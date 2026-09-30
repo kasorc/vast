@@ -1819,7 +1819,7 @@ penAnim('miasto',S2[0],S2[1],tg=>{const st=P(0),off=[st[0]+300,st[1]-260];const 
 const S3=[5.6,3.6];
 worldBase('trasa',$('#cam_trasa'),S3[0],S3[1],{});
 treesFor($('#trees3'),S3[0],S3[1]);
-[['BESKIDY 120',.5],['BESKIDY 40',1.3],['BESKIDY 5',2.1]].forEach((s,i)=>{const q=F(S3[0]+s[1]+.22);const [x,y]=P(q),[x2,y2]=P(q+.01);let nx=-(y2-y),ny=x2-x;const nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;let side=ny>0?1:-1;let sx=x+nx*70*side-20,sy=y+ny*70*side+60;
+[['BESKIDY 120',.5],['BESKIDY 40',1.3],['BESKIDY 5',2.1]].forEach((s,i)=>{const q=F(S3[0]+s[1]+.22);const [x,y]=P(q),[x2,y2]=P(q+.01);let nx=-(y2-y),ny=x2-x;const nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;let side=ny>0?1:-1;let sx=x-6,sy=y+138;
   const g=E('g',{transform:`translate(${f(sx)},${f(sy)})`},$('#signs3'));const u=E('g',{class:'up',style:`--dl:${s[1]}s`},g);
   E('ellipse',{cx:6,cy:0,rx:26,ry:6,fill:'#000',opacity:.15},u);E('rect',{x:-3,y:-74,width:7,height:74,fill:'#6E5446'},u);
   E('path',{d:'M-66,-114 H56 L72,-96 L56,-78 H-66 Z',fill:'#46605A',transform:'translate(5,4)'},u);
