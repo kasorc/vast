@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SheBalance – Role opadają jak liście</title>
+<!-- PLIK GENEROWANY przez src/animacje/role-liscie/build.py (gen.py + szablon.html) – edytuj generator, nie ten plik. -->
+<style>
+  /*FONTS*/
+  :root{--page:#F4F2EF;--ink:#333;--muted:#6B6B6B}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Mulish",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+  .stage-wrap{width:min(100%, calc((100vh - 110px) * 9 / 16));aspect-ratio:9/16;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+  svg#stage{width:100%;height:100%;display:block}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .controls button{font:inherit;background:none;border:1px solid var(--muted);color:var(--ink);padding:6px 14px;cursor:pointer;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .dots{display:flex;gap:6px}.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:1px solid var(--muted);background:none}.dots button.on{background:var(--ink)}
+  .bar{width:min(100%,360px);height:3px;background:rgba(127,127,127,.25)}.bar i{display:block;height:100%;width:0;background:var(--ink)}
+  body.rec{padding:0;gap:0} body.rec .stage-wrap{width:100vw;height:100vh;box-shadow:none} body.rec .controls,body.rec .bar{display:none}
+  /*BASE_CSS*/
+  /*FIG_CSS*/
+  /* --- style animacji „Role opadają jak liście” --- */
+  .scene{transition:none}
+  .cam{transform-origin:0 0}
+@@CSS@@
+</style>
+</head>
+<body>
+<div class="stage-wrap">
+<svg id="stage" viewBox="0 0 540 960">
+  <defs>/*DEFS*/@@DEFS@@</defs>
+  <rect id="bg" width="540" height="960" fill="#C8C8C8"/>
+@@SCENES@@
+  <rect width="540" height="960" filter="url(#paper)" opacity=".16" style="mix-blend-mode:multiply" pointer-events="none"/>
+</svg>
+</div>
+<div class="bar"><i id="prog"></i></div>
+<div class="controls"><button id="play">Pauza</button><button id="restart">Od początku</button><div class="dots" id="dots"></div></div>
+<script>
+window.SCENES=[@@SCJS@@];
+// Teksty .wsplit → osobne <text> na słowo (albo na grupy znaków z data-g="0,9,19"), zmienna --w = numer słowa.
+window.beforeSplit=function(){
+  const NS='http://www.w3.org/2000/svg';
+  document.querySelectorAll('text.wsplit').forEach(t=>{
+    const s=t.textContent, cls=t.getAttribute('class').replace('wsplit','').trim(), g=document.createElementNS(NS,'g');
+    let st=[]; if(t.dataset.g) st=t.dataset.g.split(',').map(Number); else for(let i=0;i<s.length;i++) if(s[i]!==' '&&(i===0||s[i-1]===' ')) st.push(i);
+    const hl=(t.dataset.hl||'').split(',').filter(x=>x!=='').map(Number);
+    st.forEach((a,k)=>{const b=k<st.length-1?st[k+1]:s.length; const p=t.getStartPositionOfChar(a);
+      const c=document.createElementNS(NS,'text'); c.textContent=s.slice(a,b).trimEnd(); c.setAttribute('x',p.x.toFixed(2)); c.setAttribute('y',p.y.toFixed(2));
+      ['font-size','fill','opacity'].forEach(x=>{if(t.getAttribute(x)) c.setAttribute(x,t.getAttribute(x));}); c.setAttribute('text-anchor','start');
+      c.setAttribute('class',(cls+' w'+(hl.includes(k)?' hl':'')).trim()); c.style.cssText=(t.getAttribute('style')||'')+';--w:'+k; g.appendChild(c);});
+    t.replaceWith(g);
+  });
+};
+</script>
+<svg width="0" height="0" style="position:absolute"><defs><g id="logoSign" fill="currentColor"><g transform="scale(.1) translate(-711,-738)">/*LOGO*/</g></g></defs></svg>
+<script>/*ENGINE*/</script>
+</body>
+</html>

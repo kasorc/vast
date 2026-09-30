@@ -16,8 +16,9 @@ if (pi >= 0) { // podgląd: sekundy → PNG w katalogu podglad/<nazwa>/ (przecho
   const times = rest[pi+1].split(',').map(Number).sort((a,b)=>a-b);
   const dir = ROOT + '/src/podglad/' + name; fs.mkdirSync(dir, {recursive:true});
   const p = await open(1); const scenes = await p.evaluate(()=>window.SCENES.map(s=>({t0:s.t0,d:s.d})));
+  let f = 0; const FPSP = 30;
   for (const t of times) {
-    const i = scenes.findLastIndex(s=>s.t0<=t); if (i>0) await p.evaluate(x=>window.renderAt(x), scenes[i-1].t0+scenes[i-1].d-0.02);
+    for (; f/FPSP < t - 1e-6; f++) await p.evaluate(x=>window.renderAt(x), f/FPSP+1e-4);
     await p.evaluate(x=>window.renderAt(x), t); await p.screenshot({path:`${dir}/t${t.toFixed(2)}.png`});
   }
   console.log('podgląd zapisany w', dir, p.errs.length? 'BŁĘDY: '+p.errs.join(' | '):'bez błędów JS'); await b.close(); process.exit(0);
@@ -26,14 +27,15 @@ const FPS = 30; fs.rmSync(TMP,{recursive:true,force:true}); fs.mkdirSync(TMP,{re
 const probe = await open(1); const scenes = await probe.evaluate(()=>window.SCENES.map(s=>({t0:s.t0,d:s.d}))); const total = await probe.evaluate(()=>window.TOTAL);
 if (probe.errs.length) console.log('BŁĘDY JS:', probe.errs); await probe.close();
 const N = Math.round(total*FPS);
-const jobs = scenes.map((s,i)=>({i, f0:Math.ceil(s.t0*FPS-1e-6), f1: i<scenes.length-1? Math.ceil(scenes[i+1].t0*FPS-1e-6) : N}));
-async function worker(){ const p = await open(2);
-  while (jobs.length) { const j = jobs.shift();
-    if (j.i>0) { const ps=scenes[j.i-1]; await p.evaluate(t=>window.renderAt(t), ps.t0+ps.d-0.02); }
-    for (let f=j.f0; f<j.f1; f++) { await p.evaluate(t=>window.renderAt(t), f/FPS+1e-4);
-      await p.screenshot({path:`${TMP}/${String(f).padStart(5,'0')}.png`, timeout:120000}); } }
+const W = 4, per = Math.ceil(N / W);
+const jobs = Array.from({length:W}, (_,k)=>({f0:k*per, f1:Math.min(N,(k+1)*per)}));
+async function worker(j){ const p = await open(2);
+  // dojście do klatki startowej po kolei (bez zrzutów) – identyczny stan jak przy renderze sekwencyjnym
+  for (let f=0; f<j.f0; f++) await p.evaluate(t=>window.renderAt(t), f/FPS+1e-4);
+  for (let f=j.f0; f<j.f1; f++) { await p.evaluate(t=>window.renderAt(t), f/FPS+1e-4);
+    await p.screenshot({path:`${TMP}/${String(f).padStart(5,'0')}.png`, timeout:120000}); }
   await p.close(); }
-await Promise.all([worker(),worker(),worker(),worker()]); await b.close();
+await Promise.all(jobs.map(worker)); await b.close();
 const out = ROOT + '/animacje/' + name + '.mp4';
 execFileSync(FF, ['-y','-loglevel','error','-framerate',String(FPS),'-i',TMP+'/%05d.png','-c:v','libx264','-preset','slow','-crf','14','-tune','animation','-pix_fmt','yuv420p','-movflags','+faststart',out]);
 fs.rmSync(TMP,{recursive:true,force:true});

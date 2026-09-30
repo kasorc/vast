@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SheBalance – Mapa, która się rozkłada</title>
+<style>
+  /*FONTS*/
+  :root{--page:#F4F2EF;--ink:#333;--muted:#6B6B6B}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Mulish",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+  .stage-wrap{width:min(100%, calc((100vh - 110px) * 9 / 16));aspect-ratio:9/16;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+  svg#stage{width:100%;height:100%;display:block}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .controls button{font:inherit;background:none;border:1px solid var(--muted);color:var(--ink);padding:6px 14px;cursor:pointer;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .dots{display:flex;gap:6px}.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:1px solid var(--muted);background:none}.dots button.on{background:var(--ink)}
+  .bar{width:min(100%,360px);height:3px;background:rgba(127,127,127,.25)}.bar i{display:block;height:100%;width:0;background:var(--ink)}
+  body.rec{padding:0;gap:0} body.rec .stage-wrap{width:100vw;height:100vh;box-shadow:none} body.rec .controls,body.rec .bar{display:none}
+  /*BASE_CSS*/
+  /*FIG_CSS*/
+
+  /* ================= MAPA, KTÓRA SIĘ ROZKŁADA – style ================= */
+  /* twarde cięcia – przejścia robimy sami (nurkowanie, iris, kartkowanie, whip-pan) */
+  .scene{transition:none}
+  #cam.go{animation:none}
+  :root{--in:cubic-bezier(.2,.9,.25,1.15);--out:cubic-bezier(.6,0,.8,.2);--io:cubic-bezier(.65,0,.35,1);--soft:cubic-bezier(.3,.7,.3,1)}
+  .fig .headWrap{transform-origin:110px 205px}
+  .sans{font-family:"Mulish",sans-serif;font-weight:600}
+  .bold{font-family:"Mulish",sans-serif;font-weight:700}
+
+  /* wycinanki: wstawanie od dołu z cieniem */
+  .up,.upSh,.down,.pinDrop,.popC{transform-box:fill-box}
+  .up,.down{transform-origin:50% 100%}
+  .scene.active .up{animation:upY .7s var(--in) both;animation-delay:var(--dl,0s)}
+  @keyframes upY{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+  .scene.active .down{animation:downY .45s var(--out) both;animation-delay:var(--dl,0s)}
+  @keyframes downY{0%{transform:scaleY(1)}100%{transform:scaleY(0);opacity:0}}
+  .popC{transform-origin:50% 50%}
+  .scene.active .popC{animation:popC .5s var(--in) both;animation-delay:var(--dl,0s)}
+  @keyframes popC{from{transform:scale(0);opacity:0}to{transform:none;opacity:1}}
+  .scene.active .fadeIn{animation:fadeIn .25s ease both;animation-delay:var(--dl,0s)}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .twk{animation:twk 1.7s steps(1) infinite}
+  @keyframes twk{0%{opacity:1}40%{opacity:.15}62%{opacity:1}80%{opacity:.3}}
+
+  /* tarasy gór */
+  .ter .top,.ter .side,.ter .cast{transform-box:view-box}
+  .scene.active .ter.rise .top{animation:terTop .9s var(--in) both;animation-delay:var(--dl)}
+  .scene.active .ter.rise .side{animation:terSide .9s var(--in) both;animation-delay:var(--dl)}
+  .scene.active .ter.rise .cast{animation:castIn .9s ease both;animation-delay:var(--dl)}
+  @keyframes castIn{from{opacity:0}to{opacity:.12}}
+  @keyframes terTop{from{transform:translateY(0);fill-opacity:0;stroke-opacity:0}to{transform:translateY(var(--lift));fill-opacity:1;stroke-opacity:1}}
+  @keyframes terSide{from{transform:translateY(0);opacity:0}to{transform:translateY(var(--liftS));opacity:1}}
+  .scene.active .ter.fall .top{animation:terTopF .5s var(--out) both;animation-delay:var(--dl)}
+  .scene.active .ter.fall .side,.scene.active .ter.fall .cast{animation:terSideF .5s var(--out) both;animation-delay:var(--dl)}
+  @keyframes terTopF{from{transform:translateY(var(--lift))}90%{fill-opacity:0}to{transform:translateY(0);fill-opacity:0;opacity:0}}
+  @keyframes terSideF{from{transform:translateY(var(--liftS))}to{transform:translateY(0);opacity:0}}
+  .ter.still .top{transform:translateY(var(--lift))} .ter.still .side{transform:translateY(var(--liftS))}
+
+  /* etykiety tekstu (papierowe metki) */
+  .tagSh{opacity:.2}
+
+  /* ---------- 1. ROZŁOŻENIE ---------- */
+  .scene.active #cam1{animation:cam1 2.6s both}
+  @keyframes cam1{
+    0%{transform:translate(270px,500px) scale(.42) translate(-630px,-800px);animation-timing-function:var(--io)}
+    38%{transform:translate(270px,500px) scale(.38) translate(-630px,-800px);animation-timing-function:var(--io)}
+    60%{transform:translate(270px,500px) scale(.40) translate(-600px,-800px);animation-timing-function:var(--io)}
+    78%{transform:translate(270px,500px) scale(.54) translate(-420px,-800px);animation-timing-function:cubic-bezier(.6,0,.35,1)}
+    100%{transform:translate(270px,500px) scale(1.5) translate(-290px,-760px)}}
+  .fRback,.fRfront{transform-origin:840px 0} .fLback,.fLfront{transform-origin:420px 0}
+  .s1.active .fRback{animation:foldAway .32s var(--out) .12s both}
+  .s1.active .fRfront{animation:foldOpen .5s var(--in) .44s both}
+  .s1.active .fLback{animation:foldAway .3s var(--out) .52s both}
+  .s1.active .fLfront{animation:foldOpen .5s var(--in) .82s both}
+  @keyframes foldAway{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+  @keyframes foldOpen{0%{transform:scaleX(0)}70%{transform:scaleX(1.03)}100%{transform:scaleX(1)}}
+  .s1.active .fRfront .crease{animation:crease .6s ease .44s both} .s1.active .fLfront .crease{animation:crease .6s ease .82s both}
+  @keyframes crease{from{opacity:.28}to{opacity:0}}
+  .scene.active .grey1{animation:grey1 2.6s both}
+  @keyframes grey1{0%,78%{opacity:0}97%,100%{opacity:1}}
+  .needle{transform-origin:175px 175px}
+  .scene.active .needle{animation:needle 1.5s cubic-bezier(.2,.7,.3,1) .7s both}
+  @keyframes needle{0%{transform:rotate(-600deg)}62%{transform:rotate(14deg)}78%{transform:rotate(-6deg)}90%{transform:rotate(2deg)}100%{transform:rotate(0)}}
+  .scene.active .hand1{animation:hand1 2.6s both}
+  @keyframes hand1{0%,34%{transform:translate(1800px,1000px);animation-timing-function:var(--soft)}
+    50%,60%{transform:translate(1085px,930px);animation-timing-function:var(--out)}
+    76%,100%{transform:translate(1850px,1020px)}}
+  .scene.active .pen1{animation:pen1 2.6s both}
+  @keyframes pen1{0%,34%{transform:translate(1800px,1000px) rotate(0);animation-timing-function:var(--soft)}
+    50%,58%{transform:translate(1085px,930px) rotate(0);animation-timing-function:var(--io)}
+    66%,100%{transform:translate(1080px,944px) rotate(10deg)}}
+  .scene.active .b1pos{animation:b1pos 2.6s both}
+  @keyframes b1pos{0%{transform:translateY(24px)}14%,76%{transform:none;animation-timing-function:cubic-bezier(.55,0,.9,.4)}100%{transform:translate(-60px,430px) scale(1.3)}}
+  .scene.active .figB.b1 .armL{animation:b1L 2.6s var(--io) both}
+  @keyframes b1L{0%,31%{transform:rotate(174deg)}45%{transform:rotate(150deg)}52%,100%{transform:rotate(153deg)}}
+  .scene.active .figB.b1 .armR{animation:b1R 2.6s var(--io) both}
+  @keyframes b1R{0%,17%{transform:rotate(-174deg)}31%{transform:rotate(-150deg)}38%,100%{transform:rotate(-153deg)}}
+  .figB.b1 .foreL{transform:rotate(-8deg)} .figB.b1 .foreR{transform:rotate(8deg)}
+  .scene.active .figB.b1 .headWrap{animation:b1H 2.6s var(--io) both}
+  @keyframes b1H{0%,50%{transform:rotate(0)}62%,100%{transform:rotate(-5deg)}}
+  .scene.active .t1a{transform-box:fill-box;transform-origin:50% 50%;animation:t1a 1.2s both}
+  @keyframes t1a{0%{transform:scale(1.12);opacity:1;animation-timing-function:var(--soft)}80%{transform:scale(1);opacity:1}100%{transform:scale(.96);opacity:0}}
+  .scene.active .t1b{animation:t1b 2.6s both}
+  @keyframes t1b{0%,44%{opacity:0;transform:translateY(-14px)}52%,86%{opacity:1;transform:none}94%,100%{opacity:0;transform:translateY(-30px)}}
+  .scene.active .t1b .ch{--d0:1.2s}
+
+  /* ---------- 2. MIASTO ---------- */
+  .scene.active .mini{transform-box:fill-box;transform-origin:50% 100%;animation:miniLife 1.55s var(--io) .3s both}
+  .scene.active .mini.mB{animation-delay:.4s}
+  @keyframes miniLife{0%{transform:scaleY(0)}18%{transform:scaleY(1.04)}26%,86%{transform:scaleY(1)}100%{transform:scaleY(0)}}
+  .figA.phoneA .armR{transform:rotate(5deg)} .figA.phoneA .headWrap{transform:rotate(5deg) translateY(5px)}
+  .scene.active .figA.phoneA .foreR{animation:scroll .5s ease-in-out infinite alternate}
+  @keyframes scroll{from{transform:rotate(152deg)}to{transform:rotate(160deg)}}
+  .figB.stompB .armL{transform:rotate(30deg)} .figB.stompB .foreL{transform:rotate(-80deg)}
+  .figB.stompB .armR{transform:rotate(-30deg)} .figB.stompB .foreR{transform:rotate(80deg)}
+  .scene.active .figB.stompB .legR{animation:stomp .4s ease-in-out infinite}
+  @keyframes stomp{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px)}58%{transform:translateY(2px)}}
+  .scene.active .figB.stompB .headWrap{animation:impat .8s ease-in-out infinite alternate}
+  @keyframes impat{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+  .scene.active .bub{transform-box:fill-box;transform-origin:50% 100%;animation:bub var(--bd,1.9s) both;animation-delay:var(--dl)}
+  @keyframes bub{0%{transform:scale(0);opacity:0;animation-timing-function:var(--in)}22%{transform:scale(1);opacity:1}82%{transform:scale(1);opacity:1;animation-timing-function:var(--out)}100%{transform:scale(0);opacity:0}}
+  .scene.active .pinDrop{transform-origin:50% 100%;animation:pinDrop .7s cubic-bezier(.3,1.5,.5,1) both;animation-delay:var(--dl)}
+  @keyframes pinDrop{0%{transform:translateY(-160px) scaleY(1.1);opacity:0}40%{opacity:1}75%{transform:translateY(0) scaleY(.93)}100%{transform:none}}
+  .scene.active .busPop{transform-box:fill-box;transform-origin:50% 100%;animation:upY .6s var(--in) 2.0s both}
+  .scene.active .t2{transform-box:fill-box;transform-origin:50% 50%;animation:stamp .45s cubic-bezier(.3,1.4,.5,1) .25s both}
+  @keyframes stamp{from{transform:scale(1.45) rotate(-7deg);opacity:0}to{transform:rotate(-1.5deg);opacity:1}}
+  .scene.active .t2out{animation:tOut .25s var(--out) 2.72s both}
+  @keyframes tOut{to{opacity:0;transform:translateY(-10px)}}
+
+  /* ---------- 3. TRASA ---------- */
+  .rot3{transform-origin:270px 500px}
+  .scene.active .rot3{animation:rot3 3.6s var(--io) both}
+  @keyframes rot3{0%{transform:rotate(0)}33%{transform:rotate(4deg)}68%{transform:rotate(-4deg)}100%{transform:rotate(0)}}
+  .scene.active .w3{animation:w3 .5s var(--in) both;animation-delay:var(--dl)}
+  @keyframes w3{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .scene.active .tag3{transform-box:fill-box;transform-origin:0 50%;animation:tag3 .45s var(--in) .05s both}
+  @keyframes tag3{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .scene.active .t3out{animation:tOut .25s var(--out) 3.3s both}
+  .busWave{transform-box:fill-box;transform-origin:50% 100%;animation:bw .3s ease-in-out infinite alternate}
+  @keyframes bw{from{transform:rotate(-25deg)}to{transform:rotate(25deg)}}
+
+  /* ---------- 4. BESKIDY ---------- */
+  .scene.active .grey4{animation:grey4 1.1s ease .15s both}
+  @keyframes grey4{to{opacity:0}}
+  .hopA,.hopB{transform-origin:110px 712px}
+  .scene.active .hopA{animation:hopA .75s cubic-bezier(.3,0,.3,1) .55s both}
+  @keyframes hopA{0%{transform:translate(440px,-60px) scale(.35);opacity:0}15%{opacity:1}55%{transform:translate(200px,-260px) scale(.9,1.05)}82%{transform:translate(0,0) scale(1.06,.93)}100%{transform:none}}
+  .scene.active .hopB{animation:hopB .75s cubic-bezier(.3,0,.3,1) .8s both}
+  @keyframes hopB{0%{transform:translate(-340px,-60px) scale(.35);opacity:0}15%{opacity:1}55%{transform:translate(-150px,-260px) scale(.9,1.05)}82%{transform:translate(0,0) scale(1.06,.93)}100%{transform:none}}
+  .scene.active .figA.a4 .armR{animation:a4R 3.8s var(--io) both}
+  @keyframes a4R{0%,36%{transform:rotate(-7deg)}44%,100%{transform:rotate(-148deg)}}
+  .scene.active .figA.a4 .foreR{animation:waveF .36s ease-in-out 1.55s infinite alternate}
+  .scene.active .figB.b4 .armL{animation:b4L 3.8s var(--io) both}
+  @keyframes b4L{0%,40%{transform:rotate(7deg)}49%,62%{transform:rotate(166deg)}70%,100%{transform:rotate(158deg)}}
+  .scene.active .figB.b4 .armR{animation:b4R 3.8s var(--io) both}
+  @keyframes b4R{0%,40%{transform:rotate(-7deg)}49%,62%{transform:rotate(-166deg)}70%,100%{transform:rotate(-42deg)}}
+  .scene.active .figB.b4 .body{animation:b4B 3.8s var(--io) both}
+  @keyframes b4B{0%,62%{transform:rotate(0)}70%,100%{transform:rotate(-8deg)}}
+  .figB.b4 .foreL{transform:rotate(12deg)} .figB.b4 .foreR{transform:rotate(-8deg)}
+  .scene.active .sunStick{transform-box:fill-box;transform-origin:50% 100%;animation:sunStick 3.8s both}
+  @keyframes sunStick{0%,30%{transform:scaleY(0)}40%{transform:scaleY(1.04) rotate(0)}50%{transform:rotate(-5deg)}65%{transform:rotate(4deg)}80%{transform:rotate(-3deg)}100%{transform:rotate(2deg)}}
+  .scene.active .mist{animation:mist 3.8s var(--io) both}
+  @keyframes mist{from{transform:translateX(var(--mx0));opacity:0}25%{opacity:.85}to{transform:translateX(var(--mx1));opacity:.85}}
+  .pinHead{transform-box:fill-box;transform-origin:50% 50%}
+  .scene.active .pinHead{animation:pinHead .34s cubic-bezier(.7,0,.9,.5) 3.46s both}
+  @keyframes pinHead{from{transform:scale(1)}to{transform:scale(36)}}
+  .scene.active .t4{transform-box:fill-box;transform-origin:50% 0;animation:t4 3.8s both}
+  @keyframes t4{0%,12%{transform:translateY(-40px) rotate(3deg);opacity:0;animation-timing-function:var(--in)}24%{transform:rotate(-1deg);opacity:1}60%{opacity:1;transform:rotate(-1deg)}66%,100%{opacity:0;transform:translateY(-12px) rotate(-1deg)}}
+  .scene.active .t4 .ch{--d0:.6s}
+
+  /* ---------- 5. TRZY POP-UPY DNIA ---------- */
+  .page{transform-origin:0 480px}
+  .scene.active .pg1{animation:flip .42s var(--out) 1.78s both}
+  .scene.active .pg2{animation:flip .42s var(--out) 3.58s both}
+  .scene.active .pg3{animation:flip .38s var(--out) 5.12s both}
+  @keyframes flip{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+  .scene.active .pg1 .shade{animation:shade .42s var(--out) 1.78s both}
+  .scene.active .pg2 .shade{animation:shade .42s var(--out) 3.58s both}
+  .scene.active .pg3 .shade{animation:shade .38s var(--out) 5.12s both}
+  @keyframes shade{from{opacity:0}to{opacity:.45}}
+  .scene.active .iris5{animation:iris5 .55s var(--io) both}
+  @keyframes iris5{from{r:0}to{r:760px}}
+  .scene.active .pin1in{transform-origin:270px 520px;animation:push5 2.3s var(--soft) both}
+  .scene.active .pin2in{transform-origin:270px 480px;animation:push5 2.3s var(--soft) 1.7s both}
+  .scene.active .pin3in{transform-origin:270px 600px;animation:pull5 2s var(--soft) 3.5s both}
+  @keyframes push5{from{transform:scale(1)}to{transform:scale(1.07)}}
+  @keyframes pull5{from{transform:scale(1.1) translateY(-12px)}to{transform:scale(1)}}
+  .scene.active .par1{animation:par 2.3s var(--soft) both} .scene.active .par2{animation:par 2.3s var(--soft) both;--px:-26px} .scene.active .par3{animation:par 2.3s var(--soft) both;--px:30px}
+  @keyframes par{from{transform:translateX(0)}to{transform:translateX(var(--px,-12px))}}
+  .scene.active .sunUp{animation:sunUp 2s var(--soft) both}
+  @keyframes sunUp{from{transform:translateY(70px)}to{transform:none}}
+  .scene.active .mistB{animation:mistB 3s ease-in-out infinite alternate}
+  @keyframes mistB{from{transform:translateX(-30px)}to{transform:translateX(30px)}}
+  .fig.bend .foreL{transform:rotate(12deg)} .fig.bend .foreR{transform:rotate(-12deg)}
+  .scene.active .fig.bend .armL{animation:bdL 1.2s var(--io) infinite}
+  .scene.active .fig.bend .armR{animation:bdR 1.2s var(--io) infinite}
+  .scene.active .fig.bend .body{animation:bdB 1.2s var(--io) infinite}
+  .scene.active .fig.bend.late .armL,.scene.active .fig.bend.late .armR,.scene.active .fig.bend.late .body{animation-delay:-.6s}
+  @keyframes bdL{0%,35%,100%{transform:rotate(168deg)}50%,85%{transform:rotate(160deg)}}
+  @keyframes bdR{0%,35%,100%{transform:rotate(-168deg)}50%,85%{transform:rotate(-48deg)}}
+  @keyframes bdB{0%,35%,100%{transform:rotate(0)}50%,85%{transform:rotate(-9deg)}}
+  .figA.a5b .armR{transform:rotate(16deg)} .figA.a5b .headWrap{transform:rotate(4deg) translateY(3px)}
+  .scene.active .figA.a5b .foreR{animation:write .45s ease-in-out infinite alternate}
+  @keyframes write{from{transform:rotate(110deg)}to{transform:rotate(121deg)}}
+  .figB.b5b .armR{transform:rotate(30deg)}
+  .scene.active .figB.b5b .foreR{animation:tap .5s ease-in-out infinite alternate}
+  @keyframes tap{from{transform:rotate(12deg)}to{transform:rotate(26deg)}}
+  .scene.active .figB.b5b .headWrap{animation:nod 1.1s ease-in-out infinite alternate}
+  @keyframes nod{from{transform:rotate(-5deg)}to{transform:rotate(2deg) translateY(2px)}}
+  .scene.active .figB.b5c .body{animation:lean5 5.5s var(--io) both}
+  @keyframes lean5{0%,67%{transform:rotate(0)}78%,100%{transform:rotate(-7deg)}}
+  .scene.active .figB.b5c .headWrap{animation:lean5h 5.5s var(--io) both}
+  @keyframes lean5h{0%,69%{transform:rotate(0)}80%,100%{transform:rotate(-13deg)}}
+  .scene.active .figA.a5c .headWrap{animation:lean5a 5.5s var(--io) both}
+  @keyframes lean5a{0%,74%{transform:rotate(0)}88%,100%{transform:rotate(5deg)}}
+  .swing{transform-box:view-box}
+  .scene.active .swing{animation:swing 2.2s ease-in-out infinite alternate;animation-delay:var(--dl)}
+  @keyframes swing{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+  .scene.active .tx5{animation:tx5 .5s var(--in) both;animation-delay:var(--dl)}
+  @keyframes tx5{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .scene.active .p5 .ch{animation:chType .3s var(--in) both;animation-delay:calc(var(--d0) + var(--i) * 55ms)}
+  .scene.active .p5c .ch{transform-box:fill-box;transform-origin:50% 60%;animation:chBreath .8s cubic-bezier(.3,.7,.3,1) both;animation-delay:calc(var(--d0) + var(--i) * 70ms)}
+  @keyframes chBreath{from{opacity:0;transform:scale(1.35)}to{opacity:1;transform:none}}
+  .hangIn{transform-origin:270px 40px}
+  .scene.active .hangIn{animation:hangIn 1s both 1.86s}
+  @keyframes hangIn{0%{transform:translateY(-240px) rotate(-10deg);animation-timing-function:cubic-bezier(.3,.8,.4,1)}45%{transform:rotate(4deg);animation-timing-function:ease-in-out}72%{transform:rotate(-1.5deg)}100%{transform:none}}
+  @keyframes chType{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+  .scene.active .glow{animation:glow 1.6s ease-in-out infinite alternate}
+  @keyframes glow{from{opacity:.35}to{opacity:.7}}
+
+  /* ---------- 6. MAPA SIĘ SKŁADA ---------- */
+  .whip6{transform-origin:270px 480px}
+  .scene.active .whip6{animation:whip6 3.7s both}
+  @keyframes whip6{0%,90%{transform:none;filter:none;animation-timing-function:cubic-bezier(.7,0,.9,.4)}91%{filter:url(#vblur)}100%{transform:translateY(-900px);filter:url(#vblur)}}
+  .rot6{transform-origin:270px 480px}
+  .scene.active .rot6{animation:rot6 3.3s var(--io) .3s both}
+  @keyframes rot6{0%{transform:rotate(0)}45%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
+  .scene.active #cam6{animation:cam6 3.7s both}
+  @keyframes cam6{0%{transform:translate(270px,500px) scale(.52) translate(-630px,-640px);animation-timing-function:var(--soft)}
+    24%,100%{transform:translate(270px,500px) scale(.38) translate(-630px,-800px)}}
+  .drop6{transform-origin:630px 550px}
+  .scene.active .drop6{animation:drop6 .5s var(--in) both}
+  @keyframes drop6{from{transform:scale(1.15);opacity:.0}30%{opacity:1}to{transform:none;opacity:1}}
+  .s6.active .fLfront{animation:foldAway .26s var(--out) 1.42s both}
+  .s6.active .fLback{animation:foldOpen2 .3s var(--in) 1.68s both}
+  .s6.active .fRfront{animation:foldAway .26s var(--out) 1.95s both}
+  .s6.active .fRback{animation:foldOpen2 .3s var(--in) 2.21s both}
+  @keyframes foldOpen2{0%{transform:scaleX(0)}70%{transform:scaleX(1.03)}100%{transform:scaleX(1)}}
+  .guide6{transform-origin:630px 550px}
+  .scene.active .guide6{animation:guide6 3.7s both}
+  @keyframes guide6{0%,70%{transform:none;animation-timing-function:var(--io)}76%{transform:translateY(-40px) scale(1.06) rotate(-4deg);animation-timing-function:cubic-bezier(.5,0,.7,.6)}84%{transform:translate(-340px,260px) scale(.6) rotate(-14deg);animation-timing-function:cubic-bezier(.4,.2,.8,.6)}92%,100%{transform:translate(-460px,1000px) scale(.4) rotate(-26deg)}}
+  .scene.active .b6pos{animation:b6pos 3.7s both}
+  @keyframes b6pos{0%,6%{transform:translateY(330px);animation-timing-function:var(--in)}22%,100%{transform:none}}
+  .scene.active .figB.b6 .armL{animation:b6L 3.7s var(--io) both}
+  @keyframes b6L{0%,38%{transform:rotate(153deg)}51%,72%{transform:rotate(174deg)}84%{transform:rotate(70deg)}95%,100%{transform:rotate(18deg)}}
+  .scene.active .figB.b6 .armR{animation:b6R 3.7s var(--io) both}
+  @keyframes b6R{0%,52%{transform:rotate(-153deg)}65%,72%{transform:rotate(-174deg)}86%,100%{transform:rotate(-12deg)}}
+  .figB.b6 .foreL{transform:rotate(-8deg)} .figB.b6 .foreR{transform:rotate(8deg)}
+  .scene.active .figB.b6 .headWrap{animation:b6H 3.7s var(--io) both}
+  @keyframes b6H{0%,72%{transform:rotate(0)}82%{transform:rotate(7deg)}92%,100%{transform:rotate(-3deg)}}
+  .scene.active .t6 .ch{transform-origin:50% 100%;animation:chDrop .5s cubic-bezier(.3,1.5,.5,1) both;animation-delay:calc(2.3s + var(--i) * 40ms)}
+  @keyframes chDrop{from{opacity:0;transform:translateY(-60px)}60%{opacity:1}to{opacity:1;transform:none}}
+  .scene.active .tag6{animation:fadeIn .2s ease 2.25s both}
+
+  /* ---------- 7. CTA ---------- */
+  .scene.active .whip7{animation:whip7 .42s cubic-bezier(.2,.8,.3,1) both}
+  @keyframes whip7{0%{transform:translateY(700px);filter:url(#vblur)}70%{filter:url(#vblur)}72%,100%{transform:none;filter:none}}
+  .scene.active .push7{transform-origin:270px 380px;animation:push7 3.4s var(--soft) both}
+  @keyframes push7{from{transform:scale(1)}to{transform:scale(1.06)}}
+  .scene.active .contour7{animation:par 3.4s var(--soft) both;--px:-24px}
+  .scene.active .rv7{animation:rv7 .9s cubic-bezier(.45,0,.3,1) .15s both}
+  @keyframes rv7{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  .scene.active .logoLine path{animation:draw 1.1s cubic-bezier(.45,0,.3,1) .8s both}
+  .scene.active .logoFill{animation:fadeIn .45s ease 1.65s both}
+  .scene.active .cta1{animation:tx5 .45s var(--in) both;animation-delay:var(--dl)}
+  .pill{transform-box:fill-box;transform-origin:50% 50%}
+  .scene.active .pill{animation:pill .5s var(--in) 1.9s both,pulse7 1.1s ease-in-out 2.4s infinite}
+  @keyframes pill{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+  @keyframes pulse7{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  .scene.active .pinIco{transform-box:fill-box;transform-origin:50% 100%;animation:pinIco 1.1s cubic-bezier(.3,1.5,.5,1) 2.4s infinite}
+  @keyframes pinIco{0%,60%,100%{transform:none}20%{transform:translateY(-6px)}}
+</style>
+</head>
+<body>
+<div class="stage-wrap">
+<svg id="stage" viewBox="0 0 540 960">
+  <defs>/*DEFS*/
+    <pattern id="wood" patternUnits="userSpaceOnUse" width="640" height="140">
+      <rect width="640" height="140" fill="#A4B8B0"/>
+      <path d="M0,22 C160,10 320,36 640,20 M0,58 C200,70 380,44 640,60 M0,96 C140,86 420,112 640,94 M0,126 C220,134 400,118 640,128" stroke="#8FA59C" stroke-width="3" fill="none" opacity=".7"/>
+      <path d="M0,40 C170,30 330,52 640,38 M0,112 C240,104 380,124 640,110" stroke="#B8C8C1" stroke-width="2" fill="none" opacity=".8"/>
+      <path d="M0,139 H640" stroke="#93A99F" stroke-width="2"/>
+      <ellipse cx="420" cy="76" rx="26" ry="8" fill="none" stroke="#8FA59C" stroke-width="2.5" opacity=".7"/>
+    </pattern>
+    <pattern id="stripesV" patternUnits="userSpaceOnUse" width="26" height="20"><rect width="26" height="20" fill="#f8f6f1"/><rect x="9" width="8" height="20" fill="#1f1f22"/></pattern>
+    <filter id="greyF"><feColorMatrix type="saturate" values=".06"/><feComponentTransfer><feFuncR type="linear" slope=".92" intercept=".05"/><feFuncG type="linear" slope=".92" intercept=".05"/><feFuncB type="linear" slope=".92" intercept=".06"/></feComponentTransfer></filter>
+    <filter id="mblur" filterUnits="userSpaceOnUse" x="-400" y="-400" width="2100" height="1900"><feGaussianBlur stdDeviation="38"/></filter>
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="soft4" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="vblur" x="-5%" y="-60%" width="110%" height="220%"><feGaussianBlur stdDeviation="0 22"/></filter>
+    <linearGradient id="creaseG" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".0"/><stop offset=".5" stop-color="#000" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="skyM" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#F4F2EF"/><stop offset="1" stop-color="#E3CCC1"/></linearGradient>
+    <linearGradient id="nightG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#58756C"/><stop offset="1" stop-color="#58756C"/></linearGradient>
+    <linearGradient id="edgeSh" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+    <radialGradient id="warm" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#F4E3B5" stop-opacity=".9"/><stop offset="1" stop-color="#F4E3B5" stop-opacity="0"/></radialGradient>
+    <g id="worldArt"></g>
+    <g id="coverArt"></g>
+    <g id="pencilG"></g>
+  </defs>
+  <rect id="bg" width="540" height="960" fill="#A4B8B0"/>
+  <circle id="wipe" cx="270" cy="480" r="1150" fill="#A4B8B0"/>
+  <g id="cam">
+
+    <!-- ===== 1. ROZŁOŻENIE ===== -->
+    <g class="scene s1" data-s="rozloz">
+      <g id="cam1">
+        <rect x="-3000" y="-3000" width="7300" height="7100" fill="url(#wood)"/>
+        <!-- środkowy panel -->
+        <rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/>
+        <use href="#worldArt" clip-path="url(#clipC)"/>
+        <!-- lewe skrzydło -->
+        <g class="fLfront"><rect x="14" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipL)"/><g class="needle"><path d="M175,90 L190,175 L175,260 L160,175 Z" fill="#6E5446"/><path d="M175,90 L190,175 L160,175 Z" fill="#B5582F"/><circle cx="175" cy="175" r="9" fill="#F2EFEB" stroke="#6E5446" stroke-width="3"/></g><rect class="crease" x="0" y="0" width="420" height="1100" fill="#000" opacity="0"/></g>
+        <g class="fLback"><rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#coverArt" transform="translate(0,0)"/></g>
+        <!-- prawe skrzydło (na wierzchu) -->
+        <g class="fRfront"><rect x="854" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipR)"/><rect class="crease" x="840" y="0" width="420" height="1100" fill="#000" opacity="0"/></g>
+        <g class="fRback"><rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#coverArt"/></g>
+        <!-- szarość codzienności -->
+        <use class="grey1" href="#worldArt" filter="url(#greyF)"/>
+        <!-- ołówek i dłoń A -->
+        <g class="pen1"><use href="#pencilG" transform="rotate(-8) scale(1.7)"/></g>
+        <g class="hand1"><g transform="scale(2.6)">
+          <rect x="18" y="-17" width="400" height="34" rx="14" fill="url(#stripesV)" stroke="#d6cfc2" stroke-width="1.5"/>
+          <rect x="12" y="-15" width="12" height="30" rx="4" fill="#ece8df"/>
+          <ellipse cx="2" cy="0" rx="17" ry="14" fill="#f2c9aa"/>
+          <ellipse cx="-12" cy="-8" rx="8" ry="4.5" fill="#efc0a0"/><ellipse cx="-14" cy="1" rx="8" ry="4.5" fill="#efc0a0"/><ellipse cx="-10" cy="9" rx="7" ry="4" fill="#efc0a0"/>
+        </g></g>
+      </g>
+      <!-- B od pasa w górę -->
+      <g class="b1pos"><g transform="translate(160,576)">/*FIG_B:b1 has-pack*/</g></g>
+      <!-- teksty -->
+      <g class="tag t1a" data-fill="#58756C" data-pad="26 14" transform="rotate(-1.5 270 138)"><text x="270" y="158" font-size="58" text-anchor="middle" class="serif" fill="#F2EFEB">Skąd?</text></g>
+      <g class="t1b"><g class="tag" data-fill="#58756C" data-pad="22 12" data-del="1.15" transform="rotate(-1.5 270 138)"><text x="270" y="156" font-size="50" text-anchor="middle" class="serif split" fill="#F2EFEB">Z codzienności.</text></g></g>
+    </g>
+
+    <!-- ===== 2. MIASTO ===== -->
+    <g class="scene s2" data-s="miasto">
+      <g id="cam_miasto" class="camS">
+        <g id="city2"></g>
+        <!-- przystanek -->
+        <g class="up" style="--dl:.2s"><rect x="205" y="742" width="152" height="118" fill="#DCDCD8" opacity=".85"/><rect x="200" y="732" width="162" height="12" rx="3" fill="#8E918D"/><rect x="204" y="740" width="7" height="122" fill="#8E918D"/><rect x="351" y="740" width="7" height="122" fill="#8E918D"/></g>
+        <g transform="translate(222,682) scale(.25)"><g class="mini mA">/*FIG_A:phoneA*/</g></g>
+        <g transform="translate(284,682) scale(.25)"><g class="mini mB">/*FIG_B:stompB has-pack*/</g></g>
+        <g id="bus2"></g>
+        <g id="pinA2"></g>
+        <!-- dymki -->
+        <g class="bub" style="--dl:.6s;--bd:1.25s"><g transform="translate(236,628)"><path d="M-26,-22 H26 Q34,-22 34,-14 V12 Q34,20 26,20 H6 L-2,32 L-4,20 H-26 Q-34,20 -34,12 V-14 Q-34,-22 -26,-22 Z" fill="#F4F2EF" stroke="#8E918D" stroke-width="2"/><circle cx="0" cy="-1" r="12" fill="none" stroke="#6E5446" stroke-width="2.4"/><path d="M0,-8 V-1 L6,3" stroke="#6E5446" stroke-width="2.4" fill="none" stroke-linecap="round"/></g></g>
+        <g class="bub" style="--dl:.8s;--bd:1.1s"><g transform="translate(330,612)"><path d="M-26,-22 H26 Q34,-22 34,-14 V12 Q34,20 26,20 H4 L-6,32 L-6,20 H-26 Q-34,20 -34,12 V-14 Q-34,-22 -26,-22 Z" fill="#F4F2EF" stroke="#8E918D" stroke-width="2"/><rect x="-15" y="-11" width="30" height="21" rx="2" fill="none" stroke="#6E5446" stroke-width="2.4"/><path d="M-15,-9 L0,2 L15,-9" fill="none" stroke="#6E5446" stroke-width="2.4"/><circle cx="17" cy="-12" r="7" fill="#B5582F"/></g></g>
+        <g class="bub" style="--dl:1.0s;--bd:.95s"><g transform="translate(282,572)"><path d="M-26,-22 H26 Q34,-22 34,-14 V12 Q34,20 26,20 H6 L0,32 L-4,20 H-26 Q-34,20 -34,12 V-14 Q-34,-22 -26,-22 Z" fill="#F4F2EF" stroke="#8E918D" stroke-width="2"/><path d="M-12,-9 h4 M-2,-9 h16 M-12,0 h4 M-2,0 h16 M-12,9 h4 M-2,9 h10" stroke="#6E5446" stroke-width="2.4" stroke-linecap="round"/></g></g>
+        <g id="pen_miasto"><use href="#pencilG"/></g>
+      </g>
+      <g class="t2out"><g class="tag t2" data-fill="#F4F2EF" data-pad="22 14"><text x="270" y="152" font-size="20" text-anchor="middle" class="bold" letter-spacing="3" fill="#B5582F">PUNKT A</text><text x="270" y="200" font-size="48" text-anchor="middle" class="serif" fill="#333">pośpiech</text></g></g>
+    </g>
+
+    <!-- ===== 3. TRASA ===== -->
+    <g class="scene s3" data-s="trasa">
+      <g class="rot3"><g id="cam_trasa" class="camS">
+        <g id="trees3"></g>
+        <g id="signs3"></g>
+        <g id="bus3"></g>
+        <g id="pen_trasa"><use href="#pencilG"/></g>
+      </g></g>
+      <g class="t3out"><g class="tag tag3" data-fill="#F4F2EF" data-pad="24 14" data-box="80 118 380 128"></g>
+        <g class="words3" data-font="46">
+          <text class="serif w3" data-line="0" style="--dl:.2s" fill="#333">Im</text>
+          <text class="serif w3" data-line="0" style="--dl:.55s" fill="#333">bliżej,</text>
+          <text class="serif w3" data-line="1" style="--dl:1.15s" fill="#333">tym</text>
+          <text class="serif w3" data-line="1" style="--dl:1.5s" fill="#58756C">ciszej.</text>
+        </g></g>
+    </g>
+
+    <!-- ===== 4. BESKIDY ===== -->
+    <g class="scene s4" data-s="beskidy">
+      <g id="cam_beskidy" class="camS">
+        <g id="terr4"></g>
+        <g id="mist4"></g>
+        <g class="sunStick" transform="translate(0,0)"><g><rect x="1147" y="170" width="6" height="190" fill="#6E5446"/><circle cx="1150" cy="150" r="46" fill="#B8892F"/><circle cx="1146" cy="146" r="46" fill="#D4A23A"/><circle cx="1146" cy="146" r="30" fill="none" stroke="#F4F2EF" stroke-width="3" stroke-dasharray="6 7" opacity=".7"/></g></g>
+        <g id="trees4"></g>
+        <g id="pinB4"></g>
+        <g id="bus4"></g>
+        <g transform="translate(822,327) scale(.25)"><g class="hopA">/*FIG_A:a4*/</g></g>
+        <g transform="translate(1017,327) scale(.25)"><g class="hopB">/*FIG_B:b4 has-pack*/</g></g>
+        <g id="pen_beskidy"><use href="#pencilG"/></g>
+        <g id="pinHead4"></g>
+      </g>
+      <g class="t4"><g class="tag" data-fill="#F4F2EF" data-pad="22 14"><text x="270" y="150" font-size="20" text-anchor="middle" class="bold" letter-spacing="3" fill="#58756C">PUNKT B</text><text x="270" y="198" font-size="42" text-anchor="middle" class="serif split" fill="#333">przestrzeń dla siebie</text></g></g>
+    </g>
+
+    <!-- ===== 5. TRZY POP-UPY DNIA ===== -->
+    <g class="scene s5" data-s="dzien">
+      <rect x="-20" y="-20" width="580" height="1000" fill="url(#wood)"/>
+      <!-- strona 3: wieczór -->
+      <g class="page pg3"><g class="pin3in">
+        <rect x="-40" y="-40" width="620" height="1040" fill="url(#nightG)"/>
+        <g id="stars3"></g>
+        <path d="M-40,640 C60,560 140,600 220,540 C300,480 380,560 460,500 C520,470 560,500 600,520 V1000 H-40 Z" fill="#46605A"/>
+        <path d="M-40,700 C80,660 200,690 300,650 C400,610 480,660 600,640 V1000 H-40 Z" fill="#3F5750"/>
+        <ellipse cx="420" cy="660" rx="120" ry="70" fill="url(#warm)" class="glow"/>
+        <g><path d="M322,720 L420,556 L518,720 Z" fill="#C9B2A6"/><path d="M420,556 L518,720 L470,720 Z" fill="#B09A8F"/><path d="M398,720 L420,610 L442,720 Z" fill="#6E5446"/><path d="M420,610 L442,720 L430,720 Z" fill="#F4E3B5" opacity=".7"/></g>
+        <path d="M-40,850 C120,830 400,830 600,850 V1000 H-40 Z" fill="#3A514A"/>
+        <g transform="translate(96,410) scale(.62)">/*FIG_A:sit hold has-mug a5c*/</g>
+        <g transform="translate(204,410) scale(.62)">/*FIG_B:sit b5c*/</g>
+        <g><path d="M86,712 C120,690 170,706 196,700 C230,690 280,704 312,694 C350,688 372,706 392,724 C410,780 430,840 452,888 C330,902 150,904 16,890 C38,836 60,772 86,712 Z" fill="#000" opacity=".2" transform="translate(6,8)"/>
+          <path d="M86,712 C120,690 170,706 196,700 C230,690 280,704 312,694 C350,688 372,706 392,724 C410,780 430,840 452,888 C330,902 150,904 16,890 C38,836 60,772 86,712 Z" fill="#E3CCC1"/>
+          <path d="M80,730 C140,716 250,720 396,740 L402,756 C250,736 140,734 76,748 Z M52,818 C160,806 300,810 424,826 L430,844 C300,828 160,824 46,838 Z" fill="#B5582F" opacity=".6"/>
+          <path d="M152,702 C150,760 140,820 130,896 M292,700 C300,760 312,820 322,896" stroke="#B5582F" stroke-width="8" fill="none" opacity=".4"/>
+          <path d="M140,760 C150,800 176,840 172,890 M250,750 C240,800 250,850 262,896 M350,760 C372,800 384,850 390,892" stroke="#C9B2A6" stroke-width="3" fill="none"/>
+          <path d="M392,724 C410,780 430,840 452,888 L420,872 C404,820 396,770 392,724 Z" fill="#C9B2A6"/></g>
+        <g class="fadeIn" style="--dl:3.66s"><g class="tag p5c" data-fill="#F4F2EF" data-pad="26 12"><text x="270" y="190" font-size="62" text-anchor="middle" class="serif split" fill="#333" style="--d0:3.7s">Oddech.</text></g></g>
+      </g><rect class="shade" width="540" height="960" fill="#000" opacity="0"/><rect x="540" width="46" height="960" fill="url(#edgeSh)"/></g>
+      <!-- strona 2: rozmowa -->
+      <g class="page pg2"><g class="pin2in">
+        <rect x="-40" y="-40" width="620" height="1040" fill="#E3CCC1"/>
+        <rect x="150" y="300" width="240" height="170" fill="#F4F2EF" stroke="#C9B2A6" stroke-width="6" opacity=".0"/>
+        <g opacity=".55"><path d="M40,110 L500,110" stroke="#C9B2A6" stroke-width="2"/><path d="M60,110 l20,40 l20,-40 M140,110 l20,40 l20,-40 M360,110 l20,40 l20,-40 M440,110 l20,40 l20,-40" fill="#F4F2EF" stroke="#C9B2A6" stroke-width="2"/></g>
+        <g transform="translate(20,250) scale(.85)">/*FIG_A:holdL has-notes a5b*/</g>
+        <g transform="translate(290,250) scale(.85)">/*FIG_B:b5b*/</g>
+        <rect x="-40" y="604" width="620" height="400" fill="#6E5446"/><rect x="-40" y="596" width="620" height="16" fill="#8A6A57"/><path d="M-40,640 H580 M-40,700 H580 M-40,780 H580" stroke="#5F4739" stroke-width="3" opacity=".5"/>
+        <g transform="translate(270,640) rotate(-4)"><rect x="-95" y="-34" width="190" height="96" fill="#000" opacity=".2" transform="translate(6,6)"/><rect x="-95" y="-34" width="190" height="96" fill="#F2EFEB"/><path d="M-32,-34 V62 M32,-34 V62" stroke="#E3CCC1" stroke-width="2"/><path d="M-80,40 C-50,10 -20,40 10,0 S60,-10 78,-22" stroke="#B5582F" stroke-width="4" stroke-dasharray="8 6" fill="none"/><circle cx="78" cy="-22" r="7" fill="#58756C"/></g>
+        <g transform="translate(78,610)"><rect x="-44" y="-14" width="88" height="16" rx="2" fill="#58756C"/><rect x="-38" y="-28" width="80" height="14" rx="2" fill="#A4B8B0"/><rect x="-42" y="-40" width="84" height="12" rx="2" fill="#E3CCC1"/></g>
+        <g transform="translate(462,606) scale(1.15)"><use href="#mug"/></g>
+        <g class="bub" style="--dl:2.1s"><g transform="translate(252,300)"><path d="M-30,-24 H30 Q38,-24 38,-16 V12 Q38,20 30,20 H8 L-8,34 L-6,20 H-30 Q-38,20 -38,12 V-16 Q-38,-24 -30,-24 Z" fill="#F4F2EF" stroke="#58756C" stroke-width="2"/><circle cx="-14" cy="-2" r="4.5" fill="#58756C"/><circle cx="0" cy="-2" r="4.5" fill="#58756C"/><circle cx="14" cy="-2" r="4.5" fill="#58756C"/></g></g>
+        <g class="bub" style="--dl:2.6s"><g transform="translate(262,396)"><path d="M-30,-24 H30 Q38,-24 38,-16 V12 Q38,20 30,20 H6 L10,34 L-6,20 H-30 Q-38,20 -38,12 V-16 Q-38,-24 -30,-24 Z" fill="#F4F2EF" stroke="#58756C" stroke-width="2"/><use href="#heartShape" transform="translate(0,1) scale(1.5)" fill="none" stroke="#B5582F" stroke-width="1.6"/></g></g>
+        <g class="bub" style="--dl:3.05s"><g transform="translate(250,492)"><path d="M-30,-24 H30 Q38,-24 38,-16 V12 Q38,20 30,20 H8 L-8,34 L-6,20 H-30 Q-38,20 -38,12 V-16 Q-38,-24 -30,-24 Z" fill="#F4F2EF" stroke="#58756C" stroke-width="2"/><use href="#star" transform="translate(0,-2) scale(1.4)" fill="#58756C"/></g></g>
+        <g class="hangIn"><path d="M200,60 L230,128 M340,60 L310,128" stroke="#8A6A57" stroke-width="2"/><g class="tag" data-fill="#F4F2EF" data-pad="26 12"><text x="270" y="190" font-size="62" text-anchor="middle" class="serif" fill="#333">Rozmowa.</text></g></g>
+      </g><rect class="shade" width="540" height="960" fill="#000" opacity="0"/><rect x="540" width="46" height="960" fill="url(#edgeSh)"/></g>
+      <!-- strona 1: ruch -->
+      <g class="page pg1"><g class="pin1in">
+        <rect x="-40" y="-40" width="620" height="1040" fill="url(#skyM)"/>
+        <g class="sunUp"><circle cx="400" cy="470" r="70" fill="#E9CFA0"/><circle cx="400" cy="470" r="96" fill="#E9CFA0" opacity=".3"/></g>
+        <g class="par1"><path d="M-60,560 C40,470 120,520 200,450 C280,380 360,470 440,420 C500,390 560,430 620,460 V1000 H-60 Z" fill="#A4B8B0"/></g>
+        <g class="mistB"><rect x="-40" y="520" width="360" height="22" rx="11" fill="#F4F2EF" opacity=".75"/></g>
+        <g class="par2"><path d="M-60,650 C60,590 160,640 260,590 C360,540 460,620 620,580 V1000 H-60 Z" fill="#58756C"/></g>
+        <g class="mistB" style="animation-direction:alternate-reverse"><rect x="220" y="612" width="380" height="20" rx="10" fill="#F4F2EF" opacity=".6"/></g>
+        <rect x="-60" y="720" width="660" height="300" fill="#8FA69C"/>
+        <g class="par3">
+          <path d="M52,772 L232,772 L252,812 L32,812 Z" fill="#E3CCC1"/><path d="M32,812 L252,812 L252,820 L32,820 Z" fill="#C9B2A6"/>
+          <path d="M300,772 L482,772 L502,812 L280,812 Z" fill="#58756C"/><path d="M280,812 L502,812 L502,820 L280,820 Z" fill="#46605A"/>
+          <g transform="translate(245,388) scale(-.55,.55)">/*FIG_A:bend late*/</g>
+          <g transform="translate(290,388) scale(.55)">/*FIG_B:bend*/</g>
+        </g>
+        <g class="tx5" style="--dl:.35s"><g class="tag p5" data-fill="#F4F2EF" data-pad="26 12"><text x="270" y="190" font-size="62" text-anchor="middle" class="serif split" fill="#333" style="--d0:.4s">Ruch.</text></g></g>
+      </g><rect class="shade" width="540" height="960" fill="#000" opacity="0"/><rect x="540" width="46" height="960" fill="url(#edgeSh)"/></g>
+      <!-- iris z pinezki -->
+      <mask id="irisM" maskUnits="userSpaceOnUse" x="0" y="0" width="540" height="960"><rect width="540" height="960" fill="#fff"/><circle class="iris5" cx="439" cy="500" r="0" fill="#000"/></mask>
+      <rect width="540" height="960" fill="#58756C" mask="url(#irisM)"/>
+    </g>
+
+    <!-- ===== 6. MAPA SIĘ SKŁADA ===== -->
+    <g class="scene s6" data-s="sklada">
+      <g class="whip6"><g class="rot6">
+        <g id="cam6">
+          <rect x="-3000" y="-3000" width="7300" height="7100" fill="url(#wood)"/>
+          <g class="guide6"><g class="drop6">
+            <rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/>
+            <use href="#worldArt" clip-path="url(#clipC)"/>
+            <g class="fLfront"><rect x="14" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipL)"/><g class="needleS"><path d="M175,90 L190,175 L175,260 L160,175 Z" fill="#6E5446"/><path d="M175,90 L190,175 L160,175 Z" fill="#B5582F"/><circle cx="175" cy="175" r="9" fill="#F2EFEB" stroke="#6E5446" stroke-width="3"/></g><g class="route6" data-clip="clipL"></g></g>
+            <g class="fRfront"><rect x="854" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipR)"/><g class="route6" data-clip="clipR"></g></g>
+            <g id="route6" data-clip="clipC"></g>
+            <g id="pops6"></g>
+            <g class="fLback"><use href="#coverArt"/></g>
+            <g class="fRback"><rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#coverArt"/></g>
+          </g></g>
+        </g>
+        <g class="b6pos"><g transform="translate(160,576)">/*FIG_B:b6 has-pack*/</g></g>
+      </g></g>
+      <g class="tag6"><g class="tag t6" data-fill="#58756C" data-pad="24 12" transform="rotate(-1.5 270 140)"><text x="270" y="160" font-size="54" text-anchor="middle" class="serif split" fill="#F2EFEB">Trasa gotowa.</text></g></g>
+    </g>
+
+    <!-- ===== 7. CTA ===== -->
+    <g class="scene s7" data-s="cta">
+      <g class="whip7"><g class="push7">
+        <rect x="-60" y="-200" width="660" height="1400" fill="#F4F2EF"/>
+        <g class="contour7" id="contour7"></g>
+        <g id="route7"></g>
+        <g transform="translate(270,292) scale(2.15)">
+          <g class="logoFill"><use href="#logoSign" style="color:#58756C"/></g>
+          <g class="logoLine" id="logoLine"></g>
+        </g>
+      </g></g>
+      <g class="cta1" style="--dl:1.4s"><text x="270" y="492" font-size="22" text-anchor="middle" class="sans" fill="#58756C" letter-spacing="1">5–7.11 · Beskidy · 20 miejsc</text></g>
+      <g class="pill">
+        <rect x="92" y="530" width="356" height="68" rx="34" fill="#46605A" transform="translate(0,5)" opacity=".5"/>
+        <rect x="92" y="530" width="356" height="68" rx="34" fill="#58756C"/>
+        <g class="pinIco"><path d="M140,586 C128,570 122,562 122,552 A18,18 0 0 1 158,552 C158,562 152,570 140,586 Z" fill="#B5582F"/><circle cx="140" cy="552" r="6.5" fill="#F4F2EF"/></g>
+        <text x="296" y="574" font-size="28" text-anchor="middle" class="bold" fill="#F4F2EF">Zaznacz trasę →</text>
+      </g>
+      <g class="cta1" style="--dl:2.15s"><text x="270" y="650" font-size="26" text-anchor="middle" class="sans" fill="#333" letter-spacing=".5">shebalance.pl</text></g>
+    </g>
+
+  </g>
+  <rect width="540" height="960" filter="url(#paper)" opacity=".14" style="mix-blend-mode:multiply" pointer-events="none"/>
+  <rect width="540" height="960" fill="url(#vignette)" opacity=".5" pointer-events="none"/>
+</svg>
+</div>
+<div class="bar"><i id="prog"></i></div>
+<div class="controls"><button id="play">Pauza</button><button id="restart">Od początku</button><div class="dots" id="dots"></div></div>
+<script>
+window.SCENES=[
+  {id:'rozloz',d:2.6,bg:'#A4B8B0'},
+  {id:'miasto',d:3.0,bg:'#A4B8B0'},
+  {id:'trasa',d:3.6,bg:'#A4B8B0'},
+  {id:'beskidy',d:3.8,bg:'#A4B8B0'},
+  {id:'dzien',d:5.5,bg:'#A4B8B0'},
+  {id:'sklada',d:3.7,bg:'#A4B8B0'},
+  {id:'cta',d:3.4,bg:'#F4F2EF'}
+];
+</script>
+<svg width="0" height="0" style="position:absolute"><defs><g id="logoSign" fill="currentColor"><g transform="scale(.1) translate(-711,-738)">/*LOGO*/</g></g></defs></svg>
+<script>
+/* ====== generator sceny (deterministyczny, tylko budowa elementów i keyframes) ====== */
+(function(){
+const NS='http://www.w3.org/2000/svg', $=s=>document.querySelector(s);
+function E(tag,a,p){const e=document.createElementNS(NS,tag); if(a) for(const k in a){ if(k==='text') e.textContent=a[k]; else e.setAttribute(k,a[k]);} if(p) p.appendChild(e); return e;}
+let sd=23; const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+const f=v=>(+v).toFixed(1), CSS=[];
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), sm=x=>{x=clamp(x);return x*x*(3-2*x);}, cosE=x=>(1-Math.cos(Math.PI*clamp(x)))/2, mix=(a,b,t)=>a+(b-a)*t;
+function KF(name,d,fn){const n=Math.max(12,Math.round(d*20)); let s='@keyframes '+name+'{'; for(let i=0;i<=n;i++){s+=(i/n*100).toFixed(3)+'%{'+fn(d*i/n)+'}';} CSS.push(s+'}');}
+const defs=$('#stage defs');
+const W=1260,H=1100;
+
+/* --- ścieżki pomocnicze --- */
+function closedCR(p){const n=p.length;let d=`M${f(p[0][0])},${f(p[0][1])}`;for(let i=0;i<n;i++){const p0=p[(i-1+n)%n],p1=p[i],p2=p[(i+1)%n],p3=p[(i+2)%n];d+=`C${f(p1[0]+(p2[0]-p0[0])/6)},${f(p1[1]+(p2[1]-p0[1])/6)} ${f(p2[0]-(p3[0]-p1[0])/6)},${f(p2[1]-(p3[1]-p1[1])/6)} ${f(p2[0])},${f(p2[1])}`;}return d+'Z';}
+function blob(cx,cy,rx,ry,n,j,seed){let s=seed*7919+1;const r=()=>(s=(s*16807)%2147483647)/2147483647;const pts=[];for(let i=0;i<n;i++){const a=i/n*Math.PI*2;const k=1+(r()-.5)*j;pts.push([cx+Math.cos(a)*rx*k,cy+Math.sin(a)*ry*k]);}return closedCR(pts);}
+
+/* --- trasa --- */
+const ROUTE='M380,860 C440,850 480,800 490,740 S520,640 600,630 C680,620 720,700 800,670 S830,580 760,550 C700,525 720,450 800,455 S910,500 960,500';
+const rp=E('path',{d:ROUTE},defs); const L=rp.getTotalLength();
+const P=q=>{const p=rp.getPointAtLength(clamp(q)*L);return [p.x,p.y];};
+const T0=4.2,T1=9.0, F=tg=>cosE((tg-T0)/(T1-T0)), FB=tg=>F(tg-.6);
+const tpass=q=>{let a=T0,b=T1;for(let i=0;i<32;i++){const m=(a+b)/2;if(F(m)<q)a=m;else b=m;}return (a+b)/2;};
+const tip=tg=>P(F(tg));
+const OFF=[40,-60];
+const follow=tg=>{let x=0,y=0;for(let i=0;i<12;i++){const q=tip(tg-.6*i/11);x+=q[0];y+=q[1];}return [x/12+OFF[0],y/12+OFF[1]];};
+function camAt(tg){let s=1.5,cx,cy;
+  if(tg<5.6){const a=sm((tg-2.6)/1.7);const bx=mix(290,322,a),by=mix(760,732,a);const w=sm((tg-4.0)/1.6);const fo=follow(tg);cx=mix(bx,fo[0],w);cy=mix(by,fo[1],w);}
+  else if(tg<9.2){const fo=follow(tg);cx=fo[0];cy=fo[1];s=1.5-.22*Math.sin(Math.PI*clamp((tg-5.6)/3.6));}
+  else{const fo=follow(tg);const w=sm((tg-9.2)/1.0);cx=mix(fo[0],1000,w);cy=mix(fo[1],300,w);s=mix(1.5,1.3,w);const z=sm((tg-11.75)/1.1);s=s+z*1.3;cx=mix(cx,975,z);cy=mix(cy,128,z);}
+  return {s,cx,cy};}
+const camT=c=>`transform:translate(270px,500px) scale(${c.s.toFixed(4)}) translate(${(-c.cx).toFixed(2)}px,${(-c.cy).toFixed(2)}px)`;
+
+/* --- dane świata --- */
+const MTS=[{cx:1040,cy:250,rx:135,ry:85,seed:5},{cx:875,cy:300,rx:98,ry:64,seed:3},{cx:1190,cy:320,rx:85,ry:58,seed:9}];
+const RSC=[1,.72,.46,.22], TERC=['#B7C7C0','#A4B8B0','#8AA298','#6F8A80'];
+const RINGS=MTS.map(m=>RSC.map((k,i)=>blob(m.cx,m.cy-i*10,m.rx*k,m.ry*k,9,.22,m.seed)));
+const BLD=[[112,720,52,118,0],[172,706,42,152,1],[222,714,56,104,2],[286,700,46,168,1],[340,716,58,120,0],[404,708,40,140,2],[118,818,58,88,1],[400,826,52,96,0],[166,760,34,70,2]];
+const GREYS=[['#BDBDB8','#9E9E99'],['#ABABA6','#8E8E89'],['#CBCBC6','#ABABA6']];
+// drzewa wzdłuż trasy (z dala od drogi)
+const samples=[];for(let i=0;i<=200;i++)samples.push(P(i/200));
+const distR=(x,y)=>Math.min(...samples.map(p=>Math.hypot(p[0]-x,p[1]-y)));
+const TREES=[];
+for(let q=.16;q<.94;q+=.021){const [x,y]=P(q),[x2,y2]=P(q+.004);let nx=-(y2-y),ny=x2-x;const nl=Math.hypot(nx,ny)||1;nx/=nl;ny/=nl;
+  for(const side of [-1,1]){ if(rnd()<.25) continue; const off=46+rnd()*46; const tx=x+nx*off*side,ty=y+ny*off*side;
+    if(distR(tx,ty)<40) continue; if(tx>815&&ty>430) continue; if(tx<460&&ty>690) continue;
+    TREES.push({q,x:tx,y:ty,k:rnd()<.6?'s':'d',sc:.75+rnd()*.5}); }}
+TREES.sort((a,b)=>a.y-b.y);
+
+/* --- mapa (statyczna grafika) --- */
+function buildWorld(){
+  const g=$('#worldArt');
+  E('rect',{x:0,y:0,width:W,height:H,fill:'#F2EFEB'},g);
+  E('rect',{x:0,y:0,width:W,height:H,fill:'#E3CCC1',opacity:.18},g);
+  // siatka
+  let gd='';for(let x=210;x<W;x+=210)gd+=`M${x},30 V${H-30}`;for(let y=210;y<H;y+=210)gd+=`M30,${y} H${W-30}`;
+  E('path',{d:gd,stroke:'#A4B8B0','stroke-width':1.5,opacity:.45,fill:'none'},g);
+  // pola i łąki
+  [[560,830,90,48,'#E3CCC1'],[700,900,110,56,'#E3CCC1'],[640,380,90,50,'#E3CCC1'],[980,700,120,60,'#E3CCC1'],[1120,900,90,70,'#A4B8B0'],[540,500,70,40,'#A4B8B0'],[880,800,80,50,'#A4B8B0'],[330,400,130,70,'#A4B8B0'],[150,500,90,60,'#E3CCC1'],[1130,640,80,50,'#A4B8B0'],[640,1010,120,50,'#A4B8B0']].forEach((a,i)=>{
+    E('path',{d:blob(a[0],a[1],a[2],a[3],7,.35,i+11),fill:a[4],opacity:.75},g);
+    E('path',{d:blob(a[0],a[1],a[2]*.7,a[3]*.6,7,.3,i+31),fill:'none',stroke:'#fff',opacity:.5,'stroke-width':2,'stroke-dasharray':'3 6'},g);});
+  // lasy
+  [[620,290,9],[1100,770,10],[220,300,7],[790,990,8],[960,880,6],[470,420,6]].forEach((c,i)=>{for(let j=0;j<c[2];j++){E('circle',{cx:f(c[0]+(rnd()-.5)*120),cy:f(c[1]+(rnd()-.5)*70),r:f(12+rnd()*9),fill:'#58756C',opacity:.38},g);}});
+  // rzeka
+  E('path',{d:'M-10,560 C120,540 200,600 260,560 S420,470 540,560 S610,760 700,800 S900,1000 1010,1110',stroke:'#A4B8B0','stroke-width':18,fill:'none','stroke-linecap':'round'},g);
+  E('path',{d:'M-10,560 C120,540 200,600 260,560 S420,470 540,560 S610,760 700,800 S900,1000 1010,1110',stroke:'#F2EFEB','stroke-width':3,fill:'none',opacity:.8,'stroke-dasharray':'14 10'},g);
+  // góry: poziomice
+  RINGS.forEach(rs=>rs.forEach((d,i)=>E('path',{d,fill:'none',stroke:i?'#8AA298':'#A4B8B0','stroke-width':3},g)));
+  [[1120,900,70,40],[300,190,70,45]].forEach((h,i)=>{for(let k=0;k<3;k++)E('path',{d:blob(h[0],h[1]-k*6,h[2]*(1-k*.3),h[3]*(1-k*.3),8,.2,40+i),fill:'none',stroke:'#A4B8B0','stroke-width':2.5},g);});
+  // miasto – ulice i obrysy budynków
+  E('path',{d:'M90,760 H470 M90,850 H470 M150,690 V1000 M330,690 V1000 M90,940 H470',stroke:'#CFCFCB','stroke-width':10,fill:'none'},g);
+  BLD.forEach(b=>E('rect',{x:b[0],y:b[1]-24,width:b[2],height:24,fill:'#C9C9C4'},g));
+  [[190,900,50,30],[260,960,60,26],[380,940,50,30],[110,980,40,26],[420,880,40,24]].forEach(b=>E('rect',{x:b[0],y:b[1],width:b[2],height:b[3],fill:'#D5D5D0'},g));
+  // napisy
+  E('text',{x:1045,y:84,'font-size':46,'text-anchor':'middle',class:'serif',fill:'#6E5446','letter-spacing':12,text:'BESKIDY'},g);
+  E('text',{x:120,y:676,'font-size':30,class:'serif',fill:'#6E5446','letter-spacing':4,text:'Miasto'},g);
+  E('text',{x:392,y:910,'font-size':24,class:'bold',fill:'#B5582F','letter-spacing':4,text:'START'},g);
+  // kompas (róża)
+  const c=E('g',{},g);E('circle',{cx:175,cy:175,r:98,fill:'#F4F2EF',stroke:'#6E5446','stroke-width':3},c);E('circle',{cx:175,cy:175,r:86,fill:'none',stroke:'#6E5446','stroke-width':1.2},c);
+  for(let i=0;i<32;i++){const a=i/32*Math.PI*2,r1=i%8?80:70;E('line',{x1:f(175+Math.cos(a)*r1),y1:f(175+Math.sin(a)*r1),x2:f(175+Math.cos(a)*86),y2:f(175+Math.sin(a)*86),stroke:'#6E5446','stroke-width':i%8?1.2:3},c);}
+  E('path',{d:'M175,120 L186,175 L175,230 L164,175 Z M120,175 L175,166 L230,175 L175,184 Z',fill:'#E3CCC1',opacity:.8},c);
+  [['N',175,62],['S',175,306],['E',296,185],['W',54,185]].forEach(t=>E('text',{x:t[1],y:t[2],'font-size':30,'text-anchor':'middle',class:'serif',fill:'#6E5446',text:t[0]},c));
+  // skala
+  E('path',{d:'M1040,1050 h160 M1040,1042 v16 M1120,1044 v12 M1200,1042 v16',stroke:'#6E5446','stroke-width':3,fill:'none'},g);
+  E('text',{x:1120,y:1036,'font-size':20,'text-anchor':'middle',class:'sans',fill:'#6E5446',text:'20 km'},g);
+  // ramka i zgięcia
+  E('rect',{x:24,y:24,width:W-48,height:H-48,fill:'none',stroke:'#6E5446','stroke-width':4},g);
+  E('rect',{x:34,y:34,width:W-68,height:H-68,fill:'none',stroke:'#6E5446','stroke-width':1.2},g);
+  E('rect',{x:396,y:0,width:48,height:H,fill:'url(#creaseG)'},g);E('rect',{x:816,y:0,width:48,height:H,fill:'url(#creaseG)'},g);
+  // wycinki paneli
+  [['clipL',0],['clipC',420],['clipR',840]].forEach(c=>{const cp=E('clipPath',{id:c[0]},defs);E('rect',{x:c[1],y:0,width:420,height:H},cp);});
+}
+function buildCover(){
+  const g=$('#coverArt');
+  E('rect',{x:420,y:0,width:420,height:H,fill:'#E3CCC1'},g);
+  E('rect',{x:444,y:24,width:372,height:H-48,fill:'none',stroke:'#6E5446','stroke-width':4},g);
+  E('path',{d:'M500,380 L570,270 L610,330 L660,230 L760,380 Z',fill:'none',stroke:'#58756C','stroke-width':6,'stroke-linejoin':'round'},g);
+  E('path',{d:'M470,380 H790',stroke:'#58756C','stroke-width':4},g);
+  E('text',{x:630,y:500,'font-size':46,'text-anchor':'middle',class:'bold',fill:'#6E5446','letter-spacing':9,text:'PRZEWODNIK'},g);
+  E('text',{x:630,y:620,'font-size':86,'text-anchor':'middle',class:'serif',fill:'#333',text:'SheBalance'},g);
+  E('text',{x:630,y:706,'font-size':60,'text-anchor':'middle',class:'serif',fill:'#58756C',text:'Beskidy'},g);
+  E('path',{d:'M480,900 C560,840 620,960 700,880 S780,860 790,840',stroke:'#B5582F','stroke-width':6,fill:'none','stroke-dasharray':'16 10'},g);
+}
+function buildPencil(){
+  const g=E('g',{transform:'rotate(40)'},$('#pencilG'));
+  E('path',{d:'M0,0 L-9,-30 L-9,-166 L-9,-186 Q0,-192 9,-186 L9,-30 Z',fill:'#000',opacity:.18,transform:'translate(-14,8)'},g);
+  E('path',{d:'M0,0 L-9,-30 L9,-30 Z',fill:'#E9D6BE'},g);E('path',{d:'M0,0 L-3,-10 L3,-10 Z',fill:'#333'},g);
+  E('rect',{x:-9,y:-150,width:18,height:120,fill:'#58756C'},g);E('rect',{x:-3,y:-150,width:5,height:120,fill:'#7B968C'},g);
+  E('rect',{x:-9,y:-166,width:18,height:16,fill:'#BDB8AD'},g);E('rect',{x:-9,y:-186,width:18,height:22,rx:5,fill:'#E3CCC1'},g);
+}
+
+/* --- elementy pop-up --- */
+function building(p,b,cls,dl){
+  const [x,y,w,h,s]=b, gg=E('g',{class:cls,style:`--dl:${dl}s`},p);
+  E('path',{d:`M${x+w},${y-h} l14,-12 v${h-6} l-14,12 Z`,fill:GREYS[s][1]},gg);
+  E('path',{d:`M${x},${y-h} l14,-12 h${w} l-14,12 Z`,fill:'#DADAD6'},gg);
+  E('rect',{x,y:y-h,width:w,height:h,fill:GREYS[s][0]},gg);
+  for(let yy=y-h+14;yy<y-16;yy+=22)for(let xx=x+8;xx<x+w-10;xx+=16){E('rect',{x:xx,y:yy,width:9,height:12,fill:'#8E8E89'},gg); if(rnd()<.3){const l=E('rect',{x:xx,y:yy,width:9,height:12,fill:'#F4E3B5',class:'twk'},gg);l.style.animationDelay=(-rnd()*1.7).toFixed(2)+'s';}}
+  return gg;}
+function tree(p,t,cls,dl,autumn){
+  const og=E('g',{transform:`translate(${f(t.x)},${f(t.y)}) scale(${t.sc.toFixed(2)})`},p);
+  const gg=E('g',{class:cls,style:`--dl:${dl}s`},og);
+  E('ellipse',{cx:6,cy:0,rx:22,ry:6,fill:'#000',opacity:.12},gg);
+  E('rect',{x:-3,y:-18,width:6,height:18,fill:'#6E5446'},gg);
+  if(autumn){const c=autumn;E('circle',{cx:4,cy:-40,r:25,fill:c[1]},gg);E('circle',{cx:0,cy:-42,r:25,fill:c[0]},gg);E('path',{d:'M-10,-50 q8,-8 16,0',stroke:'#F4F2EF','stroke-width':2,fill:'none',opacity:.5},gg);}
+  else if(t.k==='s'){E('path',{d:'M0,-78 L24,-14 L4,-14 Z',fill:'#46605A'},gg);E('path',{d:'M0,-78 L4,-14 L-24,-14 Z',fill:'#58756C'},gg);E('path',{d:'M0,-100 L18,-50 L0,-50 Z',fill:'#46605A'},gg);E('path',{d:'M0,-100 L0,-50 L-18,-50 Z',fill:'#58756C'},gg);}
+  else{E('circle',{cx:4,cy:-38,r:22,fill:'#8AA298'},gg);E('circle',{cx:0,cy:-40,r:22,fill:'#A4B8B0'},gg);}
+  return gg;}
+function busShape(p){
+  const o=E('g',{},p); const b=E('g',{transform:'scale(1.05)'},o);
+  E('path',{d:'M-78,-6 V-66 Q-78,-80 -64,-80 H62 Q86,-80 90,-50 L92,-6 Z',fill:'#46605A',transform:'translate(8,-5)'},b);
+  E('path',{d:'M-84,-6 V-66 Q-84,-80 -70,-80 H56 Q80,-80 84,-50 L86,-6 Z',fill:'#E3CCC1',stroke:'#6E5446','stroke-width':2},b);
+  E('rect',{x:-84,y:-30,width:170,height:9,fill:'#58756C'},b);
+  [[-76,-72,42],[-28,-72,42],[20,-72,32]].forEach(w=>E('rect',{x:w[0],y:w[1],width:w[2],height:30,rx:5,fill:'#F4F2EF',stroke:'#6E5446','stroke-width':1.5},b));
+  E('path',{d:'M58,-72 H64 Q78,-72 80,-46 H58 Z',fill:'#F4F2EF',stroke:'#6E5446','stroke-width':1.5},b);
+  // głowy A i B w oknach
+  E('circle',{cx:-55,cy:-50,r:9,fill:'#f2c9aa'},b);E('path',{d:'M-65,-52 Q-55,-68 -45,-52 Z',fill:'#1f1f22'},b);E('rect',{x:-50,y:-55,width:13,height:3,rx:1.5,fill:'#1f1f22'},b);E('path',{d:'M-64,-48 q-2,6 1,10',stroke:'#e4c690','stroke-width':3,fill:'none'},b);
+  E('path',{d:'M-18,-40 Q-20,-62 -7,-63 Q6,-62 4,-40 Z',fill:'#7d5132'},b);E('circle',{cx:-7,cy:-50,r:8,fill:'#f3cdb3'},b);E('path',{d:'M-15,-54 Q-7,-62 1,-54',stroke:'#6a4328','stroke-width':4,fill:'none'},b);
+  const wv=E('g',{class:'busWave'},b);E('rect',{x:8,y:-62,width:4,height:14,rx:2,fill:'#f3cdb3'},wv);E('circle',{cx:10,cy:-63,r:4,fill:'#f3cdb3'},wv);
+  [-50,50].forEach(x=>{E('circle',{cx:x,cy:-6,r:12,fill:'#333'},b);E('circle',{cx:x,cy:-6,r:4.5,fill:'#E3CCC1'},b);});
+  E('circle',{cx:84,cy:-20,r:4,fill:'#F4F2EF'},b);
+  return o;}
+function pin(p,x,y,col,label,cls,dl){
+  const g=E('g',{transform:`translate(${x},${y})`},p); const d=E('g',{class:cls||'',style:`--dl:${dl||0}s`},g);
+  E('ellipse',{cx:4,cy:0,rx:12,ry:4,fill:'#000',opacity:.2},d);
+  E('path',{d:'M0,0 L0,-42',stroke:'#6E5446','stroke-width':4,'stroke-linecap':'round'},d);
+  const head=E('g',{},d);E('circle',{cx:0,cy:-50,r:17,fill:col},head);E('circle',{cx:-5,cy:-55,r:5,fill:'#fff',opacity:.45},head);
+  if(label){const lb=E('g',{class:'pinLabel popC',style:'--dl:2.45s'},d);E('path',{d:'M-22,-78 H-162 Q-170,-78 -170,-70 V-38 Q-170,-30 -162,-30 H-22 L-14,-54 Z',fill:'#F4F2EF',stroke:col,'stroke-width':3},lb);E('text',{x:-94,y:-46,'font-size':28,'text-anchor':'middle',class:'serif',fill:'#333',text:label},lb);}
+  return {g:d,head};}
+function terraces(p,mode,delay){
+  MTS.forEach((m,mi)=>RINGS[mi].forEach((d,k)=>{const lift=-(k+1)*12;const dl=typeof delay==='function'?delay(m,mi,k):delay;
+    const gg=E('g',{class:'ter '+mode,style:`--lift:${lift}px;--liftS:${lift+12}px;--dl:${dl.toFixed(2)}s`},p);
+    E('path',{d,class:'cast',fill:'#000',opacity:.1,transform:'translate(10,8)'},gg);
+    E('path',{d,class:'side',fill:'#46605A'},gg);
+    E('path',{d,class:'top',fill:TERC[k],stroke:'#F4F2EF','stroke-width':3},gg);}));}
+
+/* --- warstwa mapy + szarość + trasa dla scen 2–4 --- */
+function worldBase(sid,cam,t0,d,opt){
+  const g=E('g',{});cam.insertBefore(g,cam.firstChild);
+  E('rect',{x:-3000,y:-3000,width:7300,height:7100,fill:'url(#wood)'},g);
+  E('rect',{x:14,y:22,width:W,height:H,fill:'#000',opacity:.3,filter:'url(#soft)'},g);
+  E('use',{href:'#worldArt'},g);
+  const m=E('mask',{id:'gm_'+sid,maskUnits:'userSpaceOnUse',x:-100,y:-100,width:W+200,height:H+200},g);
+  E('rect',{x:-100,y:-100,width:W+200,height:H+200,fill:'#fff'},m);
+  [[420,.25],[340,.45],[270,.7],[200,1]].forEach(a=>E('path',{d:ROUTE,class:'rv_'+sid,pathLength:1,'stroke-dasharray':'1 1','stroke-dashoffset':1,fill:'none',stroke:'#000','stroke-opacity':a[1],'stroke-width':a[0]},m));
+  E('use',{href:'#worldArt',filter:'url(#greyF)',mask:`url(#gm_${sid})`,class:opt.greyCls||''},g);
+  const rm=E('mask',{id:'rm_'+sid,maskUnits:'userSpaceOnUse',x:-100,y:-100,width:W+200,height:H+200},g);
+  E('path',{d:ROUTE,class:'rv_'+sid,pathLength:1,'stroke-dasharray':'1 1','stroke-dashoffset':1,fill:'none',stroke:'#fff','stroke-width':24},rm);
+  E('path',{d:ROUTE,fill:'none',stroke:'#B5582F','stroke-width':8,'stroke-dasharray':'18 12','stroke-linecap':'round',mask:`url(#rm_${sid})`},g);
+  // ślad pod trasą z poprzednich scen: reveal
+  KF('rv_'+sid,d,t=>`stroke-dashoffset:${(1-F(t0+t)).toFixed(4)}`);
+  CSS.push(`.scene.active .rv_${sid}{animation:rv_${sid} ${d}s linear both}`);
+  KF('cam_'+sid,d,t=>camT(camAt(t0+t)));
+  CSS.push(`.scene.active #cam_${sid}{animation:cam_${sid} ${d}s linear both}`);
+  return g;}
+function penAnim(sid,t0,d,posFn){ KF('pen_'+sid,d,t=>{const p=posFn(t0+t);return `transform:translate(${f(p[0])}px,${f(p[1])}px)`;}); CSS.push(`.scene.active #pen_${sid}{animation:pen_${sid} ${d}s linear both}`);}
+function busAnim(sid,host,t0,d){
+  const wrap=E('g',{id:'busw_'+sid},host); const inner=E('g',{id:'busd_'+sid},wrap); busShape(inner);
+  KF('busw_'+sid,d,t=>{const q=FB(t0+t),p=P(q);return `transform:translate(${f(p[0])}px,${f(p[1]+2)}px)`;});
+  KF('busd_'+sid,d,t=>{const q=FB(t0+t);const a=P(Math.max(0,q-.012)),b=P(Math.min(1,q+.012));const dir=b[0]-a[0]>=-2?1:-1;return `transform:scaleX(${dir})`;});
+  CSS.push(`.scene.active #busw_${sid}{animation:busw_${sid} ${d}s linear both}.scene.active #busd_${sid}{animation:busd_${sid} ${d}s linear both}`);
+  return wrap;}
+function treesFor(host,t0,d){TREES.forEach(t=>{const tp=tpass(t.q)-.08;if(tp>t0+d)return; if(tp<t0) tree(host,t,'',0); else tree(host,t,'up',(tp-t0));});}
+
+/* ===== budowa ===== */
+buildWorld(); buildCover(); buildPencil();
+
+// SCENA 2
+const S2=[2.6,3.0];
+worldBase('miasto',$('#cam_miasto'),S2[0],S2[1],{});
+BLD.slice().sort((a,b)=>a[1]-b[1]).forEach((b,i)=>building($('#city2'),b,'up',.05+i*.09));
+const pa=pin($('#pinA2'),372,862,'#B5582F',null,'pinDrop',.7);
+treesFor($('#city2'),S2[0],S2[1]);
+{const bw=busAnim('miasto',$('#bus2'),S2[0],S2[1]); bw.firstChild.firstChild.setAttribute('class','busPop');}
+penAnim('miasto',S2[0],S2[1],tg=>{const st=P(0),off=[st[0]+300,st[1]-260];const a=sm((tg-(T0-.45))/.45);const p=tip(tg);return a<1?[mix(off[0],p[0],a),mix(off[1],p[1],a)]:p;});
+
+// SCENA 3
+const S3=[5.6,3.6];
+worldBase('trasa',$('#cam_trasa'),S3[0],S3[1],{});
+treesFor($('#trees3'),S3[0],S3[1]);
+[['BESKIDY 120',.5],['BESKIDY 40',1.3],['BESKIDY 5',2.1]].forEach((s,i)=>{const q=F(S3[0]+s[1]+.3);const [x,y]=P(q),[x2,y2]=P(q+.01);let nx=-(y2-y),ny=x2-x;const nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;let side=i%2?1:-1;let sx=x+nx*62*side,sy=y+ny*62*side;if(distR(sx,sy)<45){side=-side;sx=x+nx*62*side;sy=y+ny*62*side;}
+  const g=E('g',{transform:`translate(${f(sx)},${f(sy)})`},$('#signs3'));const u=E('g',{class:'up',style:`--dl:${s[1]}s`},g);
+  E('ellipse',{cx:6,cy:0,rx:26,ry:6,fill:'#000',opacity:.15},u);E('rect',{x:-3,y:-74,width:7,height:74,fill:'#6E5446'},u);
+  E('path',{d:'M-66,-114 H56 L72,-96 L56,-78 H-66 Z',fill:'#46605A',transform:'translate(5,4)'},u);
+  E('path',{d:'M-66,-114 H56 L72,-96 L56,-78 H-66 Z',fill:'#F4F2EF',stroke:'#58756C','stroke-width':3},u);
+  E('text',{x:-2,y:-89,'font-size':20,'text-anchor':'middle',class:'bold',fill:'#58756C',text:s[0]},u);});
+busAnim('trasa',$('#bus3'),S3[0],S3[1]);
+penAnim('trasa',S3[0],S3[1],tg=>tip(tg));
+
+// SCENA 4
+const S4=[9.2,3.8];
+worldBase('beskidy',$('#cam_beskidy'),S4[0],S4[1],{greyCls:'grey4'});
+terraces($('#terr4'),'rise',(m,mi,k)=>.15+mi*.2+k*.12);
+[[1260,300,-50,50],[1120,262,40,-40],[1010,330,-40,50]].forEach((mm,i)=>{const e=E('ellipse',{cx:mm[0]-150,cy:mm[1],rx:80,ry:8,fill:'#F4F2EF',filter:'url(#soft4)',class:'mist',style:`--mx0:${mm[2]}px;--mx1:${mm[3]}px`},$('#mist4'));});
+treesFor($('#trees4'),S4[0],0);
+[[800,452,.9],[835,468,1.0],[1120,468,1.1],[1165,440,1.2],[1205,478,1.05],[1100,420,1.15],[905,432,.95]].forEach((a,i)=>tree($('#trees4'),{x:a[0],y:a[1],sc:.9+(i%3)*.15},'up',a[2],i%2?['#D4A23A','#B8892F']:['#E3CCC1','#C9B2A6']));
+const pb=pin($('#pinB4'),1040,178,'#58756C','SheBalance','pinDrop',1.3);
+{const hh=pin($('#pinHead4'),1040,178,'#58756C',null,'pinDrop',1.3); hh.head.setAttribute('class','pinHead'); hh.g.querySelector('ellipse').remove(); hh.g.querySelector('path').remove(); hh.head.lastChild.remove();}
+{const bw=busAnim('beskidy',$('#bus4'),S4[0],S4[1]);}
+penAnim('beskidy',S4[0],S4[1],tg=>{const p=P(1),a=sm((tg-9.2)/.7);return [mix(p[0],p[0]+420,a),mix(p[1],p[1]-380,a)];});
+
+// SCENA 5 – gwiazdki na drucikach
+[[60,270,.0],[112,340,.4],[36,430,.8],[480,262,.2],[436,340,.6],[504,420,1.0]].forEach(s=>{const g=E('g',{class:'swing',style:`transform-origin:${s[0]}px -10px;--dl:${-s[2]}s`},$('#stars3'));E('line',{x1:s[0],y1:-10,x2:s[0],y2:s[1]-14,stroke:'#E3CCC1','stroke-width':1.2,opacity:.8},g);E('use',{href:'#star',transform:`translate(${s[0]},${s[1]}) scale(1.6)`,fill:'#F4E3B5'},g);});
+
+// SCENA 6 – pop-upy opadają falą, trasa w kolorze
+{document.querySelectorAll('#route6,.route6').forEach(r6=>E('path',{d:ROUTE,fill:'none',stroke:'#B5582F','stroke-width':8,'stroke-dasharray':'18 12','stroke-linecap':'round','clip-path':`url(#${r6.dataset.clip})`},r6));
+ const p6=$('#pops6'); const wave=(x,y)=>.85+((x/W)*.6+((H-y)/H)*.25)*.75;
+ terraces(p6,'fall',(m,mi,k)=>wave(m.cx,m.cy)+(3-k)*.03);
+ BLD.slice().sort((a,b)=>a[1]-b[1]).forEach(b=>building(p6,b,'down',wave(b[0],b[1])));
+ TREES.forEach(t=>tree(p6,t,'down',wave(t.x,t.y)));
+ const pp=pin(p6,372,862,'#B5582F',null,'down',wave(372,862)); pin(p6,1040,178,'#58756C',null,'down',wave(1062,188));
+ const bg=E('g',{transform:'translate(960,502)'},p6); const bd=E('g',{class:'down',style:`--dl:${wave(960,500).toFixed(2)}s`},bg); busShape(bd);
+ const tn=E('g',{class:'down',style:`--dl:${wave(1150,560).toFixed(2)}s`},p6);E('path',{d:'M1090,560 L1150,470 L1210,560 Z',fill:'#C9B2A6'},tn);E('path',{d:'M1150,470 L1210,560 L1180,560 Z',fill:'#B09A8F'},tn);E('path',{d:'M1138,560 L1150,500 L1162,560 Z',fill:'#6E5446'},tn);
+}
+
+// SCENA 7 – poziomice, trasa i logo
+{const c=$('#contour7');[[80,120,200,120,2],[500,860,260,150,4],[520,160,150,110,6]].forEach(h=>{for(let k=0;k<6;k++)E('path',{d:blob(h[0],h[1],h[2]*(1-k*.15),h[3]*(1-k*.15),9,.25,h[4]),fill:'none',stroke:'#A4B8B0','stroke-width':1.6,opacity:.55},c);});
+ const R7='M34,960 C30,860 22,720 38,600 S80,450 150,428 S232,440 258,418';
+ const r=$('#route7'); const m=E('mask',{id:'rm7',maskUnits:'userSpaceOnUse',x:-50,y:-50,width:640,height:1100},r);
+ E('path',{d:R7,class:'rv7',pathLength:1,'stroke-dasharray':'1 1',fill:'none',stroke:'#fff','stroke-width':20},m);
+ E('path',{d:R7,fill:'none',stroke:'#B5582F','stroke-width':5,'stroke-dasharray':'12 9','stroke-linecap':'round',mask:'url(#rm7)'},r);
+ const ll=$('#logoLine'); const gi=E('g',{transform:'scale(.1) translate(-711,-738)'},ll);
+ document.querySelectorAll('#logoSign path').forEach(p=>{E('path',{d:p.getAttribute('d'),fill:'none',stroke:'#58756C','stroke-width':14,pathLength:1,'stroke-dasharray':'1','stroke-dashoffset':'1'},gi);});
+}
+
+// telefon w dłoni A (scena 2)
+document.querySelectorAll('.figA.phoneA .foreR').forEach(fr=>{E('rect',{x:152,y:436,width:32,height:50,rx:6,fill:'#2a2a2e'},fr);E('rect',{x:156,y:441,width:24,height:36,rx:2,fill:'#A4B8B0'},fr);});
+
+const st=document.createElement('style');st.textContent=CSS.join('\n');document.head.appendChild(st);
+
+/* --- metki pod tekst i układ słów (po załadowaniu fontów) --- */
+window.beforeSplit=function(){
+  document.querySelectorAll('.words3').forEach(w=>{const fs=+w.dataset.font;const lines={};w.querySelectorAll('text').forEach(t=>{t.setAttribute('font-size',fs);(lines[t.dataset.line]=lines[t.dataset.line]||[]).push(t);});
+    Object.keys(lines).forEach(k=>{const ts=lines[k];const gap=fs*.28;const tot=ts.reduce((a,t)=>a+t.getComputedTextLength(),0)+gap*(ts.length-1);let x=270-tot/2;ts.forEach(t=>{t.setAttribute('x',x.toFixed(1));t.setAttribute('y',(170+ +k*58));x+=t.getComputedTextLength()+gap;});});});
+  document.querySelectorAll('.tag').forEach(t=>{let bb;
+    if(t.dataset.box){const b=t.dataset.box.split(' ').map(Number);bb={x:b[0],y:b[1],width:b[2],height:b[3]};}
+    else bb=t.getBBox();
+    const [px,py]=(t.dataset.pad||'20 12').split(' ').map(Number);
+    const x=bb.x-px,y=bb.y-py,w=bb.width+2*px,h=bb.height+2*py;
+    const fill=t.dataset.fill||'#F4F2EF';
+    const sh=E('rect',{x:f(x+5),y:f(y+7),width:f(w),height:f(h),rx:4,fill:'#000',class:'tagSh'});
+    const r=E('rect',{x:f(x),y:f(y),width:f(w),height:f(h),rx:4,fill});
+    const ed=E('rect',{x:f(x+5),y:f(y+5),width:f(w-10),height:f(h-10),rx:2,fill:'none',stroke:fill==='#F4F2EF'?'#E3CCC1':'#F2EFEB','stroke-width':1.2,opacity:.8});
+    t.insertBefore(ed,t.firstChild);t.insertBefore(r,t.firstChild);t.insertBefore(sh,t.firstChild);});
+};
+})();
+</script>
+<script>/*ENGINE*/</script>
+</body>
+</html>

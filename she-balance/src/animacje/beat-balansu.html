@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SheBalance – Beat balansu</title>
+<style>
+  /*FONTS*/
+  :root{--page:#F4F2EF;--ink:#333;--muted:#6B6B6B}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Mulish",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+  .stage-wrap{width:min(100%, calc((100vh - 110px) * 9 / 16));aspect-ratio:9/16;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+  svg#stage{width:100%;height:100%;display:block}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .controls button{font:inherit;background:none;border:1px solid var(--muted);color:var(--ink);padding:6px 14px;cursor:pointer;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .dots{display:flex;gap:6px}.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:1px solid var(--muted);background:none}.dots button.on{background:var(--ink)}
+  .bar{width:min(100%,360px);height:3px;background:rgba(127,127,127,.25)}.bar i{display:block;height:100%;width:0;background:var(--ink)}
+  body.rec{padding:0;gap:0} body.rec .stage-wrap{width:100vw;height:100vh;box-shadow:none} body.rec .controls,body.rec .bar{display:none}
+  /*BASE_CSS*/
+  /*FIG_CSS*/
+
+  /* ================= BEAT BALANSU – 100 BPM: beat = 0,6 s, ósemka = 0,3 s, takt = 2,4 s ================= */
+  /* Wszystkie czasy zdarzeń to wielokrotności 0,3 s. Elementy w .scene liczą czas od początku sceny,
+     warstwy #grid i #letters – czas globalny filmu. */
+  .lab{font-family:"Mulish",sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  /* cięcia na beat (twarde) – przenikają się tylko tła scen z siatką */
+  .scene:not(.fadeBg){transition:none}
+
+  /* ---------- kamera: #cam wyłączony; #gcam = jedna animacja 24 s (czas globalny), #beat = puls na beat (keyframes generowane przy starcie) ---------- */
+  #stage #cam,#stage #cam.go{animation:none}
+  #gcam{animation:gcam 24s linear both}
+  #beat{animation:gbeat 24s linear both}
+  /* ---------- słowa na beat ---------- */
+  .scene.active .wd{transform-box:fill-box;transform-origin:50% 60%;animation:wdIn .3s cubic-bezier(.2,.9,.25,1.15) var(--t,0s) both}
+  @keyframes wdIn{from{opacity:0;transform:scale(1.45)}to{opacity:1;transform:none}}
+  .scene.active .wd.hook{animation-name:wdHook}
+  @keyframes wdHook{from{opacity:.9;transform:scale(1.32)}to{opacity:1;transform:none}}
+  .scene.active .outAt{animation:wdIn .3s cubic-bezier(.2,.9,.25,1.15) var(--t,0s) both, fadeOut .2s cubic-bezier(.6,0,.8,.2) var(--o) forwards}
+  @keyframes fadeOut{to{opacity:0;transform:translateY(-10px)}}
+  /* „Pauza.” – twarde wejście z rozmyciem ruchu */
+  .scene.active .slam{transform-box:fill-box;transform-origin:50% 50%;animation:slam .3s cubic-bezier(.2,.9,.25,1.1) both, fadeOut .15s cubic-bezier(.6,0,.8,.2) 1.05s forwards}
+  @keyframes slam{from{opacity:0;transform:scale(2.2);letter-spacing:.3em}to{opacity:1;transform:none;letter-spacing:.02em}}
+  .scene.active .riseT{animation:riseT .45s cubic-bezier(.2,.9,.25,1.15) var(--t) both}
+  @keyframes riseT{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  /* „Gotowa?” – rozstrzelenie liter */
+  .scene.active .track{transform-box:fill-box;transform-origin:50% 50%;animation:track .45s cubic-bezier(.2,.9,.25,1.1) both}
+  @keyframes track{from{opacity:0;letter-spacing:.6em;transform:scaleX(1.2)}to{opacity:1;letter-spacing:.04em;transform:none}}
+  /* odliczanie 3…2…1… (skala 1,4 → 1) */
+  .scene.active .cnt{transform-box:fill-box;transform-origin:50% 55%;opacity:0;animation:cnt .6s linear var(--t) both}
+  @keyframes cnt{0%{opacity:0;transform:scale(1.4);animation-timing-function:cubic-bezier(.2,.9,.25,1.1)}15%{opacity:1;transform:scale(1)}82%{opacity:1;transform:scale(.96);animation-timing-function:cubic-bezier(.6,0,.8,.2)}100%{opacity:0;transform:scale(.7)}}
+  /* hasło wyłaniające się spod kamieni (maska od dołu) */
+  .scene.active .reveal{animation:reveal .45s cubic-bezier(.2,.9,.25,1.1) var(--t) both}
+  @keyframes reveal{from{opacity:0;transform:translateY(22px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:none;clip-path:inset(-20% 0 -20% 0)}}
+  /* CTA – wjazd z boku */
+  .scene.active .slideL{animation:slideL .4s cubic-bezier(.2,.9,.25,1.12) var(--t) both}
+  .scene.active .slideR{animation:slideR .4s cubic-bezier(.2,.9,.25,1.12) var(--t) both}
+  @keyframes slideL{from{opacity:0;transform:translateX(-70px)}to{opacity:1;transform:none}}
+  @keyframes slideR{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:none}}
+  .scene.active .btnIn{transform-box:fill-box;transform-origin:50% 50%;animation:pop .45s cubic-bezier(.3,1.5,.5,1) var(--t) both, btnP .6s cubic-bezier(.2,.7,.3,1) 4.2s 1}
+  @keyframes btnP{0%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+  /* ---------- scena 1: sampler ---------- */
+  .scene.active .pIn{transform-box:fill-box;transform-origin:50% 50%;animation:var(--pa,none)}
+  .scene.active .pFl{opacity:0;animation:var(--pf,none)}
+  .scene.active .pRing{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:var(--pr,none)}
+  @keyframes padHit{0%{transform:scale(.92)}35%{transform:scale(.92)}100%{transform:none}}
+  @keyframes padFl{0%{opacity:.75}100%{opacity:0}}
+  @keyframes padSoft{0%{opacity:.4}100%{opacity:0}}
+  @keyframes padRing{0%{opacity:.9;transform:scale(.2)}100%{opacity:0;transform:scale(2.4)}}
+  .scene.active .samp .foreL{animation:sampL 2.4s linear both}
+  .scene.active .samp .foreR{animation:sampR 2.4s linear both}
+  @keyframes sampL{0%{transform:rotate(-14deg);animation-timing-function:cubic-bezier(.2,.7,.3,1)}12.5%{transform:rotate(-62deg);animation-timing-function:cubic-bezier(.45,0,.55,1)}44%{transform:rotate(-66deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}50%{transform:rotate(-14deg);animation-timing-function:cubic-bezier(.2,.7,.3,1)}62.5%{transform:rotate(-60deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}75%{transform:rotate(-14deg);animation-timing-function:cubic-bezier(.2,.7,.3,1)}100%{transform:rotate(-40deg)}}
+  @keyframes sampR{0%{transform:rotate(58deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}25%{transform:rotate(14deg);animation-timing-function:cubic-bezier(.2,.7,.3,1)}37.5%{transform:rotate(62deg);animation-timing-function:cubic-bezier(.45,0,.55,1)}69%{transform:rotate(64deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}75%{transform:rotate(14deg);animation-timing-function:cubic-bezier(.2,.7,.3,1)}100%{transform:rotate(40deg)}}
+  .frontOnly .fig{visibility:hidden} .frontOnly .foreL,.frontOnly .foreR{visibility:visible}
+
+  /* kiwanie głową na beat */
+  .nod .headWrap{transform-origin:110px 205px;animation:nod .6s cubic-bezier(.45,0,.55,1) infinite}
+  @keyframes nod{0%,100%{transform:translateY(4px) rotate(1.6deg)}50%{transform:translateY(-2px) rotate(-1deg)}}
+
+  /* ---------- siatka 3×3 (warstwa globalna) ---------- */
+  #grid{visibility:hidden}
+  #stage[data-scene=pady] #grid,#stage[data-scene=pauza] #grid,#stage[data-scene=build] #grid,#stage[data-scene=drop] #grid{visibility:visible}
+  #gridZoom{animation:gridIn .45s cubic-bezier(.2,.9,.25,1.05) 2.4s both}
+  @keyframes gridIn{from{transform:translate(270px,640px) scale(.572) translate(-270px,-470px)}to{transform:none}}
+  .win .wi{transform-origin:73px 90px;animation:winPop .45s cubic-bezier(.2,.9,.25,1.15) var(--on), winOut .45s linear 12s forwards}
+  @keyframes winPop{from{transform:scale(.9)}to{transform:none}}
+  @keyframes winOut{0%{transform:none;animation-timing-function:cubic-bezier(.5,0,.5,1)}33%{transform:scale(.3);animation-timing-function:cubic-bezier(.3,0,.8,.5)}100%{transform:translate(var(--ox),-980px) scale(.3) rotate(var(--or))}}
+  .win .wf{animation:grey .12s ease-out 7.2s forwards, ungrey .3s ease-out var(--uf) forwards}
+  .w4 .wf{animation:none}
+  @keyframes grey{from{filter:grayscale(0) brightness(1)}to{filter:grayscale(1) brightness(1.04)}}
+  @keyframes ungrey{from{filter:grayscale(1) brightness(1.25)}to{filter:grayscale(0) brightness(1)}}
+  .win .cover{animation:coverOff .22s ease-out var(--on) forwards, coverOn .15s ease-in 12s forwards}
+  @keyframes coverOff{to{opacity:0}} @keyframes coverOn{from{opacity:0}to{opacity:1}}
+  .win .flash{opacity:0;animation:padFl .35s ease-out var(--on) forwards, padFl .35s ease-out var(--uf)}
+  .win .ring{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:padRing .6s cubic-bezier(.2,.7,.3,1) var(--on)}
+  /* zamrożenie: gasimy „życie” postaci w pauzie (pętle akcji zatrzymują się same – kończą się dokładnie w 7,2 s) */
+  #grid .fig .body{animation:figBreath 3.2s ease-in-out 0s 2.25 forwards, figBreath 3.2s ease-in-out var(--uf) infinite}
+  #grid .eyes{animation:blink 3.4s linear 0s 2.117647 forwards, blink 3.4s linear var(--uf) infinite}
+  #grid .tilt{animation:tilt 4.2s ease-in-out 0s 1.714286 forwards, tilt 4.2s ease-in-out var(--uf) infinite}
+  #grid .sway{animation:sway 3.6s ease-in-out 0s 2 forwards, sway 3.6s ease-in-out var(--uf) infinite}
+  #grid .pupils{animation:look 6s ease-in-out 0s 1.2 forwards, look 6s ease-in-out var(--uf) infinite}
+  #grid .smile{animation:smile 4s ease-in-out 0s 1.8 forwards, smile 4s ease-in-out var(--uf) infinite}
+  #grid .steam{animation:steam 1.8s ease-in-out 0s 4 forwards, steam 1.8s ease-in-out var(--uf) infinite}
+  #grid .nod .headWrap{animation:nod .6s cubic-bezier(.45,0,.55,1) 0s 12 forwards, nod .6s cubic-bezier(.45,0,.55,1) var(--uf) infinite}
+  #grid .w3 .eyes{animation:blink 3.4s linear 0s 2.117647 forwards, wink .3s cubic-bezier(.45,0,.55,1) 8.4s, blink 3.4s linear var(--uf) infinite}
+  @keyframes wink{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.06)}}
+  #grid .w8 .hp{transform-box:fill-box;transform-origin:50% 50%;animation:hpOff .35s cubic-bezier(.6,0,.8,.2) 9s forwards}
+  @keyframes hpOff{to{transform:translate(18px,-150px) rotate(-18deg);opacity:0}}
+
+  /* pętle w okienkach: 0% = kulminacja ruchu (to ona zostaje w „freeze”); 1. pętla kończy się w 7,2 s, 2. rusza przy odmrożeniu */
+  .w0 .jumpB{transform-origin:110px 712px;animation:jumpB .6s linear 0s 12 forwards, jumpB .6s linear var(--uf) infinite}
+  @keyframes jumpB{0%{transform:translateY(-70px);animation-timing-function:cubic-bezier(.5,0,.9,.6)}45%{transform:translateY(0) scale(1.03,.96);animation-timing-function:ease-out}55%{transform:translateY(0);animation-timing-function:cubic-bezier(.1,.5,.4,1)}100%{transform:translateY(-70px)}}
+  .w0 .rope{transform-origin:110px 447px;animation:rope .6s linear 0s 12 forwards, rope .6s linear var(--uf) infinite}
+  @keyframes rope{0%{transform:scaleY(1)}25%{transform:scaleY(.04)}50%{transform:scaleY(-1.5)}75%{transform:scaleY(-.04)}100%{transform:scaleY(1)}}
+  .w0 .fig .shadow{display:none}
+  .rp .armL{transform:rotate(18deg)} .rp .foreL{transform:rotate(-18deg)} .rp .armR{transform:rotate(-18deg)} .rp .foreR{transform:rotate(18deg)}
+  .w0 .shd{transform-box:fill-box;transform-origin:50% 50%;animation:shd .6s linear 0s 12 forwards, shd .6s linear var(--uf) infinite}
+  @keyframes shd{0%,100%{transform:scale(.6);opacity:.5}50%{transform:scale(1);opacity:1}}
+
+  .hands2 .foreL{transform:rotate(-45deg)} .hands2 .foreR{transform:rotate(45deg)}
+  .w1 .pot{transform-origin:62px 134px;animation:pot 1.2s cubic-bezier(.45,0,.55,1) 0s 6 forwards, pot 1.2s cubic-bezier(.45,0,.55,1) var(--uf) infinite}
+  @keyframes pot{0%,100%{transform:rotate(28deg)}35%,65%{transform:rotate(0)}}
+  .w1 .stream{animation:stream 1.2s linear 0s 6 forwards, stream 1.2s linear var(--uf) infinite}
+  @keyframes stream{0%,100%{opacity:1}14%,86%{opacity:0}}
+
+  .w2 .armA{transform-origin:6px 200px;animation:fiveA .6s linear 0s 12 forwards, fiveA .6s linear var(--uf) infinite}
+  .w2 .armB{transform-origin:140px 200px;animation:fiveB .6s linear 0s 12 forwards, fiveB .6s linear var(--uf) infinite}
+  @keyframes fiveA{0%,100%{transform:rotate(19deg)}0%{animation-timing-function:cubic-bezier(.2,.7,.3,1)}50%{transform:rotate(2deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}}
+  @keyframes fiveB{0%,100%{transform:rotate(-19deg)}0%{animation-timing-function:cubic-bezier(.2,.7,.3,1)}50%{transform:rotate(-2deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}}
+  .spark{transform-box:fill-box;transform-origin:50% 50%}
+  .w2 .spark{animation:sparkL .6s linear 0s 12 forwards, sparkL .6s linear var(--uf) infinite}
+  .w6 .spark{animation:sparkL 1.2s linear 0s 6 forwards, sparkL 1.2s linear var(--uf) infinite}
+  @keyframes sparkL{0%,100%{opacity:1;transform:translate(0,0) scale(1)}40%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(.3)}99%{opacity:0;transform:scale(.2)}}
+
+  .w3 .mapL{transform-origin:57px 0;animation:mapF 1.2s linear 0s 6 forwards, mapF 1.2s linear var(--uf) infinite}
+  .w3 .mapR{transform-origin:89px 0;animation:mapF 1.2s linear 0s 6 forwards, mapF 1.2s linear var(--uf) infinite}
+  @keyframes mapF{0%{transform:scaleX(1)}40%{transform:scaleX(1);animation-timing-function:cubic-bezier(.6,0,.8,.3)}58%,80%{transform:scaleX(.05);animation-timing-function:cubic-bezier(.2,.9,.25,1.1)}100%{transform:scaleX(1)}}
+
+  .w5 .foreR{animation:pen .6s ease-in-out 0s 12 forwards, pen .6s ease-in-out var(--uf) infinite}
+  @keyframes pen{0%,50%,100%{transform:rotate(50deg)}25%{transform:rotate(57deg)}75%{transform:rotate(45deg)}}
+  .w5 .ln{stroke-dasharray:44;animation:var(--la) 2.4s linear 0s 3 forwards, var(--la) 2.4s linear var(--uf) infinite}
+  @keyframes ln1{0%,6%{stroke-dashoffset:0;opacity:1}8%{opacity:0;stroke-dashoffset:0}9%{stroke-dashoffset:44;opacity:0}10%{opacity:1;stroke-dashoffset:44}38%,100%{stroke-dashoffset:0;opacity:1}}
+  @keyframes ln2{0%,6%{stroke-dashoffset:0;opacity:1}8%{opacity:0;stroke-dashoffset:0}9%,38%{stroke-dashoffset:44;opacity:0}39%{opacity:1;stroke-dashoffset:44}68%,100%{stroke-dashoffset:0;opacity:1}}
+  @keyframes ln3{0%,6%{stroke-dashoffset:0;opacity:1}8%{opacity:0;stroke-dashoffset:0}9%,68%{stroke-dashoffset:44;opacity:0}69%{opacity:1;stroke-dashoffset:44}98%,100%{stroke-dashoffset:0;opacity:1}}
+
+  .w6 .mugA{transform-origin:40px 150px;animation:mug 1.2s linear 0s 6 forwards, mug 1.2s linear var(--uf) infinite}
+  @keyframes mug{0%,100%{transform:rotate(22deg)}0%{animation-timing-function:cubic-bezier(.2,.7,.3,1)}50%{transform:rotate(-8deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}}
+
+  #grid .w7 .fig .body{animation:none}
+  .w7 .treeW{transform-origin:110px 712px;animation:tree 1.2s ease-in-out 0s 6 forwards, tree 1.2s ease-in-out var(--uf) infinite}
+  @keyframes tree{0%,100%{transform:rotate(-2.4deg)}50%{transform:rotate(2.4deg)}}
+  #grid .w7 .foreL{animation:clapOL .3s ease-in-out var(--uf) infinite}
+  #grid .w7 .foreR{animation:clapOR .3s ease-in-out var(--uf) infinite}
+  @keyframes clapOL{0%,100%{transform:rotate(14deg)}50%{transform:rotate(-22deg)}}
+  @keyframes clapOR{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(22deg)}}
+
+  #grid .w8 .foreR{animation:wv .6s ease-in-out 0s 12 forwards, clapR .6s ease-in-out var(--uf) infinite}
+  #grid .w8 .armR{animation:armClapR .3s cubic-bezier(.2,.9,.25,1.1) var(--uf) forwards}
+  #grid .w8 .armL{animation:armClapL .3s cubic-bezier(.2,.9,.25,1.1) var(--uf) forwards}
+  #grid .w8 .foreL{animation:clapL .6s ease-in-out var(--uf) infinite}
+  @keyframes wv{0%,100%{transform:rotate(-42deg)}50%{transform:rotate(-8deg)}}
+  @keyframes armClapR{from{transform:rotate(-145deg)}to{transform:rotate(-10deg)}}
+  @keyframes armClapL{from{transform:rotate(7deg)}to{transform:rotate(10deg)}}
+  @keyframes clapR{0%,100%{transform:rotate(62deg)}50%{transform:rotate(30deg)}}
+  @keyframes clapL{0%,100%{transform:rotate(-62deg)}50%{transform:rotate(-30deg)}}
+
+  .w4 .logoIn{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:logoPop .6s cubic-bezier(.3,1.5,.5,1) 7.2s both, logoBr 1.2s ease-in-out 7.8s infinite, logoOut .3s cubic-bezier(.6,0,.8,.2) 10.2s forwards}
+  @keyframes logoBr{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.04);opacity:1}}
+  @keyframes logoOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.4)}}
+  .w4 .halo{opacity:0;animation:haloA .6s ease-out 7.2s forwards, haloB 1.2s ease-in-out 7.8s infinite, haloOut .3s ease-in 10.2s forwards}
+  @keyframes haloA{to{opacity:.55}} @keyframes haloB{0%,100%{opacity:.4}50%{opacity:.7}} @keyframes haloOut{to{opacity:.25}}
+
+  /* ---------- build-up: iskry ---------- */
+  .scene.active .bsp{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:bsp .45s cubic-bezier(.2,.7,.3,1) var(--t) both}
+  @keyframes bsp{0%{opacity:1;transform:scale(.2) rotate(0)}40%{opacity:1;transform:scale(1.15) rotate(40deg)}100%{opacity:0;transform:scale(.4) rotate(90deg)}}
+
+  /* ---------- drop: nocna polana ---------- */
+  .scene.active .dropCam{transform-origin:270px 600px;animation:dropCam .6s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes dropCam{from{transform:scale(1.6)}to{transform:none}}
+  .scene.active .dropFlash{opacity:0;animation:padFl .3s ease-out both}
+  .bulb{transform-box:fill-box;transform-origin:50% 50%}
+  .scene.active .bulbA{animation:bulb 1.2s cubic-bezier(.2,.7,.3,1) infinite}
+  .scene.active .bulbB{animation:bulb 1.2s cubic-bezier(.2,.7,.3,1) -.6s infinite}
+  @keyframes bulb{0%{opacity:1;transform:scale(1.15)}50%{opacity:.35;transform:scale(.85)}100%{opacity:1;transform:scale(1.15)}}
+  .scene.active .riseUp{animation:riseUp .45s cubic-bezier(.2,.9,.25,1.08) var(--t,.3s) both}
+  @keyframes riseUp{from{transform:translateY(var(--ry,460px))}to{transform:none}}
+  .scene.active .dance .armL{animation:dArmL 2.4s linear infinite} .scene.active .dance .armR{animation:dArmR 2.4s linear infinite}
+  .scene.active .dance .foreL{animation:dForeL 2.4s linear infinite} .scene.active .dance .foreR{animation:dForeR 2.4s linear infinite}
+  .scene.active .dance .body{animation:dBody 2.4s linear infinite}
+  @keyframes dArmL{0%,100%{transform:rotate(152deg)}0%,25%,50%,75%{animation-timing-function:cubic-bezier(.3,0,.15,1)}25%{transform:rotate(30deg)}50%{transform:rotate(165deg)}75%{transform:rotate(88deg)}}
+  @keyframes dArmR{0%,100%{transform:rotate(-152deg)}0%,25%,50%,75%{animation-timing-function:cubic-bezier(.3,0,.15,1)}25%{transform:rotate(-30deg)}50%{transform:rotate(-30deg)}75%{transform:rotate(-88deg)}}
+  @keyframes dForeL{0%,100%{transform:rotate(18deg)}0%,25%,50%,75%{animation-timing-function:cubic-bezier(.3,0,.15,1)}25%{transform:rotate(-100deg)}50%{transform:rotate(8deg)}75%{transform:rotate(88deg)}}
+  @keyframes dForeR{0%,100%{transform:rotate(-18deg)}0%,25%,50%,75%{animation-timing-function:cubic-bezier(.3,0,.15,1)}25%{transform:rotate(100deg)}50%{transform:rotate(100deg)}75%{transform:rotate(-88deg)}}
+  @keyframes dBody{0%,100%{transform:translateY(-8px) rotate(0)}0%,25%,50%,75%{animation-timing-function:cubic-bezier(.3,0,.15,1)}10%{transform:translateY(2px) rotate(0)}25%{transform:rotate(3deg)}50%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+  .scene.active .spinB{transform-origin:110px 400px;animation:spinB 4.8s linear both}
+  @keyframes spinB{0%,37.5%{transform:scaleX(1)}38.9%,87.5%{transform:scaleX(-1)}88.9%,100%{transform:scaleX(1)}}
+
+  /* ---------- outro: A rzuca B słuchawki ---------- */
+  .scene.active .thrower .armR{animation:thArmR 2.4s linear both} .scene.active .thrower .foreR{animation:thForeR 2.4s linear both}
+  .scene.active .thrower .armL{animation:thArmL 2.4s linear both} .scene.active .thrower .foreL{animation:thForeL 2.4s linear both}
+  @keyframes thArmR{0%{transform:rotate(-166deg)}20%{transform:rotate(-172deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}27%{transform:rotate(-160deg);animation-timing-function:cubic-bezier(.2,.7,.3,1)}50%,100%{transform:rotate(-150deg)}}
+  @keyframes thForeR{0%,20%{transform:rotate(-8deg)}27%{transform:rotate(20deg)}50%,100%{transform:rotate(-18deg)}}
+  @keyframes thArmL{0%,37.5%{transform:rotate(7deg);animation-timing-function:cubic-bezier(.3,0,.15,1)}50%,100%{transform:rotate(150deg)}}
+  @keyframes thForeL{0%,37.5%{transform:rotate(-6deg)}50%,100%{transform:rotate(18deg)}}
+  .hpLand{transform-box:fill-box;transform-origin:50% 50%}
+  .scene.active .hpLand{animation:hpLand 2.4s linear both}
+  @keyframes hpLand{0%,25%{transform:translate(-197px,-121px) rotate(-12deg) scale(.8);animation-timing-function:cubic-bezier(.2,.6,.4,1)}37.5%{transform:translate(-100px,-128px) rotate(-6deg) scale(.85);animation-timing-function:cubic-bezier(.6,0,.9,.5)}50%{transform:translate(0,0) rotate(0) scale(1);animation-timing-function:cubic-bezier(.2,.7,.3,1)}56%{transform:translate(0,6px) scale(1.04,.94)}62%,100%{transform:none}}
+  .scene.active .laugher .smile{animation:laugh 2.4s linear both}
+  @keyframes laugh{0%,50%{transform:scale(1)}56%,100%{transform:scale(1.18,1.55)}}
+  .scene.active .laugher .body{animation:giggle 2.4s linear both}
+  .scene.active .thrower .body{animation:giggle 2.4s linear both}
+  @keyframes giggle{0%,50%{transform:none}56%{transform:translateY(-6px)}62.5%{transform:translateY(0)}68.75%{transform:translateY(-6px)}75%{transform:translateY(0)}81.25%{transform:translateY(-5px)}87.5%,100%{transform:translateY(0)}}
+  .scene.active .laugher .armL{animation:lArmL 2.4s linear both} .scene.active .laugher .armR{animation:lArmR 2.4s linear both}
+  @keyframes lArmL{0%,62.5%{transform:rotate(7deg);animation-timing-function:cubic-bezier(.3,0,.15,1)}75%,100%{transform:rotate(148deg)}}
+  @keyframes lArmR{0%,62.5%{transform:rotate(-7deg);animation-timing-function:cubic-bezier(.3,0,.15,1)}75%,100%{transform:rotate(-148deg)}}
+  .scene.active .bokeh{animation:float 2.4s ease-in-out infinite alternate}
+
+  /* ---------- logo: kopczyk z trzech kamieni ---------- */
+  .peb{transform-box:fill-box;transform-origin:50% 50%}
+  .scene.active .peb{animation:peb .3s linear var(--t) both, pebOut .3s cubic-bezier(.6,0,.8,.2) 1.2s forwards}
+  @keyframes peb{0%{transform:translate(var(--sx),var(--sy)) rotate(var(--sr));animation-timing-function:cubic-bezier(.2,.6,.4,1)}50%{transform:translate(calc(var(--sx)*.45),calc(var(--sy)*.45 - 50px)) rotate(calc(var(--sr)*.4));animation-timing-function:cubic-bezier(.6,0,.9,.5)}100%{transform:none}}
+  @keyframes pebOut{to{opacity:0;transform:scale(.85)}}
+  .scene.active .pebShow{opacity:0;animation:pebShow .15s ease-out both}
+  @keyframes pebShow{to{opacity:1}}
+  .scene.active .bigLogo{transform-box:fill-box;transform-origin:50% 50%;animation:logoPop .6s cubic-bezier(.3,1.5,.5,1) 1.2s both, logoBr 1.2s ease-in-out 1.8s infinite}
+  .scene.active .glow{opacity:0;animation:haloA .6s ease-out 1.2s forwards}
+
+  /* ---------- CTA ---------- */
+  .scene.active .lineOut{animation:fadeOut .2s cubic-bezier(.6,0,.8,.2) var(--o) forwards}
+  .scene.active .lgOut{animation:fadeOut .2s cubic-bezier(.6,0,.8,.2) 2.4s forwards}
+  .scene.active .ctaIn{opacity:0;animation:pebShow .15s ease-out 2.55s forwards}
+  .scene.active .ctaWipe{transform-origin:270px 440px;animation:wipeC .36s cubic-bezier(.7,0,.25,1) 2.4s both}
+  @keyframes wipeC{from{transform:scale(0)}to{transform:none}}
+
+  /* ---------- litery BALANS z kamieni (warstwa globalna) ---------- */
+  .pc{transform-box:fill-box;transform-origin:50% 50%;animation:pcFall .45s cubic-bezier(.55,0,1,.5) var(--tf) both, pcDrop var(--dd) cubic-bezier(.55,0,1,.5) 19.2s forwards}
+  .pc.keep{animation:pcFall .45s cubic-bezier(.55,0,1,.5) var(--tf) both, pcFade .15s ease-in 19.35s forwards}
+  @keyframes pcFall{from{transform:translate(var(--dx),var(--fy)) rotate(var(--r0))}to{transform:none}}
+  @keyframes pcDrop{to{transform:translate(var(--ex),860px) rotate(var(--er))}}
+  @keyframes pcFade{to{opacity:0}}
+  .pcB{transform-box:fill-box;transform-origin:50% 100%;animation:pcBounce .3s linear var(--T)}
+  @keyframes pcBounce{0%{transform:scale(1.1,.84);animation-timing-function:cubic-bezier(.2,.7,.3,1)}40%{transform:translateY(-10px) scale(.97,1.04);animation-timing-function:cubic-bezier(.6,0,.8,.3)}75%{transform:translateY(0) scale(1.03,.97)}100%{transform:none}}
+  .lt{transform-box:fill-box;transform-origin:50% 100%;animation:ltBeat .6s cubic-bezier(.2,.7,.3,1) 14.4s 4, hop .3s linear var(--th), hopAll .6s linear 18.6s}
+  @keyframes ltBeat{0%{transform:scale(1.03,1.07)}100%{transform:none}}
+  @keyframes hop{0%{transform:none;animation-timing-function:cubic-bezier(.2,.7,.3,1)}45%{transform:translateY(-30px) scale(.96,1.05);animation-timing-function:cubic-bezier(.6,0,.8,.3)}90%{transform:translateY(0) scale(1.05,.94)}100%{transform:none}}
+  @keyframes hopAll{0%{transform:none;animation-timing-function:cubic-bezier(.2,.7,.3,1)}40%{transform:translateY(-44px) scale(.95,1.06);animation-timing-function:cubic-bezier(.6,0,.8,.3)}75%{transform:translateY(0) scale(1.06,.92)}100%{transform:none}}
+  .ltShadow{opacity:0;animation:ltSh .3s ease-out 12.6s forwards, ltShOut .3s ease-in 19.2s forwards}
+  @keyframes ltSh{to{opacity:.18}} @keyframes ltShOut{from{opacity:.18}to{opacity:0}}
+  .pd{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:pd .45s cubic-bezier(.2,.7,.3,1) var(--T) forwards}
+  @keyframes pd{0%{opacity:.8;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--px),-14px) scale(1.2)}}
+</style>
+</head>
+<body>
+<div class="stage-wrap">
+<svg id="stage" viewBox="0 0 540 960">
+  <defs>/*DEFS*/
+    <clipPath id="winClip"><rect width="146" height="180" rx="16"/></clipPath>
+    <linearGradient id="padShine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>
+    <linearGradient id="nightG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34463f"/><stop offset=".55" stop-color="#4a6259"/><stop offset="1" stop-color="#58756C"/></linearGradient>
+    <radialGradient id="glowM"><stop offset="0" stop-color="#E8C872" stop-opacity=".85"/><stop offset=".35" stop-color="#D4A23A" stop-opacity=".35"/><stop offset="1" stop-color="#D4A23A" stop-opacity="0"/></radialGradient>
+    <radialGradient id="glowC"><stop offset="0" stop-color="#F2EFEB" stop-opacity=".5"/><stop offset="1" stop-color="#F2EFEB" stop-opacity="0"/></radialGradient>
+    <!-- słuchawki (współrzędne głowy postaci) -->
+    <g id="hpA"><path d="M56,134 C44,26 176,26 164,134" fill="none" stroke="#58756C" stroke-width="9" stroke-linecap="round"/><path d="M60,120 C52,40 168,40 160,120" fill="none" stroke="#A4B8B0" stroke-width="2.5" stroke-linecap="round" opacity=".8"/><rect x="40" y="118" width="24" height="44" rx="11" fill="#58756C"/><rect x="156" y="118" width="24" height="44" rx="11" fill="#58756C"/><rect x="45" y="126" width="6" height="28" rx="3" fill="#F2EFEB" opacity=".6"/><rect x="169" y="126" width="6" height="28" rx="3" fill="#F2EFEB" opacity=".6"/></g>
+    <g id="hpB"><path d="M48,136 C32,12 188,12 172,136" fill="none" stroke="#58756C" stroke-width="9" stroke-linecap="round"/><path d="M52,120 C40,28 180,28 168,120" fill="none" stroke="#A4B8B0" stroke-width="2.5" stroke-linecap="round" opacity=".8"/><rect x="30" y="116" width="24" height="46" rx="11" fill="#58756C"/><rect x="166" y="116" width="24" height="46" rx="11" fill="#58756C"/><rect x="35" y="124" width="6" height="30" rx="3" fill="#F2EFEB" opacity=".6"/><rect x="179" y="124" width="6" height="30" rx="3" fill="#F2EFEB" opacity=".6"/></g>
+  </defs>
+  <rect id="bg" width="540" height="960" fill="#F2EFEB"/>
+  <g id="cam"><g id="gcam"><g id="beat">
+
+    <!-- ============ TAKT 1 (0,0–2,4): SAMPLER ============ -->
+    <g class="scene" data-s="sampler">
+      <rect width="540" height="960" fill="#F2EFEB"/>
+      <circle cx="270" cy="520" r="330" fill="url(#glowC)"/>
+      <rect x="-40" y="782" width="620" height="230" fill="#E3CCC1"/>
+      <rect x="-40" y="782" width="620" height="5" fill="#D9BFB1"/>
+      <!-- A za samplerem (całe ciało – nogi schowane za urządzeniem) -->
+      <g transform="translate(176.5,182) scale(.85)" data-hp="A">/*FIG_A:samp nod*/</g>
+      <!-- sampler -->
+      <ellipse cx="270" cy="790" rx="140" ry="10" fill="#000" opacity=".12"/>
+      <rect x="151" y="498" width="238" height="290" rx="22" fill="#EAE3DC" stroke="#D9CFC6" stroke-width="2"/>
+      <rect x="151" y="498" width="238" height="290" rx="22" fill="url(#padShine)" opacity=".5"/>
+      <g id="pads" transform="translate(270 640) scale(.44) translate(-270 -470)"></g>
+      <!-- przedramiona A nad padami (ta sama postać, widoczne tylko przedramiona) -->
+      <g transform="translate(176.5,182) scale(.85)" class="frontOnly">/*FIG_A:samp*/</g>
+    </g>
+
+    <!-- tła scen z siatką -->
+    <g class="scene fadeBg" data-s="pady"><rect width="540" height="960" fill="#E3CCC1"/><circle cx="270" cy="470" r="420" fill="url(#glowC)"/></g>
+    <g class="scene fadeBg" data-s="pauza"><rect width="540" height="960" fill="#E4E0DB"/></g>
+    <g class="scene fadeBg" data-s="build"><rect width="540" height="960" fill="#E3CCC1"/><circle cx="270" cy="470" r="420" fill="url(#glowC)"/>
+      <g id="sparks"></g>
+    </g>
+
+    <!-- ============ TAKTY 6–7 (12,0–16,8): DROP – nocna polana ============ -->
+    <g class="scene" data-s="drop">
+      <g class="dropCam">
+        <rect x="-60" y="-60" width="660" height="1080" fill="url(#nightG)"/>
+        <g class="stars"></g>
+        <path d="M-40,640 C60,560 160,600 250,560 C350,515 450,580 580,540 L580,1000 L-40,1000 Z" fill="#4f6a61" opacity=".9"/>
+        <path d="M-40,720 C80,680 200,720 300,690 C400,660 480,700 580,680 L580,1000 L-40,1000 Z" fill="#445d55"/>
+        <g class="garland"></g>
+        <g transform="translate(45,430) scale(.9)"><g class="riseUp">/*FIG_A:dance nod*/</g></g>
+        <g transform="translate(495,430) scale(-.9,.9)"><g class="riseUp" style="--t:.3s"><g class="spinB">/*FIG_B:dance nod*/</g></g></g>
+      </g>
+    </g>
+
+    <!-- ============ TAKT 8 (16,8–19,2): OUTRO – słuchawki dla B ============ -->
+    <g class="scene" data-s="outro">
+      <rect x="-60" y="-60" width="660" height="1080" fill="url(#nightG)"/>
+      <g class="stars"></g>
+      <circle class="bokeh" cx="70" cy="380" r="26" fill="#E8C872" opacity=".12"/>
+      <circle class="bokeh" cx="480" cy="420" r="34" fill="#E8C872" opacity=".1" style="animation-delay:-1.2s"/>
+      <circle class="bokeh" cx="500" cy="330" r="14" fill="#F2EFEB" opacity=".15"/>
+      <g class="garland"></g>
+      <g transform="translate(20,400) scale(.95)">/*FIG_A:thrower nod*/</g>
+      <g transform="translate(290,400) scale(.95)" data-hp="B" data-hpc="hpLand">/*FIG_B:laugher nod*/</g>
+    </g>
+
+    <!-- ============ TAKT 9 (19,2–21,6): LOGO z trzech kamieni ============ -->
+    <g class="scene" data-s="logo">
+      <rect x="-60" y="-60" width="660" height="1080" fill="url(#nightG)"/>
+      <g class="stars"></g>
+      <g class="garland"></g>
+      <circle class="glow" cx="270" cy="440" r="190" fill="url(#glowM)"/>
+      <g class="pebShow">
+        <g class="peb" style="--t:.3s;--sx:-102px;--sy:-211px;--sr:-20deg"><rect x="208" y="450" width="124" height="56" rx="28" fill="#A4B8B0"/><rect x="208" y="450" width="124" height="56" rx="28" fill="url(#padShine)"/></g>
+        <g class="peb" style="--t:.6s;--sx:34px;--sy:-159px;--sr:25deg"><rect x="224" y="404" width="92" height="46" rx="23" fill="#E3CCC1"/><rect x="224" y="404" width="92" height="46" rx="23" fill="url(#padShine)"/></g>
+        <g class="peb" style="--t:.9s;--sx:170px;--sy:-141px;--sr:-30deg"><rect x="239" y="368" width="62" height="36" rx="18" fill="#F2EFEB"/><rect x="239" y="368" width="62" height="36" rx="18" fill="url(#padShine)"/></g>
+      </g>
+      <g transform="translate(270,440) scale(1.6)"><g class="bigLogo"><use href="#logoSign" style="color:#F2EFEB"/></g></g>
+      <g transform="translate(118,536) scale(.3)"><g class="riseUp" style="--t:.6s;--ry:1500px">/*FIG_A:cheer*/</g></g>
+      <g transform="translate(356,536) scale(.3)"><g class="riseUp" style="--t:.6s;--ry:1500px">/*FIG_B:cheer*/</g></g>
+      <!-- TAKT 10 (21,6–24,0): CTA – koło z kremu otwiera się z logo -->
+      <circle class="ctaWipe" cx="270" cy="440" r="720" fill="#F2EFEB"/>
+      <g class="ctaIn"><g id="ctaPads"></g></g>
+    </g>
+
+    <!-- ============ SIATKA 3×3 (warstwa globalna 2,4–12,45) ============ -->
+    <g id="grid"><g id="gridZoom">
+      <!-- 1: B na skakance -->
+      <g class="win w0" transform="translate(41,190)" style="--on:2.4s;--uf:10.2s;--ox:-60px;--or:-40deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#F4F2EF"/><rect y="160" width="146" height="20" fill="#E3CCC1"/>
+          <ellipse class="shd" cx="73" cy="164" rx="20" ry="3.5" fill="#000" opacity=".15"/>
+          <g transform="translate(48.8,7.4) scale(.22)"><g class="jumpB">
+            <path class="rope" d="M18,447 C6,700 60,760 110,760 C160,760 214,700 202,447" fill="none" stroke="#6E5446" stroke-width="7" stroke-linecap="round"/>
+            /*FIG_B:rp*/
+          </g></g>
+          <g class="cover"><rect width="146" height="180" fill="#A4B8B0"/><rect width="146" height="180" fill="url(#padShine)"/></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+
+      <!-- 2: A nalewa herbatę -->
+      <g class="win w1" transform="translate(197,190)" style="--on:3s;--uf:11.1s;--ox:0px;--or:30deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#E3CCC1"/>
+          <g transform="translate(31.2,-6.7) scale(.38)">/*FIG_A:hands2 nod*/</g>
+          <rect y="150" width="146" height="30" fill="#D9BFB1"/><rect y="150" width="146" height="3" fill="#C9AE9F"/>
+          <!-- kubek -->
+          <g transform="translate(112,146)"><path d="M-11,-12 L11,-12 L9.5,4 Q9,8 5,8 L-5,8 Q-9,8 -9.5,4 Z" fill="#F4F2EF"/><path d="M10,-8 q8,0 7,7 q-1,5 -8,4" fill="none" stroke="#F4F2EF" stroke-width="3"/><ellipse cy="-12" rx="11" ry="2.6" fill="#8a5a3c"/>
+            <path class="steam" d="M-3,-17 q-3,-5 0,-10 q3,-5 0,-10" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></g>
+          <!-- czajniczek -->
+          <g class="pot">
+            <path class="stream" d="M88,127 C96,128 104,130 106,134" fill="none" stroke="#B5582F" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+            <path d="M84,124 Q96,116 94,110 L88,112 Q86,118 78,122 Z" fill="#58756C"/>
+            <ellipse cx="62" cy="126" rx="21" ry="16" fill="#A4B8B0"/><ellipse cx="62" cy="126" rx="21" ry="16" fill="url(#padShine)"/>
+            <path d="M44,118 q-12,2 -10,12 q2,7 12,6" fill="none" stroke="#58756C" stroke-width="4"/>
+            <rect x="52" y="106" width="20" height="6" rx="3" fill="#58756C"/><circle cx="62" cy="104" r="3" fill="#58756C"/>
+          </g>
+          <g class="cover"><rect width="146" height="180" fill="#E3CCC1"/><rect width="146" height="180" fill="url(#padShine)"/></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+
+      <!-- 3: przybicie piątki -->
+      <g class="win w2" transform="translate(353,190)" style="--on:3.6s;--uf:10.5s;--ox:60px;--or:40deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#C9D6CF"/>
+          <circle cx="73" cy="40" r="46" fill="url(#glowC)"/>
+          <g class="armA"><rect x="-10" y="40" width="32" height="170" rx="16" fill="url(#stripesA)" stroke="#d6cfc2" stroke-width="1.5"/><rect x="-8" y="40" width="28" height="9" rx="4" fill="#ece8df"/><ellipse cx="6" cy="26" rx="15" ry="18" fill="#f2c9aa"/><ellipse cx="17" cy="32" rx="5" ry="8" fill="#f2c9aa" transform="rotate(-30 17 32)"/></g>
+          <g class="armB"><rect x="124" y="40" width="32" height="170" rx="16" fill="#F7F4EE" stroke="#e2dccf" stroke-width="1.5"/><path d="M126,60 q14,6 28,0" fill="none" stroke="#e2dccf" stroke-width="1.5"/><ellipse cx="140" cy="26" rx="15" ry="18" fill="#f3cdb3"/><ellipse cx="129" cy="32" rx="5" ry="8" fill="#f3cdb3" transform="rotate(30 129 32)"/></g>
+          <g transform="translate(73,16)">
+            <g transform="scale(1.3)"><use class="spark" href="#star" style="--sx:-14px;--sy:-4px" fill="#D4A23A"/></g>
+            <circle class="spark" cx="-20" cy="10" r="2.5" fill="#fff" style="--sx:-14px;--sy:6px"/>
+            <circle class="spark" cx="20" cy="10" r="2.5" fill="#fff" style="--sx:14px;--sy:6px"/>
+          </g>
+          <g class="cover"><rect width="146" height="180" fill="#C9D6CF"/><rect width="146" height="180" fill="url(#padShine)"/></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+
+      <!-- 4: B rozkłada mapę -->
+      <g class="win w3" transform="translate(41,380)" style="--on:4.2s;--uf:11.4s;--ox:-90px;--or:-60deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#F4F2EF"/>
+          <path d="M0,150 C40,140 100,146 146,136 L146,180 L0,180 Z" fill="#E3CCC1"/>
+          <g transform="translate(31.2,-4.7) scale(.38)">/*FIG_B:hands2 nod*/</g>
+          <g transform="translate(0,4)">
+            <g class="mapL"><rect x="27" y="126" width="30" height="40" fill="#EDE6DC" stroke="#d6cfc2"/><path d="M31,150 q8,-8 14,-2 t10,-6" fill="none" stroke="#A4B8B0" stroke-width="2"/></g>
+            <rect x="57" y="126" width="32" height="40" fill="#F4F2EF" stroke="#d6cfc2"/><path d="M60,140 q10,-6 16,2 t12,-4" fill="none" stroke="#A4B8B0" stroke-width="2"/>
+            <g class="mapR"><rect x="89" y="126" width="30" height="40" fill="#EDE6DC" stroke="#d6cfc2"/><path d="M92,156 q8,-10 14,-4 t10,-8" fill="none" stroke="#A4B8B0" stroke-width="2"/></g>
+            <path d="M40,158 C60,150 80,154 106,138" fill="none" stroke="#B5582F" stroke-width="2" stroke-dasharray="3 3"/>
+            <circle cx="106" cy="138" r="3.5" fill="#B5582F"/>
+          </g>
+          <g class="cover"><rect width="146" height="180" fill="#D9BFB1"/><rect width="146" height="180" fill="url(#padShine)"/></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+
+      <!-- środek: logo (beat 9) -->
+      <g class="win w4" transform="translate(197,380)" style="--on:7.2s;--uf:99s;--ox:0px;--or:-20deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#58756C"/><rect width="146" height="180" fill="url(#padShine)" opacity=".5"/>
+          <circle class="halo" cx="73" cy="90" r="80" fill="url(#glowM)"/>
+          <g transform="translate(73,90) scale(.95)"><g class="logoIn"><use href="#logoSign" style="color:#F2EFEB"/></g></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+
+      <!-- 5: A pisze w notesie -->
+      <g class="win w5" transform="translate(353,380)" style="--on:4.8s;--uf:11.7s;--ox:90px;--or:60deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#A4B8B0"/><circle cx="73" cy="70" r="80" fill="url(#glowC)"/>
+          <g transform="translate(31.2,-6.7) scale(.38)">/*FIG_A:hands2 notesW nod*/</g>
+          <g transform="rotate(-6 73 146)">
+            <rect x="46" y="124" width="54" height="42" rx="3" fill="#F4F2EF" stroke="#d6cfc2"/><rect x="46" y="124" width="54" height="6" fill="#E3CCC1"/>
+            <path class="ln" style="--la:ln1" d="M52,138 h40" fill="none" stroke="#6E5446" stroke-width="2" stroke-linecap="round"/>
+            <path class="ln" style="--la:ln2" d="M52,147 h36" fill="none" stroke="#6E5446" stroke-width="2" stroke-linecap="round"/>
+            <path class="ln" style="--la:ln3" d="M52,156 h30" fill="none" stroke="#6E5446" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <g class="cover"><rect width="146" height="180" fill="#B7C7C0"/><rect width="146" height="180" fill="url(#padShine)"/></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+
+      <!-- 6: stukające się kubki -->
+      <g class="win w6" transform="translate(41,570)" style="--on:5.4s;--uf:10.8s;--ox:-70px;--or:-30deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#EAD8CF"/><rect y="150" width="146" height="30" fill="#D9BFB1"/>
+          <g class="mugA"><g transform="translate(40,118) scale(1.05)"><use href="#mug"/></g></g>
+          <g transform="translate(146,0) scale(-1,1)"><g class="mugA"><g transform="translate(40,118) scale(1.05)"><use href="#mug"/></g></g></g>
+          <g transform="translate(73,86)">
+            <g transform="translate(0,-8) scale(1.2)"><use class="spark" href="#star" fill="#D4A23A" style="--sx:0px;--sy:-20px"/></g>
+            <circle class="spark" cx="-14" cy="-4" r="2.5" fill="#fff" style="--sx:-18px;--sy:-10px"/>
+            <circle class="spark" cx="14" cy="-4" r="2.5" fill="#fff" style="--sx:18px;--sy:-10px"/>
+          </g>
+          <g class="cover"><rect width="146" height="180" fill="#E3CCC1"/><rect width="146" height="180" fill="url(#padShine)"/></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+
+      <!-- 7: B w pozie drzewa -->
+      <g class="win w7" transform="translate(197,570)" style="--on:6s;--uf:9.9s;--ox:0px;--or:25deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#F4F2EF"/><circle cx="73" cy="70" r="70" fill="url(#glowC)"/>
+          <rect x="22" y="160" width="102" height="9" rx="4.5" fill="#A4B8B0"/>
+          <g transform="translate(51.9,15) scale(.205)"><g class="treeW">/*FIG_B:yoga*/</g></g>
+          <g class="cover"><rect width="146" height="180" fill="#A4B8B0"/><rect width="146" height="180" fill="url(#padShine)"/></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+
+      <!-- 8: A macha (w słuchawkach) -->
+      <g class="win w8" transform="translate(353,570)" style="--on:6.6s;--uf:9.6s;--ox:70px;--or:30deg"><g class="wf"><g class="wi">
+        <g clip-path="url(#winClip)">
+          <rect width="146" height="180" fill="#C9D6CF"/><circle cx="73" cy="70" r="80" fill="url(#glowC)"/>
+          <g transform="translate(31.2,-2) scale(.38)" data-hp="A">/*FIG_A:wave nod*/</g>
+          <g class="cover"><rect width="146" height="180" fill="#D9BFB1"/><rect width="146" height="180" fill="url(#padShine)"/></g>
+          <rect class="flash" width="146" height="180" fill="#fff"/>
+        </g>
+        <rect width="146" height="180" rx="16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      </g></g><circle class="ring" cx="73" cy="90" r="30" fill="none" stroke="#fff" stroke-width="3"/></g>
+    </g></g>
+
+    <!-- ============ KAMIENNE LITERY „BALANS” (warstwa globalna 12,0–19,7) ============ -->
+    <g id="letters"></g>
+  </g></g></g>
+
+  <!-- ================= TEKSTY (poza kamerą – nie pulsują) ================= -->
+  <g class="scene" data-s="sampler"><g class="lineOut" style="--o:2.1s">
+    <g class="wl" data-cx="270" data-gap="16">
+      <text class="serif wd hook" y="160" font-size="60" fill="#333" style="--t:0s">Znajdź</text>
+      <text class="serif wd" y="160" font-size="60" fill="#333" style="--t:.6s">swój</text>
+      <text class="serif wd" y="160" font-size="60" fill="#4a655d" style="--t:1.2s">rytm.</text>
+    </g></g>
+  </g>
+  <g class="scene" data-s="pady">
+    <g class="wl" data-cx="270" data-gap="10">
+      <text class="lab wd outAt" y="150" font-size="20" fill="#3f524c" style="--t:0s;--o:2.25s">Ruch</text>
+      <text class="lab wd outAt" y="150" font-size="20" fill="#B5582F" style="--t:.6s;--o:2.25s">·</text>
+      <text class="lab wd outAt" y="150" font-size="20" fill="#3f524c" style="--t:.6s;--o:2.25s">Rozmowa</text>
+      <text class="lab wd outAt" y="150" font-size="20" fill="#B5582F" style="--t:1.2s;--o:2.25s">·</text>
+      <text class="lab wd outAt" y="150" font-size="20" fill="#3f524c" style="--t:1.2s;--o:2.25s">Cisza</text>
+    </g>
+    <g class="wl" data-cx="270" data-gap="10">
+      <text class="lab wd" y="150" font-size="20" fill="#3f524c" style="--t:2.4s">Healthy</text>
+      <text class="lab wd" y="150" font-size="20" fill="#B5582F" style="--t:3s">·</text>
+      <text class="lab wd" y="150" font-size="20" fill="#3f524c" style="--t:3s">Networking</text>
+      <text class="lab wd" y="150" font-size="20" fill="#B5582F" style="--t:3.6s">·</text>
+      <text class="lab wd" y="150" font-size="20" fill="#3f524c" style="--t:3.6s">Rozwój</text>
+    </g>
+  </g>
+  <g class="scene" data-s="pauza">
+    <text class="serif slam" x="270" y="152" font-size="60" text-anchor="middle" fill="#333">Pauza.</text>
+    <text class="serif riseT" x="270" y="144" font-size="36" text-anchor="middle" fill="#333" style="--t:1.2s">Też jest częścią rytmu.</text>
+  </g>
+  <g class="scene" data-s="build">
+    <text class="serif track" x="270" y="148" font-size="56" text-anchor="middle" fill="#333">Gotowa?</text>
+    <text class="serif cnt" x="270" y="508" font-size="104" text-anchor="middle" fill="#F2EFEB" style="--t:.6s">3…</text>
+    <text class="serif cnt" x="270" y="508" font-size="104" text-anchor="middle" fill="#F2EFEB" style="--t:1.2s">2…</text>
+    <text class="serif cnt" x="270" y="508" font-size="104" text-anchor="middle" fill="#F2EFEB" style="--t:1.8s">1…</text>
+  </g>
+  <g class="scene" data-s="drop">
+    <rect class="dropFlash" width="540" height="960" fill="#F2EFEB"/>
+    <text class="serif reveal" x="270" y="372" font-size="38" text-anchor="middle" fill="#F2EFEB" style="--t:3s">to nie stan, to <tspan fill="#E8C872">rytm.</tspan></text>
+  </g>
+  <g class="scene" data-s="logo"><g class="lgOut">
+    <text class="serif split" x="270" y="196" font-size="64" text-anchor="middle" fill="#F2EFEB" style="--d0:1.2s">SheBalance</text>
+    <text class="lab riseT" x="270" y="236" font-size="22" text-anchor="middle" fill="#E3CCC1" style="--t:1.8s;letter-spacing:.2em">camp</text></g>
+    <g transform="translate(270,196) scale(.62)"><g class="pop" style="animation-delay:2.4s"><use href="#logoSign" style="color:#58756C"/></g></g>
+    <text class="serif slideL" x="270" y="330" font-size="76" text-anchor="middle" fill="#333" style="--t:2.52s">5–7.11</text>
+    <text class="serif slideR" x="270" y="398" font-size="52" text-anchor="middle" fill="#3f524c" style="--t:2.7s">Beskidy</text>
+    <text class="serif slideL" x="270" y="462" font-size="52" text-anchor="middle" fill="#3f524c" style="--t:3s">20 miejsc</text>
+    <g class="btnIn" style="--t:3.6s">
+      <rect x="130" y="508" width="280" height="62" rx="31" fill="#58756C"/>
+      <text class="lab" x="270" y="549" font-size="28" text-anchor="middle" fill="#F2EFEB" style="letter-spacing:.04em">Zapisz się →</text>
+      <text class="serif" x="270" y="622" font-size="34" text-anchor="middle" fill="#333">shebalance.pl</text>
+    </g>
+  </g>
+
+  <rect width="540" height="960" fill="url(#vignette)" opacity=".55" pointer-events="none"/>
+  <rect width="540" height="960" filter="url(#paper)" opacity=".16" style="mix-blend-mode:multiply" pointer-events="none"/>
+</svg>
+</div>
+<div class="bar"><i id="prog"></i></div>
+<div class="controls"><button id="play">Pauza</button><button id="restart">Od początku</button><div class="dots" id="dots"></div></div>
+<script>
+// 100 BPM → beat 0,6 s; sceny = pełne takty (2,4 s), więc każdy start sceny wypada na „raz”.
+window.SEED=404;
+window.SCENES=[
+  {id:'sampler',d:2.4,bg:'#F2EFEB'}, // takt 1   0,0–2,4
+  {id:'pady',d:4.8},                 // takty 2–3 2,4–7,2
+  {id:'pauza',d:2.4},                // takt 4   7,2–9,6
+  {id:'build',d:2.4},                // takt 5   9,6–12,0
+  {id:'drop',d:4.8},                 // takty 6–7 12,0–16,8
+  {id:'outro',d:2.4},                // takt 8   16,8–19,2
+  {id:'logo',d:4.8}                  // takt 9 logo 19,2–21,6 + takt 10 CTA 21,6–24,0
+];
+window.beforeSplit=function(){
+  // ===== KAMERA (czas globalny). [czas, skala, ox, oy, obrót°, easing do następnego klucza]
+  const EI='cubic-bezier(.45,0,.55,1)', EIN='cubic-bezier(.6,0,.9,.45)', EOUT='cubic-bezier(.2,.8,.2,1)', TOT=24;
+  const CAM=[[0,1,270,640,0,EI],[2.1,1.045,270,640,0,EIN],[2.3995,1.3,270,640,0,'linear'],
+    [2.4,1,270,470,0,EI],[7.2,1.03,270,470,0,EI],[9.6,1.045,270,470,0,EIN],[11.9995,1.065,270,470,0,'linear'],
+    [12,1,270,620,0,EI],[12.6,1,270,620,0,EI]];
+  for(let k=0;k<7;k++) CAM.push([13.2+k*.6,1,270,620,k%2?1:-1,EI]);
+  CAM.push([16.7995,1,270,620,0,'linear'],[16.8,1,270,520,0,EI],[19.1995,1.07,270,520,0,'linear'],[19.2,1.07,270,440,0,EOUT],[21.6,1,270,440,0,EI],[24,1.045,270,440,0,EI]);
+  const pc=t=>(t/TOT*100).toFixed(4)+'%';
+  let css='@keyframes gcam{'+CAM.map(([t,sc,ox,oy,r,e])=>`${pc(t)}{transform:translate(${ox}px,${oy}px) rotate(${r}deg) scale(${sc}) translate(${-ox}px,${-oy}px);animation-timing-function:${e}}`).join('')+'}';
+  // ===== PULS NA BEAT: [od, do, krok, amplituda]
+  const B=[[0,7.2,.6,.022],[9.6,12,.3,.018],[12,19.2,.6,.03],[19.2,21.6,.6,.02],[21.6,24,.6,.012]]; const K=[];
+  B.forEach(([a,b,st,am])=>{for(let t=a;t<b-1e-6;t+=st){K.push([t,1+am]);K.push([t+st-.002,1]);}});
+  K.push([7.2,1],[9.5995,1]);
+  K.sort((x,y)=>x[0]-y[0]);
+  css+='@keyframes gbeat{'+K.map(([t,sc])=>`${pc(Math.min(t,TOT))}{transform:translate(270px,470px) scale(${sc}) translate(-270px,-470px);animation-timing-function:${sc>1?'cubic-bezier(.2,.7,.3,1)':'linear'}}`).join('')+'}';
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+
+  const NS='http://www.w3.org/2000/svg', R=window.rnd;
+  const el=(tag,attrs,parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;};
+  // --- słowa w linii: wyśrodkowanie wg zmierzonych szerokości
+  document.querySelectorAll('g.wl').forEach(g=>{const ts=[...g.children],gap=+g.dataset.gap||12;
+    const w=ts.map(t=>t.getComputedTextLength()); const tot=w.reduce((a,b)=>a+b,0)+gap*(ts.length-1);
+    let x=+g.dataset.cx-tot/2; ts.forEach((t,i)=>{t.setAttribute('x',x.toFixed(1));x+=w[i]+gap;});});
+  // --- słuchawki: wkładamy do głowy postaci (podążają za kiwaniem głową)
+  document.querySelectorAll('[data-hp]').forEach(h=>{const t=h.querySelector('.headWrap .tilt'); if(!t) return;
+    const g=el('g',{class:'hp '+(h.dataset.hpc||'')},t); el('use',{href:'#hp'+h.dataset.hp},g);});
+  // --- pady samplera (dokładnie geometria okien siatki → cięcie „pad → okno”)
+  const cols=['#A4B8B0','#E3CCC1','#C9D6CF','#D9BFB1','#58756C','#B7C7C0','#E3CCC1','#A4B8B0','#D9BFB1'];
+  const pads=document.getElementById('pads');
+  // uderzenia: [pad, czas] – beaty 1–4 taktu 1 + ósemkowe „kroki sekwencera” w dolnych rzędach
+  const hits={0:[0,1.2,1.8],2:[.6,1.8]}, soft={6:[.3],7:[.9],8:[1.5],3:[2.1],4:[2.1],5:[2.1],1:[2.1]};
+  for(let k=0;k<9;k++){const x=41+(k%3)*156,y=190+Math.floor(k/3)*190;
+    const g=el('g',{transform:`translate(${x},${y})`},pads), p=el('g',{class:'pIn'},g);
+    el('rect',{width:146,height:180,rx:22,fill:cols[k]},p); el('rect',{width:146,height:180,rx:22,fill:'url(#padShine)'},p);
+    el('rect',{x:10,y:10,width:126,height:160,rx:16,fill:'none',stroke:'#fff','stroke-opacity':.35,'stroke-width':3},p);
+    const f=el('rect',{class:'pFl',width:146,height:180,rx:22,fill:'#fff'},p); const r=el('circle',{class:'pRing',cx:73,cy:90,r:70,fill:'none',stroke:'#fff','stroke-width':8},g);
+    if(hits[k]){p.style.setProperty('--pa',hits[k].map(t=>`padHit .3s cubic-bezier(.2,.7,.3,1) ${t}s`).join(','));
+      f.style.setProperty('--pf',hits[k].map(t=>`padFl .35s ease-out ${t}s`).join(','));
+      r.style.setProperty('--pr',hits[k].map(t=>`padRing .6s cubic-bezier(.2,.7,.3,1) ${t}s`).join(','));}
+    else if(soft[k]) f.style.setProperty('--pf',soft[k].map(t=>`padSoft .3s ease-out ${t}s`).join(','));
+  }
+  // --- iskry build-up: gęstnieją co ósemkę (1,1,2,2,3,3,4,4)
+  const sp=document.getElementById('sparks'); const pts=[];
+  [192,348].forEach(x=>[285,475,660].forEach(y=>pts.push([x,y]))); [375,565].forEach(y=>[70,120,420,470].forEach(x=>pts.push([x,y])));
+  [1,1,2,2,3,3,4,4].forEach((n,k)=>{for(let j=0;j<n;j++){const p=pts[Math.floor(R()*pts.length)];
+    const w=el('g',{transform:`translate(${(p[0]+(R()-.5)*14).toFixed(1)},${(p[1]+(R()-.5)*14).toFixed(1)}) scale(${(.8+R()*.6).toFixed(2)})`},sp); const u=el('use',{href:'#star',class:'bsp',fill:'#D4A23A'},w);
+    u.style.setProperty('--t',(k*.3)+'s');}});
+  // --- gwiazdy i girlanda (nocna polana; żarówki mrugają na zmianę co beat)
+  document.querySelectorAll('.stars').forEach(g=>{for(let i=0;i<9;i++){const c=el('circle',{cx:(20+R()*500).toFixed(0),cy:(170+R()*260).toFixed(0),r:(1+R()*1.3).toFixed(1),fill:'#F2EFEB',class:'twinkle'},g);c.style.animationDelay=(-R()*1.4).toFixed(2)+'s';}});
+  document.querySelectorAll('.garland').forEach(g=>{
+    el('path',{d:'M-20,96 Q135,168 270,118 Q405,168 560,96',fill:'none',stroke:'#2d3b36','stroke-width':2.2},g);
+    for(let i=0;i<11;i++){const t=i/10, x=-20+t*580; const seg=t<.5?t*2:(t-.5)*2; const y0=t<.5?96:118, y1=t<.5?118:96, cy=168;
+      const y=(1-seg)*(1-seg)*y0+2*(1-seg)*seg*cy+seg*seg*y1;
+      const bw=el('g',{transform:`translate(${x.toFixed(1)},${(y+8).toFixed(1)})`},g); const b=el('g',{class:'bulb '+(i%2?'bulbB':'bulbA')},bw);
+      el('circle',{r:17,fill:'url(#glowM)'},b); el('ellipse',{rx:4.5,ry:6,fill:'#F4E6C4'},b); el('rect',{x:-2.5,y:-10,width:5,height:5,fill:'#2d3b36'},b);}});
+  // --- litery „BALANS” z kamieni: litera i ląduje w 12,6 + 0,3·i (ósemki); w outro podskakują jak wizualizer
+  const LET=[
+    [[0,0,20,120,10,0],['M12,0 H30 A27,28 0 0 1 30,56 H12 Z'],['M12,60 H32 A28,30 0 0 1 32,120 H12 Z']],  // B
+    [[9,0,20,122,10,14],[29,0,20,122,10,-14],[8,74,42,16,8,0,'keep']],                          // A
+    [[0,0,20,120,10,0],[0,100,54,20,10,0]],                                                      // L
+    [[9,0,20,122,10,14],[29,0,20,122,10,-14],[8,74,42,16,8,0,'keep']],                          // A
+    [[0,0,18,120,9,0],[40,0,18,120,9,0],[20,-4,18,128,9,-18]],                                   // N
+    [[8,0,46,18,9,0],[0,6,18,56,9,0],[4,51,50,18,9,0,'keep'],[40,58,18,56,9,0],[2,102,48,18,9,0]] // S
+  ];
+  const SC=['#E3CCC1','#A4B8B0','#F2EFEB','#C9D6CF','#D9BFB1','#B7C7C0'];
+  const L=document.getElementById('letters'); let ci=0;
+  el('ellipse',{cx:270,cy:312,rx:215,ry:8,fill:'#000',class:'ltShadow'},L);
+  LET.forEach((pieces,i)=>{const X=71+i*68, Y=185, T=12.6+i*.3;
+    const lt=el('g',{class:'lt'},L); lt.style.setProperty('--th',(16.8+i*.3).toFixed(1)+'s');
+    pieces.forEach((pp,j)=>{ const [x,y,w,h,rx,rot,keep]=pp;
+      const pc=el('g',{class:'pc'+(keep?' keep':'')},lt);
+      pc.style.cssText=`--tf:${(T-.45).toFixed(2)}s;--T:${T.toFixed(1)}s;--fy:${-(420+R()*80).toFixed(0)}px;--dx:${((R()-.5)*60).toFixed(0)}px;--r0:${((R()-.5)*160).toFixed(0)}deg;--dd:${(.5+R()*.3).toFixed(2)}s;--ex:${((R()-.5)*160).toFixed(0)}px;--er:${((R()-.5)*300).toFixed(0)}deg`;
+      const b=el('g',{class:'pcB'},pc); b.style.setProperty('--T',T.toFixed(1)+'s');
+      const tr=rot?`rotate(${rot} ${X+x+w/2} ${Y+y+h/2})`:'';
+      const col=SC[(ci++)%SC.length];
+      if(typeof x==='string'){ el('path',{d:x,transform:`translate(${X},${Y})`,fill:col,stroke:'#2d3b36','stroke-opacity':.25,'stroke-width':1.2},b); el('path',{d:x,transform:`translate(${X},${Y})`,fill:'url(#padShine)'},b); return; }
+      el('rect',{x:X+x,y:Y+y,width:w,height:h,rx:rx,fill:col,transform:tr,stroke:'#2d3b36','stroke-opacity':.25,'stroke-width':1.2},b);
+      el('rect',{x:X+x,y:Y+y,width:w,height:h,rx:rx,fill:'url(#padShine)',transform:tr},b);
+    });
+    // pył przy lądowaniu litery
+    for(let d=0;d<3;d++){const c=el('circle',{class:'pd',cx:X+10+d*18,cy:Y+122,r:4,fill:'#E3CCC1'},L); c.style.setProperty('--T',T.toFixed(1)+'s'); c.style.setProperty('--px',((d-1)*14)+'px');}
+  });
+  // --- CTA: 4 małe pady-kamienie świecące na kolejne beaty
+  const cp=document.getElementById('ctaPads');
+  for(let k=0;k<4;k++){const g=el('g',{transform:`translate(${165+k*56},680)`},cp), p=el('g',{class:'pIn'},g);
+    el('rect',{width:42,height:34,rx:12,fill:cols[[0,1,5,3][k]]},p); el('rect',{width:42,height:34,rx:12,fill:'url(#padShine)'},p);
+    const f=el('rect',{class:'pFl',width:42,height:34,rx:12,fill:'#fff'},p);
+    p.style.setProperty('--pa',`padHit .3s cubic-bezier(.2,.7,.3,1) ${2.4+k*.6}s`); f.style.setProperty('--pf',`padFl .35s ease-out ${2.4+k*.6}s`);}
+};
+</script>
+<svg width="0" height="0" style="position:absolute"><defs><g id="logoSign" fill="currentColor"><g transform="scale(.1) translate(-711,-738)">/*LOGO*/</g></g></defs></svg>
+<script>/*ENGINE*/</script>
+</body>
+</html>
