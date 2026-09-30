@@ -19,7 +19,7 @@ async function run(j){
   }
   await p.close();
   const out=`${DIR}/pliki/${j.id}-${j.k}`;
-  execFileSync(FF,['-y','-loglevel','error','-framerate','30','-i',fdir+'/%04d.png','-c:v','libvpx-vp9','-pix_fmt','yuva420p','-crf','26','-b:v','0','-row-mt','1',out+'.webm']);
+  execFileSync(FF,['-y','-loglevel','error','-framerate','30','-i',fdir+'/%04d.png','-c:v','libvpx-vp9','-pix_fmt','yuva420p','-crf','16','-b:v','0','-row-mt','1',out+'.webm']);
   execFileSync(FF,['-y','-loglevel','error','-framerate','30','-i',fdir+'/%04d.png','-c:v','qtrle','-pix_fmt','argb',out+'.mov']);
   if(!process.env.KEEP) fs.rmSync(fdir,{recursive:true,force:true});
   console.log('done',j.id,j.k,n);
