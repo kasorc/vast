@@ -21,7 +21,7 @@ anims = [
  ('oddech', 'Oddech', 6, True, 'Znak spokojnie oddycha, a od kamieni rozchodzą się kręgi jak na wodzie. Zapętlona – na tło, stories, koniec filmu.',
   f'''<svg class="sign" viewBox="0 0 1500 1500"><ellipse class="ring r1" cx="711" cy="1290" rx="520" ry="95"/><ellipse class="ring r2" cx="711" cy="1290" rx="520" ry="95"/><ellipse class="ring r3" cx="711" cy="1290" rx="520" ry="95"/>
   <g class="breathe fb" fill="currentColor">{base}{head}</g></svg>{WORD}'''),
- ('pieczatka', 'Pieczątka', 12, True, 'Napis krąży dookoła znaku jak na pieczęci. Zapętlona – świetna jako naklejka w rogu wideo.',
+ ('pieczatka', 'Pieczątka', 8, True, 'Napis krąży dookoła znaku jak na pieczęci. Zapętlona – świetna jako naklejka w rogu wideo.',
   f'''<svg class="ring-text" viewBox="0 0 1080 1080"><defs><path id="circ" d="M540,540 m-400,0 a400,400 0 1,1 800,0 a400,400 0 1,1 -800,0"/></defs>
   <g class="spin"><text><textPath href="#circ" textLength="2500" lengthAdjust="spacing">SHE BALANCE · WOMEN CAMP · HEALTHY · NETWORKING · SELF-DEVELOPMENT · </textPath></text></g>
   <circle cx="540" cy="540" r="470" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="540" cy="540" r="352" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>

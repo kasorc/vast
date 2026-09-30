@@ -1,0 +1,49 @@
+  /* ===== postacie w całej sylwetce: stawy i pozy ===== */
+  .fig .armL{transform-origin:52px 238px;transform:rotate(7deg)} .fig .armR{transform-origin:168px 238px;transform:rotate(-7deg)}
+  .figB .armL{transform-origin:50px 238px} .figB .armR{transform-origin:170px 238px}
+  .fig .foreL{transform-origin:52px 342px;transform:rotate(-6deg)} .fig .foreR{transform-origin:168px 342px;transform:rotate(6deg)}
+  .figB .foreL{transform-origin:50px 342px} .figB .foreR{transform-origin:170px 342px}
+  .fig .legL,.fig .thighL{transform-origin:86px 436px} .fig .legR,.fig .thighR{transform-origin:134px 436px}
+  .fig .shinL{transform-origin:86px 566px} .fig .shinR{transform-origin:134px 566px}
+  .fig .body{transform-origin:110px 712px}
+  .fig .prop,.fig .pack{display:none}
+  .fig.has-mug .mug,.fig.has-notes .notes,.fig.has-map .map,.fig.has-pack .pack{display:inline}
+  .fig .armL,.fig .armR,.fig .foreL,.fig .foreR,.fig .thighL,.fig .thighR,.fig .shinL,.fig .shinR,.fig .legL,.fig .legR{transition:transform .45s cubic-bezier(.4,0,.2,1)}
+  /* oddech w spoczynku */
+  .fig .body{animation:figBreath 3.2s ease-in-out infinite}
+  @keyframes figBreath{50%{transform:translateY(-2px) scaleY(1.004)}}
+  /* chód */
+  .fig.walk .body{animation:figBob .8s linear infinite}
+  @keyframes figBob{0%,50%,100%{transform:translateY(0)}25%,75%{transform:translateY(-7px)}}
+  .fig.walk .legL{animation:stepL .8s ease-in-out infinite} .fig.walk .legR{animation:stepL .8s ease-in-out infinite;animation-delay:-.4s}
+  @keyframes stepL{0%,55%,100%{transform:translateY(0)}25%{transform:translateY(-20px)}}
+  .fig.walk .shinL{animation:kneeL .8s ease-in-out infinite} .fig.walk .shinR{animation:kneeL .8s ease-in-out infinite;animation-delay:-.4s}
+  @keyframes kneeL{0%,55%,100%{transform:scaleY(1)}25%{transform:scaleY(.86)}}
+  .fig.walk .armL{animation:swingL .8s ease-in-out infinite alternate;animation-delay:-.4s} .fig.walk .armR{animation:swingR .8s ease-in-out infinite alternate}
+  @keyframes swingL{from{transform:rotate(3deg)}to{transform:rotate(15deg)}} @keyframes swingR{from{transform:rotate(-3deg)}to{transform:rotate(-15deg)}}
+  /* machanie prawą ręką */
+  .fig.wave .armR{animation:none;transform:rotate(-145deg)} .fig.wave .foreR{animation:waveF .42s ease-in-out infinite alternate}
+  @keyframes waveF{from{transform:rotate(-8deg)}to{transform:rotate(-42deg)}}
+  /* radość – obie ręce w górę + podskok */
+  .fig.cheer .armL{transform:rotate(150deg)} .fig.cheer .armR{transform:rotate(-150deg)} .fig.cheer .foreL{transform:rotate(18deg)} .fig.cheer .foreR{transform:rotate(-18deg)}
+  .fig.cheer .body{animation:jump .6s cubic-bezier(.3,0,.3,1) infinite}
+  @keyframes jump{0%,100%{transform:translateY(0) scaleY(1)}10%{transform:translateY(4px) scaleY(.97)}45%{transform:translateY(-38px) scaleY(1.02)}80%{transform:translateY(0) scaleY(.98)}}
+  /* kubek przy ustach / notes */
+  .fig.hold .armR{animation:none;transform:rotate(14deg)} .fig.hold .foreR{animation:sip 3s ease-in-out infinite}
+  @keyframes sip{0%,100%{transform:rotate(128deg)}45%,60%{transform:rotate(142deg)}}
+  .figB.hold .armR{transform:rotate(12deg)}
+  .fig.holdL .armL{transform:rotate(-14deg)} .fig.holdL .foreL{transform:rotate(-120deg)}
+  /* siedzenie (widok z przodu – uda skrócone) */
+  .fig.sit .thighL,.fig.sit .thighR{transform:scaleY(.26)} .fig.sit .shinL,.fig.sit .shinR{transform:translateY(-102px)}
+  .fig.sit .thighL{transform:scaleY(.26) rotate(8deg)} .fig.sit .thighR{transform:scaleY(.26) rotate(-8deg)}
+  /* joga: ręce nad głową, pozycja drzewa */
+  .fig.yoga .armL{transform:rotate(168deg)} .fig.yoga .armR{transform:rotate(-168deg)} .fig.yoga .foreL{transform:rotate(14deg)} .fig.yoga .foreR{transform:rotate(-14deg)}
+  .fig.yoga .thighR{transform:rotate(-70deg)} .fig.yoga .shinR{transform:translate(122px,-86px) rotate(69deg)}
+  .fig.yoga .body{animation:yogaSway 3s ease-in-out infinite}
+  @keyframes yogaSway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+  /* rozciąganie w bok */
+  .fig.stretch .armL{transform:rotate(160deg)} .fig.stretch .armR{transform:rotate(-40deg)} .fig.stretch .body{animation:none;transform:rotate(-8deg)}
+  /* wskazywanie w bok */
+  .fig.point .armR{transform:rotate(-95deg)} .fig.point .foreR{transform:rotate(-10deg)}
+  /* ręce za siebie – wiatr */
+  .fig.windy .armL{transform:rotate(40deg)} .fig.windy .armR{transform:rotate(-25deg)} .fig.windy .foreL{transform:rotate(30deg)}

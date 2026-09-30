@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SheBalance – wzór animacji</title>
+<style>
+  /*FONTS*/
+  :root{--page:#F4F2EF;--ink:#333;--muted:#6B6B6B}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Mulish",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+  .stage-wrap{width:min(100%, calc((100vh - 110px) * 9 / 16));aspect-ratio:9/16;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+  svg#stage{width:100%;height:100%;display:block}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .controls button{font:inherit;background:none;border:1px solid var(--muted);color:var(--ink);padding:6px 14px;cursor:pointer;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .dots{display:flex;gap:6px}.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:1px solid var(--muted);background:none}.dots button.on{background:var(--ink)}
+  .bar{width:min(100%,360px);height:3px;background:rgba(127,127,127,.25)}.bar i{display:block;height:100%;width:0;background:var(--ink)}
+  body.rec{padding:0;gap:0} body.rec .stage-wrap{width:100vw;height:100vh;box-shadow:none} body.rec .controls,body.rec .bar{display:none}
+  /*BASE_CSS*/
+  /*FIG_CSS*/
+  /* --- style tej animacji --- */
+  .walkBg{animation:pan 4s linear infinite} @keyframes pan{to{transform:translateX(-540px)}}
+</style>
+</head>
+<body>
+<div class="stage-wrap">
+<svg id="stage" viewBox="0 0 540 960">
+  <defs>/*DEFS*/</defs>
+  <rect id="bg" width="540" height="960" fill="#F2EFEB"/>
+  <circle id="wipe" cx="270" cy="480" r="1150" fill="#F2EFEB"/>
+  <g id="cam">
+    <g class="scene" data-s="spacer">
+      <g class="walkBg"><rect x="0" y="760" width="1080" height="200" fill="#A4B8B0"/></g>
+      <g transform="translate(60,380) scale(.52)">/*FIG_A:walk*/</g>
+      <g transform="translate(280,380) scale(.52)">/*FIG_B:walk has-pack*/</g>
+      <text x="270" y="200" font-size="56" text-anchor="middle" class="serif split" fill="#333">spacer</text>
+    </g>
+    <g class="scene" data-s="taras">
+      <g transform="translate(60,380) scale(.52)">/*FIG_A:hold has-mug*/</g>
+      <g transform="translate(280,380) scale(.52)">/*FIG_B:wave*/</g>
+      <use href="#logoSign" x="270" y="200" style="color:#58756C"/>
+    </g>
+  </g>
+  <rect width="540" height="960" filter="url(#paper)" opacity=".18" style="mix-blend-mode:multiply" pointer-events="none"/>
+</svg>
+</div>
+<div class="bar"><i id="prog"></i></div>
+<div class="controls"><button id="play">Pauza</button><button id="restart">Od początku</button><div class="dots" id="dots"></div></div>
+<script>
+window.SCENES=[{id:'spacer',d:2,bg:'#F2EFEB'},{id:'taras',d:2,bg:'#E3CCC1',o:[540,0]}];
+</script>
+<svg width="0" height="0" style="position:absolute"><defs><g id="logoSign" fill="currentColor"><g transform="scale(.1) translate(-711,-738)">/*LOGO*/</g></g></defs></svg>
+<script>/*ENGINE*/</script>
+</body>
+</html>

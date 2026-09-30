@@ -1,0 +1,82 @@
+  /* typografia */
+  .caps{font-family:"Mulish",sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.22em}
+  .thin{font-family:"Forum",Georgia,serif;letter-spacing:.14em}
+  .serif{font-family:"Forum",Georgia,serif}
+
+  /* tło: przejście kołem */
+  #wipe{transform-origin:270px 480px;transform:scale(0)}
+  #wipe.go{animation:wipe .6s cubic-bezier(.7,0,.25,1) both}
+  @keyframes wipe{from{transform:scale(0)}to{transform:scale(1)}}
+  #cam{transform-origin:270px 520px}
+  #cam.go{animation:zoom 3s linear both}
+  @keyframes zoom{from{transform:scale(1)}to{transform:scale(1.045)}}
+
+  /* sceny */
+  .scene{opacity:0;transition:opacity .3s ease;pointer-events:none}
+  .scene.active{opacity:1}
+  .scene.active .rise{animation:rise .6s cubic-bezier(.2,.9,.2,1) both}
+  .scene.active .d1{animation-delay:.12s}.scene.active .d2{animation-delay:.28s}.scene.active .d3{animation-delay:.45s}.scene.active .d4{animation-delay:.65s}.scene.active .d5{animation-delay:.85s}
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .scene.active .ch{transform-box:fill-box;transform-origin:50% 70%;animation:chIn .55s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(var(--d0,0s) + var(--i) * 38ms)}
+  @keyframes chIn{from{opacity:0;transform:translateY(26px) scale(.3) rotate(-14deg)}to{opacity:1;transform:none}}
+  .scene.active .pop{transform-box:fill-box;transform-origin:center;animation:pop .55s cubic-bezier(.3,1.7,.5,1) both}
+  @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+  .scene.active .draw{stroke-dasharray:1;animation:draw 1s ease both}
+  @keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  .scene.active .fly{animation:fly .7s cubic-bezier(.2,1.2,.3,1) both}
+  @keyframes fly{from{transform:translate(var(--fx),var(--fy)) rotate(var(--fr,0deg)) scale(.4);opacity:0}to{transform:none;opacity:1}}
+  .scene.active .burst{transform-box:fill-box;transform-origin:center;animation:burst 1.1s ease-out both}
+  @keyframes burst{from{transform:scale(.2);opacity:1;stroke-width:6}to{transform:scale(3.2);opacity:0;stroke-width:1}}
+  .scene.active .conf{animation:conf 1.8s cubic-bezier(.1,.7,.3,1) both}
+  @keyframes conf{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--dr));opacity:0}}
+  .scene.active .logoPop{transform-box:fill-box;transform-origin:center;animation:logoPop .8s cubic-bezier(.3,1.5,.5,1) both}
+  @keyframes logoPop{from{transform:scale(.2) rotate(-25deg);opacity:0}to{transform:none;opacity:1}}
+  .scene.active .sunRise{animation:sunRise 1.4s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes sunRise{from{transform:translateY(280px)}to{transform:none}}
+  .scene.active .grow{transform-box:fill-box;transform-origin:50% 100%;animation:grow .9s cubic-bezier(.3,1.3,.5,1) both}
+  @keyframes grow{from{transform:scaleY(0)}to{transform:none}}
+  .scene.active .mtn{animation:mtn 1s cubic-bezier(.2,.9,.2,1) both}
+  @keyframes mtn{from{transform:translateY(160px)}to{transform:none}}
+
+  /* ambient */
+  .float{animation:float 2.4s ease-in-out infinite alternate}
+  @keyframes float{from{transform:translateY(-6px) rotate(-4deg)}to{transform:translateY(7px) rotate(4deg)}}
+  .spin{animation:spin 16s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .twinkle{transform-box:fill-box;transform-origin:center;animation:twinkle 1.4s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.25;transform:scale(.55)}50%{opacity:1;transform:scale(1)}}
+  .steam{animation:steam 1.8s ease-in-out infinite;opacity:0}
+  @keyframes steam{0%{opacity:0;transform:translateY(6px)}40%{opacity:.85}100%{opacity:0;transform:translateY(-24px)}}
+  .heart{animation:heart 2.2s ease-out infinite;opacity:0}
+  @keyframes heart{0%{opacity:0;transform:translateY(0) scale(.4)}20%{opacity:1;transform:translateY(-20px) scale(1)}100%{opacity:0;transform:translateY(-170px) scale(.8)}}
+  .leafFall{animation:fall linear infinite}
+  @keyframes fall{from{transform:translate(0,-60px) rotate(0)}50%{transform:translate(40px,480px) rotate(200deg)}to{transform:translate(-20px,1020px) rotate(400deg)}}
+  .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(1)}45%{transform:scale(1.08)}}
+  .flame{transform-box:fill-box;transform-origin:50% 100%;animation:flame .35s ease-in-out infinite alternate}
+  @keyframes flame{from{transform:scaleY(.86) skewX(-4deg)}to{transform:scaleY(1.1) skewX(4deg)}}
+  .dust{animation:dust linear infinite}
+  @keyframes dust{0%{transform:translateY(0);opacity:0}15%{opacity:.7}85%{opacity:.7}100%{transform:translateY(-260px);opacity:0}}
+
+  /* postacie */
+  .pos{transition:transform .75s cubic-bezier(.6,0,.2,1)}
+  .lean{transition:transform .6s ease;transform-origin:110px 300px}
+  .hop{transform-origin:110px 300px}
+  .hop.go{animation:hop .55s cubic-bezier(.3,0,.3,1) both}
+  .charB .hop.go, .posB .hop.go{animation-delay:.08s}
+  @keyframes hop{0%{transform:none}30%{transform:translateY(-26px) scale(.98,1.03)}60%{transform:translateY(0) scale(1.03,.97)}100%{transform:none}}
+  .breathe{animation:breathe 3s ease-in-out infinite}
+  @keyframes breathe{50%{transform:translateY(-2.5px)}}
+  .tilt{transform-origin:110px 190px;animation:tilt 4.2s ease-in-out infinite}
+  @keyframes tilt{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.8deg) translateY(-2px)}}
+  .charB .tilt{animation-duration:4.8s;animation-delay:-1.6s}
+  .sway{transform-origin:110px 60px;animation:sway 3.6s ease-in-out infinite}
+  @keyframes sway{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(1.7deg)}}
+  .eyes{transform-origin:110px 131px;animation:blink 3.4s infinite}
+  .charA .eyes{transform-origin:110px 132px}
+  .charB .eyes{animation-duration:3.9s;animation-delay:-1.3s}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
+  .pupils{animation:look 6s ease-in-out infinite}
+  @keyframes look{0%,35%,100%{transform:none}45%,60%{transform:translateX(2.5px)}70%,85%{transform:translateX(-2px)}}
+  .smile{transform-origin:110px 168px;animation:smile 4s ease-in-out infinite}
+  @keyframes smile{0%,55%,100%{transform:scale(1)}65%,90%{transform:scale(1.12,1.25)}}

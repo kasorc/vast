@@ -8,7 +8,7 @@ const jobs=[]; for(const a of list) for(const k of ['bialy','zielony']) if(!only
 fs.mkdirSync(DIR+'/pliki',{recursive:true});
 const b = await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
 async function run(j){
-  const p = await b.newPage({viewport:{width:1080,height:1080}});
+  const p = await b.newPage({viewport:{width:1080,height:1080},deviceScaleFactor:2});
   await p.goto(`file://${DIR}/animacje.html?render=${j.id}&kolor=${j.k}`);
   await p.evaluate(()=>document.fonts.ready); await p.waitForTimeout(300);
   const fdir=`frames/${j.id}-${j.k}`; fs.rmSync(fdir,{recursive:true,force:true}); fs.mkdirSync(fdir,{recursive:true});
@@ -19,10 +19,10 @@ async function run(j){
   }
   await p.close();
   const out=`${DIR}/pliki/${j.id}-${j.k}`;
-  execFileSync(FF,['-y','-loglevel','error','-framerate','30','-i',fdir+'/%04d.png','-c:v','libvpx-vp9','-pix_fmt','yuva420p','-crf','16','-b:v','0','-row-mt','1',out+'.webm']);
-  execFileSync(FF,['-y','-loglevel','error','-framerate','30','-i',fdir+'/%04d.png','-c:v','qtrle','-pix_fmt','argb',out+'.mov']);
+  execFileSync(FF,['-y','-loglevel','error','-framerate','30','-i',fdir+'/%04d.png','-c:v','libvpx-vp9','-pix_fmt','yuva420p','-crf','14','-b:v','0','-row-mt','1',out+'.webm']);
+  execFileSync(FF,['-y','-loglevel','error','-framerate','30','-i',fdir+'/%04d.png','-c:v','png','-pix_fmt','rgba',out+'.mov']);
   if(!process.env.KEEP) fs.rmSync(fdir,{recursive:true,force:true});
   console.log('done',j.id,j.k,n);
 }
-const q=jobs.filter(j=>!fs.existsSync(DIR+'/pliki/'+j.id+'-'+j.k+'.mov')); await Promise.all([0,1].map(async()=>{while(q.length) await run(q.shift());}));
+const q=[...jobs]; await Promise.all([0,1].map(async()=>{while(q.length) await run(q.shift());}));
 await b.close();

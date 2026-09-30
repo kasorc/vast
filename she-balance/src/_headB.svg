@@ -1,0 +1,55 @@
+<g class="tilt">
+      <!-- pasma z przodu, na ramionach -->
+      <path d="M64,112 C56,140 60,160 70,178 C78,194 66,208 62,224 C58,242 70,256 64,274 C56,264 46,252 44,238 C40,218 52,202 46,184 C40,164 44,136 52,116 Z" fill="url(#hairB)"/>
+      <path d="M156,112 C164,140 160,160 150,178 C142,194 154,208 158,224 C162,242 150,256 156,274 C164,264 174,252 176,238 C180,218 168,202 174,184 C180,164 176,136 168,116 Z" fill="url(#hairB)"/>
+      <path d="M56,196 q8,14 0,28 q-6,12 2,26 M164,196 q-8,14 0,28 q6,12 -2,26" fill="none" stroke="#d8a86c" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>
+      <!-- twarz -->
+      <path d="M63,108 C63,70 157,70 157,108 C158,138 150,160 136,174 C126,184 118,189 110,189 C102,189 94,184 84,174 C70,160 62,138 63,108 Z" fill="#f3cdb3"/>
+      <path d="M65,124 C68,152 80,172 96,184 C102,188 106,189 110,189 C96,180 80,160 74,126 Z" fill="#e6b597" opacity=".55"/>
+      <path d="M72,140 Q80,150 92,150" fill="none" stroke="#e6b597" stroke-width="3" opacity=".5" stroke-linecap="round"/>
+      <path d="M148,140 Q140,150 128,150" fill="none" stroke="#e6b597" stroke-width="3" opacity=".5" stroke-linecap="round"/>
+      <!-- brwi -->
+      <path d="M77,117 Q88,110 100,114" fill="none" stroke="#6b4a33" stroke-width="3" stroke-linecap="round"/>
+      <path d="M120,114 Q132,110 143,117" fill="none" stroke="#6b4a33" stroke-width="3" stroke-linecap="round"/>
+      <!-- oczy -->
+      <path d="M79,126 Q89,120 99,126 M121,126 Q131,120 141,126" fill="none" stroke="#dca98d" stroke-width="1.4" stroke-linecap="round"/>
+      <g class="eyes">
+        <path d="M78,133 Q88,125 100,132 Q89,138 78,133 Z" fill="#fff"/>
+        <path d="M142,133 Q132,125 120,132 Q131,138 142,133 Z" fill="#fff"/>
+        <g class="pupils">
+          <circle cx="89" cy="131.5" r="4.6" fill="#7590a8"/><circle cx="89" cy="131.5" r="4.6" fill="none" stroke="#4b6178" stroke-width="1"/>
+          <circle cx="89" cy="131.5" r="1.9" fill="#1c232b"/><circle cx="90.6" cy="130" r="1.2" fill="#fff"/>
+          <circle cx="131" cy="131.5" r="4.6" fill="#7590a8"/><circle cx="131" cy="131.5" r="4.6" fill="none" stroke="#4b6178" stroke-width="1"/>
+          <circle cx="131" cy="131.5" r="1.9" fill="#1c232b"/><circle cx="132.6" cy="130" r="1.2" fill="#fff"/>
+        </g>
+        <path d="M101,132 Q89,121 77,132 L73,129.5" fill="none" stroke="#231a15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M119,132 Q131,121 143,132 L147,129.5" fill="none" stroke="#231a15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M80,135 Q89,139 98,135 M122,135 Q131,139 140,135" fill="none" stroke="#b98b78" stroke-width="1" opacity=".7"/>
+      </g>
+      <!-- nos -->
+      <path d="M111,124 Q110,142 104,151 Q109,156 117,153" fill="none" stroke="#d99e80" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M106,154 q-3,-1 -4,-3 M116,154 q3,-1 4,-3" fill="none" stroke="#d99e80" stroke-width="1.2" stroke-linecap="round"/>
+      <!-- piegi i róż -->
+      <circle cx="84" cy="152" r="10" fill="#ec9a88" opacity=".2"/><circle cx="136" cy="152" r="10" fill="#ec9a88" opacity=".2"/>
+      <g fill="#b97a5a" opacity=".5">
+        <circle cx="96" cy="144" r="1"/><circle cx="100" cy="148" r=".9"/><circle cx="93" cy="150" r="1.1"/><circle cx="88" cy="146" r=".8"/><circle cx="98" cy="153" r=".8"/><circle cx="84" cy="150" r=".9"/>
+        <circle cx="124" cy="144" r="1"/><circle cx="120" cy="148" r=".9"/><circle cx="127" cy="150" r="1.1"/><circle cx="132" cy="146" r=".8"/><circle cx="122" cy="153" r=".8"/><circle cx="136" cy="150" r=".9"/>
+        <circle cx="108" cy="140" r=".8"/><circle cx="113" cy="143" r=".7"/>
+      </g>
+      <!-- usta: delikatny, lekko asymetryczny uśmiech -->
+      <g class="smile">
+        <path d="M97,167 Q104,163.5 110,165.5 Q116,163 124,164.5 Q118,174 108,173.5 Q100,172.5 97,167 Z" fill="#cf8f88"/>
+        <path d="M96,167 Q110,170.5 125,164" fill="none" stroke="#b36e6e" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M127,161 q2,3 0.5,6" fill="none" stroke="#dca98d" stroke-width="1.2" stroke-linecap="round"/>
+      </g>
+      <!-- włosy na czubku głowy -->
+      <path d="M58,114 C55,70 86,46 112,48 C140,48 167,72 162,114 C160,98 150,84 134,78 C122,74 112,74 104,76 C92,76 78,82 70,92 C64,100 60,106 58,114 Z" fill="url(#hairB)"/>
+      <path d="M104,76 Q100,60 92,50 M104,76 Q112,58 126,50" fill="none" stroke="#5e3a22" stroke-width="1.6" opacity=".45" stroke-linecap="round"/>
+      <!-- grzywka curtain bangs -->
+      <path d="M92,104 C89,114 83,128 74,150 L79,150 C87,130 93,116 96,104 Z M126,104 C131,115 139,130 148,150 L143,150 C135,132 128,117 122,104 Z" fill="#d9a585" opacity=".55"/>
+      <path d="M106,74 C100,84 95,94 92,104 C89,114 83,128 72,150 C61,139 55,121 58,104 C62,86 84,70 106,74 Z" fill="url(#hairB)"/>
+      <path d="M106,74 C114,82 120,94 126,104 C131,115 139,130 150,150 C161,139 165,120 162,104 C158,86 130,70 106,74 Z" fill="url(#hairB)"/>
+      <path d="M92,104 q-3,10 -8,20 M126,104 q3,10 8,20 M72,150 q-2,-6 -1,-12 M150,150 q2,-6 1,-12" fill="none" stroke="#6a4328" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+      <path d="M100,80 Q92,96 86,116 M92,80 Q76,96 70,132 M112,80 Q122,94 130,114 M122,78 Q142,94 150,130" fill="none" stroke="#a8743f" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
+      <path d="M100,50 q-6,-8 -2,-14 M118,48 q6,-6 4,-12" fill="none" stroke="#6a4328" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
+    </g>

@@ -40,9 +40,9 @@
     --c:#fff;--a:#E3CCC1;--glint:#F6E7C8;color:var(--c)}
   .k-zielony .stage{--c:#58756C;--a:#E3CCC1;--glint:#D9B98A}
   .stage svg.sign{position:absolute;left:260px;top:100px;width:560px;height:560px;overflow:visible}
-  .word{position:absolute;left:0;right:0;top:700px;text-align:center;font-family:"Forum",Georgia,serif;font-size:96px;letter-spacing:.16em;line-height:1;white-space:nowrap;padding-left:.16em}
-  .sub{position:absolute;left:0;right:0;top:830px;text-align:center;font-family:"Mulish",sans-serif;font-weight:300;font-size:28px;letter-spacing:.5em;padding-left:.5em;text-transform:uppercase}
-  .tagline{position:absolute;left:0;right:0;top:900px;text-align:center;font-family:"Mulish",sans-serif;font-weight:300;font-size:26px;letter-spacing:.12em}
+  .word{position:absolute;left:0;right:0;top:700px;text-align:center;font-family:"Forum",Georgia,serif;font-size:104px;letter-spacing:.14em;line-height:1;white-space:nowrap;padding-left:.14em;-webkit-text-stroke:.7px currentColor;text-rendering:geometricPrecision}
+  .sub{position:absolute;left:0;right:0;top:830px;text-align:center;font-family:"Mulish",sans-serif;font-weight:600;font-size:34px;letter-spacing:.42em;padding-left:.42em;text-transform:uppercase}
+  .tagline{position:absolute;left:0;right:0;top:905px;text-align:center;font-family:"Mulish",sans-serif;font-weight:500;font-size:31px;letter-spacing:.1em}
   .stage *{animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,.8,.2,1)}
   .fb{transform-box:fill-box}
 
@@ -54,7 +54,7 @@
   @keyframes pie{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
   .a-rysowanie .word{animation:track 1.4s 2.6s both}
   .a-rysowanie .sub{animation:fadeUp 1s 3.3s both}
-  @keyframes track{from{opacity:0;letter-spacing:.02em}to{opacity:1;letter-spacing:.16em}}
+  @keyframes track{from{opacity:0;letter-spacing:.02em}to{opacity:1;letter-spacing:.14em}}
   @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 
   /* 2 · BALANS */
@@ -85,11 +85,11 @@
   /* 4 · PIECZĄTKA (pętla 12 s) */
   .a-pieczatka svg.sign{left:350px;top:330px;width:380px;height:380px}
   .a-pieczatka .ring-text{position:absolute;inset:0;width:1080px;height:1080px}
-  .a-pieczatka .spin{transform-origin:540px 540px;animation:spin 12s infinite linear}
+  .a-pieczatka .spin{transform-origin:540px 540px;animation:spin 8s infinite linear}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .a-pieczatka .ring-text text{font-family:"Mulish",sans-serif;font-weight:400;font-size:40px;letter-spacing:.3em;fill:currentColor}
+  .a-pieczatka .ring-text text{font-family:"Mulish",sans-serif;font-weight:600;font-size:42px;letter-spacing:.28em;fill:currentColor}
   .a-pieczatka .word,.a-pieczatka .sub,.a-pieczatka .tagline{display:none}
-  .a-pieczatka .sign{animation:bob 6s infinite ease-in-out}
+  .a-pieczatka .sign{animation:bob 4s infinite ease-in-out}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
   /* 5 · LITERY */
@@ -98,7 +98,7 @@
   .a-litery .word span{display:inline-block;animation:letterIn .9s both}
   @keyframes letterIn{from{opacity:0;transform:translateY(50px) rotate(8deg);filter:blur(14px)}to{opacity:1;transform:none;filter:none}}
   .a-litery .sub{animation:track2 1.2s 2.7s both}
-  @keyframes track2{from{opacity:0;letter-spacing:.1em}to{opacity:1;letter-spacing:.5em}}
+  @keyframes track2{from{opacity:0;letter-spacing:.1em}to{opacity:1;letter-spacing:.42em}}
   .a-litery .tagline{animation:fadeUp 1s 3.3s both}
 
   /* 6 · WSCHÓD */
@@ -120,7 +120,7 @@
   .a-polysk .gl{fill:var(--glint)}
   .a-polysk .spark{fill:var(--glint);transform-origin:50% 50%;animation:spark 4s infinite}
   @keyframes spark{0%,38%{transform:scale(0) rotate(0);opacity:0}46%{transform:scale(1) rotate(45deg);opacity:1}60%,100%{transform:scale(0) rotate(90deg);opacity:0}}
-  .a-polysk .word{background:linear-gradient(100deg,var(--c) 40%,var(--glint) 50%,var(--c) 60%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:wordGlint 4s infinite}
+  .a-polysk .word{background:linear-gradient(100deg,var(--c) 40%,var(--glint) 50%,var(--c) 60%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:0;animation:wordGlint 4s infinite}
   @keyframes wordGlint{0%,20%{background-position:100% 0}65%,100%{background-position:0 0}}
 
   /* 8 · LIŚCIE */
