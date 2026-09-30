@@ -746,7 +746,7 @@ def flight(pts, t0, dur, n=18, ease_pow=1.6):
 def sc_wiatr():
     T = 3.6; s = []
     FEET, SA, SB, SC = 830, 175, 365, .72
-    s.append('<g class="cam c7">')
+    s.append('<g class="punch"><g class="cam c7">')
     s.append('<rect x="-400" y="-800" width="1400" height="2200" fill="url(#gSkyW)"/>')
     s.append('<circle cx="120" cy="300" r="260" fill="url(#gGlow)" opacity=".8"/>')
     s.append(ridge(-400, 1000, [(-300, 120), (-120, 40), (60, 110), (190, -20), (300, 50), (430, -130), (520, -50), (620, -100), (780, 60)], 1200, '#C9D6CF'))
@@ -860,7 +860,7 @@ def sc_wiatr():
     s.append(FIG('A', 'wA', SA, FEET, SC, wrap='wLeanA'))
     s.append(''.join(fl) + ''.join(cd))
     s.append(grass(-200, 760, 900, 17, 'g7', h=(30, 60)))
-    s.append(grass(-200, 760, 1010, 18, 'g7', h=(40, 80), col='#4E6961'))
+    s.append(grass(-200, 760, 1010, 18, 'g7', h=(40, 80), col='#4E6961') + '</g>')
     A('.g7', K([(0, 'transform:rotate(0)'), (.3, 'transform:rotate(-3deg)'), (.5, 'transform:rotate(24deg)'), (.7, 'transform:rotate(14deg)'), (.9, 'transform:rotate(26deg)'),
                 (1.2, 'transform:rotate(15deg)'), (1.5, 'transform:rotate(20deg)'), (2.0, 'transform:rotate(6deg)'), (T, 'transform:rotate(2deg)')]))
     s.append('</g>')
@@ -897,6 +897,12 @@ def sc_wiatr():
     S('.figB .body > .tilt{transform-origin:110px 70px}')
     A('.hopB', K([(0, 'transform:none'), (1.85, 'transform:none'), (1.98, 'transform:translate(0,3px) scale(1.04,.95)'), (2.18, 'transform:translate(-18px,-44px) scale(.98,1.03)', 'cubic-bezier(.2,.7,.4,1)'),
                   (2.4, 'transform:translate(-36px,0)', 'cubic-bezier(.6,0,.9,.5)'), (2.48, 'transform:translate(-36px,0) scale(1.05,.93)'), (2.62, 'transform:translate(-36px,0)', EIN)]))
+    # uderzenie przy pierwszym pęknięciu: zbliżenie + biały błysk + mocniejsze ziarno
+    S('.punch{transform-origin:270px 400px}')
+    A('.punch', K([(0, 'transform:scale(1)'), (.5, 'transform:scale(1)'), (.56, 'transform:scale(1.08)', 'ease-out'), (.9, 'transform:scale(1)', EIO)]))
+    s.append('<rect class="snapFl" width="540" height="960" fill="#fff"/><rect class="snapGr" width="540" height="960" filter="url(#paper)" style="mix-blend-mode:multiply"/>')
+    A('.snapFl', K([(0, 'opacity:0'), (.54, 'opacity:0'), (.57, 'opacity:.6'), (.66, 'opacity:0', 'ease-out')]))
+    A('.snapGr', K([(0, 'opacity:0'), (.54, 'opacity:0'), (.57, 'opacity:.45'), (.66, 'opacity:0')]))
     # kamera: zoom-out + mikrowstrząsy, potem pan w górę za liśćmi
     S('.c7{transform-origin:270px 480px}')
     cam = [(0, 'transform:scale(1) translate(0px,0px)'), (.3, 'transform:scale(1) translate(0px,0px)')]
@@ -929,7 +935,8 @@ SVG['wiatr'] = sc_wiatr()
 def leaf_mask(mid, t0, cx, cy, r0, r1, dur=.48, s0=.3):
     """Maska liścia: okno w kształcie liścia rośnie; wokół niego złoty liść (większy) – przejście „złotym liściem”."""
     g = uid('lm')
-    A('.' + g, K([(0, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(%s)' % (cx, cy, r0, s0)), (t0, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(%s)' % (cx, cy, r0, s0)),
+    pre = [(0, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(0)' % (cx, cy, r0)), (t0 - .01, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(0)' % (cx, cy, r0))] if t0 > 0 else []
+    A('.' + g, K(pre + [(t0, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(%s)' % (cx, cy, r0, s0)),
                   (t0 + dur, 'transform:translate(270px,480px) rotate(%ddeg) scale(52)' % r1, 'cubic-bezier(.5,0,.75,.35)')]))
     m = ('<mask id="%s" maskUnits="userSpaceOnUse" x="0" y="0" width="540" height="960"><rect width="540" height="960" fill="#000"/>'
          '<g class="%s"><use href="#beech" fill="#fff"/></g></mask>') % (mid, g)
@@ -945,7 +952,7 @@ def sc_montaz():
     s.append('<rect width="540" height="960" fill="url(#gGold)"/><rect class="gSh" x="-300" y="-200" width="260" height="1400" fill="url(#gSheen)" opacity=".7" transform="rotate(18)"/>')
     A('.gSh', K([(0, 'transform:translateX(0) rotate(18deg)'), (.4, 'transform:translateX(760px) rotate(18deg)', ESOFT)]))
     # ---------- 4a RANO: RUCH ----------
-    m1, rim1, gold1 = leaf_mask('mM1', 0, 270, 480, -70, 30, dur=.42, s0=3)
+    m1, rim1, gold1 = leaf_mask('mM1', 0, 270, 480, -70, 30, dur=.42, s0=5)
     a = ['<g class="cam m1c">']
     a.append('<rect x="-100" y="-100" width="760" height="1160" fill="url(#gSkyDawn)"/>')
     a.append('<circle cx="410" cy="520" r="230" fill="url(#gGlow)"/><circle cx="410" cy="540" r="34" fill="#F7E7BE"/>')
@@ -1279,11 +1286,11 @@ def sc_logo():
       '@keyframes wRise2{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}' % EIN)
     s.append('<g transform="translate(270,648)"><g class="cta"><g class="ctaP"><rect x="-232" y="-32" width="464" height="64" rx="32" fill="%s"/>'
              '<text x="0" y="10" font-size="28" text-anchor="middle" class="capT2" fill="%s" style="letter-spacing:.02em">Zapisz się → shebalance.pl</text></g></g></g>' % (DKG, CREAM))
-    A('.cta', K([(0, 'transform:scale(0);opacity:0'), (1.5, 'transform:scale(0);opacity:0'), (1.76, 'transform:scale(1.04);opacity:1', 'cubic-bezier(.3,1.4,.5,1)'), (1.86, 'transform:scale(1)')]))
-    A('.ctaP', 'ctaPulse .9s ease-in-out 2.0s infinite')
+    A('.cta', K([(0, 'transform:scale(0);opacity:0'), (1.3, 'transform:scale(0);opacity:0'), (1.52, 'transform:scale(1.04);opacity:1', 'cubic-bezier(.3,1.4,.5,1)'), (1.6, 'transform:scale(1)')]))
+    A('.ctaP', 'ctaPulse .9s ease-in-out 1.8s infinite')
     S('@keyframes ctaPulse{0%,100%{transform:scale(1)}40%{transform:scale(1.05)}}')
     s.append('<text class="hnd" x="270" y="724" font-size="20" text-anchor="middle" fill="%s" style="font-family:Mulish,sans-serif;font-weight:600;letter-spacing:.04em">@shebalance_camp</text>' % BROWN)
-    A('.hnd', K([(0, 'opacity:0;transform:translateY(8px)'), (1.9, 'opacity:0;transform:translateY(8px)'), (2.15, 'opacity:1;transform:none', EIN)]))
+    A('.hnd', K([(0, 'opacity:0;transform:translateY(8px)'), (1.65, 'opacity:0;transform:translateY(8px)'), (1.9, 'opacity:1;transform:none', EIN)]))
     s.append('<g class="lfL"><g class="lfLr">%s</g></g>' % gold_leaf('m', 1.2))
     # ostatni liść przelatuje i ląduje tam, gdzie w klatce 0 była karteczka (pętla)
     A('.lfL', K([(0, 'transform:translate(-40px,130px)'), (2.25, 'transform:translate(-40px,130px)'), (2.6, 'transform:translate(120px,170px)'), (2.9, 'transform:translate(420px,210px)'),
