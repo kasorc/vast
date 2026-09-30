@@ -213,6 +213,10 @@ def sc_miasto():
                                      (300, .7, '#979797', -55, .3, '#7F95A8'), (455, .68, '#9D9D9D', 35, .7, None), (520, .74, '#999', -45, .2, None)]:
         crowd += silhouette(x, 792, sc, col, walk_dur=1.0, delay=dl, umbrella=um, dx=dx, T=T)
     s.append(crowd)
+    # „mama” – ogólna rola przy anonimowej przechodzącej (nie przy bohaterkach)
+    tm, cm = loop_card('mama', 458, 556, (458, 626), ax=5, ay=4, period=2.2, sag=10, phase=1.0, pop=.3)
+    s.append('<g class="mDrift">%s%s</g>' % (tm, cm))
+    A('.mDrift', K([(0, 'transform:translateX(0)'), (T, 'transform:translateX(35px)')], ease='linear'))
     # chodnik (1×)
     s.append('<rect x="-300" y="782" width="1140" height="520" fill="#8C8C8C"/><rect x="-300" y="778" width="1140" height="8" fill="#7C7C7C"/>')
     lines = ''.join('<path d="M%d,800 l-40,160" stroke="#848484" stroke-width="3"/>' % x for x in range(-200, 900, 90))
@@ -224,7 +228,7 @@ def sc_miasto():
     # nitki + karteczki (nitki za postaciami)
     SA_L = L2W(190, 800, .62, 52, 238); SB_R = L2W(350, 800, .62, 170, 238)
     th, cd = [], []
-    for args in [dict(label='mama', cx=190, cy=316, S_=SA_L, phase=0.3),
+    for args in [dict(label='ogarniam wszystko', lines=['ogarniam', 'wszystko'], cx=190, cy=308, S_=SA_L, phase=0.3),
                  dict(label='szefowa', cx=66, cy=452, S_=SA_L, phase=2.0, pop=.55),
                  dict(label='córka', cx=352, cy=300, S_=SB_R, phase=4.0, pop=.85)]:
         t_, c_ = loop_card(ax=10, ay=6, period=2.2, **args); th.append(t_); cd.append(c_)
@@ -238,8 +242,8 @@ def sc_miasto():
     s.append(silhouette(-22, 1010, 1.25, '#858585', walk_dur=1.1, delay=.3, dx=-20, T=T))
     s.append(silhouette(574, 1010, 1.3, '#888', walk_dur=1.05, delay=.8, dx=18, T=T))
     s.append('</g>')
-    A('.c1', K([(0, 'transform:translate(-148px,-230px) scale(2.2)'),
-                (.18, 'transform:translate(-146px,-226px) scale(2.18)', 'cubic-bezier(.55,0,.15,1)'),
+    A('.c1', K([(0, 'transform:translate(-148px,-238px) scale(2.2)'),
+                (.18, 'transform:translate(-146px,-234px) scale(2.18)', 'cubic-bezier(.55,0,.15,1)'),
                 (1.2, 'transform:translate(0px,0px) scale(1)', 'cubic-bezier(.4,0,.6,1)'),
                 (T, 'transform:translate(-6px,-10px) scale(1.03)')], ease='linear'))
     # ekran: mżawka, winieta, tekst
@@ -259,7 +263,7 @@ S('.fig .headWrap{transform-origin:110px 205px}'
   '.fig.heavy .armL{animation-duration:1s;animation-delay:-.5s}.fig.heavy .armR{animation-duration:1s}'
   '.fig.heavy .headWrap{transform:translateY(8px)}.fig.heavy .pupils{animation:none;transform:translateY(3px)}'
   '.fig.phoneA .armR{animation:none;transform:rotate(-22deg)}.fig.phoneA .foreR{transform:rotate(186deg)}'
-  '.cardT{font-family:"Mulish",sans-serif;font-weight:600;fill:#333}')
+  '.fig.sit .shadow{display:none}.cardT{font-family:"Mulish",sans-serif;font-weight:600;fill:#333}')
 
 SVG['miasto'] = sc_miasto()
 
@@ -268,7 +272,7 @@ SVG['miasto'] = sc_miasto()
 # =====================================================================
 SCENES = [('miasto', 1.85, '#C8C8C8'), ('plecy', 1.85, '#C0C0C0'), ('swiatla', 2.3, '#BDBDBD'),
           ('bus1', 2.4, BEIGE), ('bus2', 2.4, BEIGE), ('przystanek', 1.7, CREAM), ('wiatr', 3.6, CREAM),
-          ('montaz', 5.0, MUST), ('taras', 3.4, CREAM), ('kamienie', 2.1, WBEIGE), ('logo', 3.4, CREAM)]
+          ('montaz', 5.0, MUST), ('taras', 3.4, CREAM), ('kamienie', 1.9, WBEIGE), ('logo', 3.6, CREAM)]
 
 DEFS = '''
 <linearGradient id="gCity" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DEDEDE"/><stop offset=".55" stop-color="#CACACA"/><stop offset="1" stop-color="#BDBDBD"/></linearGradient>
@@ -325,13 +329,13 @@ def sc_plecy():
     SAL, SAR = L2W(160, 865, .8, 52, 238), L2W(160, 865, .8, 168, 238)
     SBL, SBR = L2W(385, 865, .8, 50, 238), L2W(385, 865, .8, 170, 238)
     th, cd = [], []
-    for a in [dict(label='mama', cx=160, cy=272, S_=SAL, phase=.2),
-              dict(label='córka', cx=392, cy=268, S_=SBR, phase=2.2),
+    for a in [dict(label='ogarniam wszystko', lines=['ogarniam', 'wszystko'], cx=118, cy=274, S_=SAL, phase=.2),
+              dict(label='córka', cx=410, cy=262, S_=SBR, phase=2.2),
               dict(label='szefowa', cx=52, cy=560, S_=SAL, phase=4.1),
               dict(label='liderka', cx=490, cy=566, S_=SBR, phase=1.0, pop=.62),
               dict(label='żona', cx=276, cy=590, S_=SAR, phase=3.0, pop=.74),
-              dict(label='ogarnij', cx=280, cy=306, S_=SBL, phase=5.0, pop=1.2),
-              dict(label='przyjaciółka', cx=272, cy=252, S_=SAR, phase=.9, pop=1.34)]:
+              dict(label='ogarnij', cx=272, cy=301, S_=SBL, phase=5.0, pop=1.2),
+              dict(label='przyjaciółka', cx=262, cy=250, S_=SAR, phase=.9, pop=1.34)]:
         t_, c_ = loop_card(ax=9, ay=5, rot=9, period=1.5, sag=7, **a); th.append(t_); cd.append(c_)
     s.append(''.join(th))
     s.append(FIG('A', 'walk heavy phoneA', 160, 865, .8, post=ghost('A', 'walk heavy phoneA', 'R', PHONE)))
@@ -407,8 +411,8 @@ def sc_swiatla():
     # postacie na krawężniku
     SAL, SBR = L2W(150, 800, .5, 52, 238), L2W(252, 800, .5, 170, 238)
     th, cd = [], []
-    for a in [dict(label='mama', cx=130, cy=416, S_=SAL, phase=.5), dict(label='szefowa', cx=262, cy=404, S_=SBR, phase=2.5),
-              dict(label='na wczoraj', cx=52, cy=560, S_=SAL, phase=4.4)]:
+    for a in [dict(label='liderka', cx=130, cy=416, S_=SAL, phase=.5), dict(label='szefowa', cx=262, cy=404, S_=SBR, phase=2.5),
+              dict(label='na wczoraj', cx=352, cy=482, S_=SBR, phase=4.4)]:
         t_, c_ = loop_card(ax=6, ay=4, rot=5, period=2.6, sag=22, **a); th.append(t_); cd.append(c_)
     s.append(''.join(th))
     s.append(FIG('A', 'sighA', 150, 800, .5, wrap='sigh'))
@@ -435,7 +439,7 @@ def sc_swiatla():
     A('.q', K([(0, 'opacity:1'), (1.84, 'opacity:1'), (2.0, 'opacity:0')]))
     S('.scene.active .fast.ch{animation-delay:calc(var(--d0,0s) + var(--i) * 17ms);animation-duration:.42s}')
     # iris zamykający się na zielonym świetle
-    s.append('<circle class="iris3" cx="270" cy="480" r="1500" fill="none" stroke="#474A48" stroke-width="1200"/>')
+    s.append('<circle class="iris3" cx="270" cy="480" r="1500" fill="none" stroke="#58756C" stroke-width="1200"/>')
     A('.iris3', K([(0, 'r:1500px'), (1.9, 'r:1500px'), (2.26, 'r:704px', 'cubic-bezier(.5,0,.3,1)'), (T, 'r:704px')]))
     return ''.join(s)
 
@@ -508,7 +512,7 @@ def sc_bus1():
     SAR, SBL, SBR = L2W(185, 834, .66, 168, 238), L2W(355, 834, .66, 50, 238), L2W(355, 834, .66, 170, 238)
     t1, c1 = loop_card('szefowa', 176, 372, SAR, ax=8, ay=4, period=2.2, sag=10, phase=.4)
     t2, c2 = loop_card('na wczoraj', 372, 366, SBL, ax=8, ay=4, period=2.2, sag=10, phase=2.4)
-    t3, c3 = loop_card('mama', 488, 470, SBR, ax=6, ay=5, period=2.2, sag=12, phase=4.0)
+    t3, c3 = loop_card('liderka', 480, 470, SBR, ax=6, ay=5, period=2.2, sag=12, phase=4.0)
     s.append('<g class="dim1">%s</g>%s%s' % (t1, t2, t3))
     phone = '<g class="ph1">%s</g>' % PHONE
     s.append(FIG('A', 'sit busA', 185, 834, .66, wrap='leanA', post=ghost('A', 'sit busA', 'R', phone)))
@@ -544,10 +548,7 @@ def sc_bus1():
     s.append('</g>')
     A('.c4', K([(0, 'transform:translate(270px,420px) scale(1) translate(-270px,-420px)'), (T, 'transform:translate(270px,420px) scale(1.06) translate(-270px,-420px)')]))
     # iris otwiera się z zielonego światła
-    s.append('<g class="sageDisc"><circle cx="270" cy="480" r="100" fill="#8FB0A3"/><use href="#logoSign" transform="translate(270,480) scale(1.3)" style="color:%s"/></g>' % CREAM)
-    A('.sageDisc', K([(0, 'opacity:1;transform:scale(1)'), (.06, 'opacity:1;transform:scale(1)'), (.38, 'opacity:0;transform:scale(1.6)', 'ease-in')]))
-    S('.sageDisc{transform-origin:270px 480px}')
-    s.append('<circle class="iris4" cx="270" cy="480" r="704" fill="none" stroke="#474A48" stroke-width="1200"/>')
+    s.append('<circle class="iris4" cx="270" cy="480" r="704" fill="none" stroke="#58756C" stroke-width="1200"/>')
     A('.iris4', K([(0, 'r:704px'), (.55, 'r:1900px', 'cubic-bezier(.5,0,.2,1)')]))
     return ''.join(s)
 
@@ -586,27 +587,27 @@ def sc_bus2():
         A('.' + c, K([(0, 'transform:translateX(760px)'), (t0, 'transform:translateX(760px)'), (t0 + .55, 'transform:translateX(-260px)', 'linear')]))
     s.append('<path class="refl2" d="M40,36 l70,0 l-200,612 l-70,0 Z" fill="#fff" opacity=".12"/>')
     A('.refl2', K([(0, 'transform:translateX(0)'), (T, 'transform:translateX(90px)')], ease='linear'))
-    s.append('<ellipse class="print" cx="430" cy="552" rx="30" ry="36" fill="#fff" opacity=".45" filter="url(#fB8)"/>')
+    s.append('<ellipse class="print" cx="449" cy="515" rx="30" ry="36" fill="#fff" opacity=".45" filter="url(#fB8)"/>')
     A('.print', K([(0, 'opacity:0'), (.9, 'opacity:0'), (1.3, 'opacity:.5')]))
     s.append('</g>')
     s.append('<rect x="16" y="36" width="508" height="612" rx="40" fill="none" stroke="#D6BCAF" stroke-width="18"/>')
     s.append('<rect x="30" y="820" width="480" height="300" rx="40" fill="%s"/><rect x="30" y="820" width="480" height="16" rx="8" fill="#6A877E"/>' % DKG)
-    s.append(FIG('A', 'bA', 160, 1281, 1.05, wrap='leanA2'))
-    s.append(FIG('B', 'bB', 345, 1281, 1.05))
+    s.append(FIG('B', 'bB', 365, 1240.6, 1.05))
+    s.append(FIG('A', 'bA', 150, 1319.6, 1.05, wrap='leanA2'))   # A nad ramieniem B, głowa niżej, obok twarzy B
     s.append('</g>')
-    A('.leanA2', K([(0, 'transform:rotate(0)'), (.9, 'transform:rotate(0)'), (1.5, 'transform:rotate(6deg)', EIO)]))
+    A('.leanA2', K([(0, 'transform:rotate(3deg)'), (.9, 'transform:rotate(3deg)'), (1.5, 'transform:rotate(8deg)', EIO)]))
     S('.leanA2{transform-origin:110px 712px}')
-    A('.fig.bA .headWrap', K([(0, 'transform:rotate(0)'), (.95, 'transform:rotate(0)'), (1.55, 'transform:rotate(9deg) translate(3px,2px)', EIO)]))
+    A('.fig.bA .headWrap', K([(0, 'transform:rotate(0)'), (.95, 'transform:rotate(0)'), (1.55, 'transform:rotate(7deg) translate(2px,2px)', EIO)]))
     A('.fig.bA .eyes', K([(0, 'transform:scaleY(1)'), (1.4, 'transform:scaleY(1)'), (1.6, 'transform:scaleY(.12)')]))
     A('.fig.bB .armR', K([(0, 'transform:rotate(-7deg)'), (.3, 'transform:rotate(-7deg)'), (.9, 'transform:rotate(-174deg)', EIO)]))
     A('.fig.bB .foreR', K([(0, 'transform:rotate(6deg)'), (.3, 'transform:rotate(6deg)'), (.9, 'transform:rotate(-2deg)', EIO)]))
     A('.fig.bB .pupils', K([(0, 'transform:none'), (.4, 'transform:none'), (.6, 'transform:translate(3px,-3px)')]))
     A('.fig.bB .smile', K([(0, 'transform:scale(1)'), (1.2, 'transform:scale(1)'), (1.45, 'transform:scale(1.14,1.3)', EIN)]))
-    A('.c5', K([(0, 'transform:translate(270px,560px) scale(1) translate(-270px,-560px)'),
-                (2.08, 'transform:translate(270px,560px) scale(1.34) translate(-270px,-560px)', EIO),
-                (2.16, 'transform:translate(270px,568px) scale(1.345) translate(-270px,-560px)', 'ease-out'),
-                (2.26, 'transform:translate(270px,556px) scale(1.34) translate(-270px,-560px)', 'ease-in-out'),
-                (T, 'transform:translate(270px,561px) scale(1.34) translate(-270px,-560px)')]))
+    A('.c5', K([(0, 'transform:translate(270px,700px) scale(1) translate(-270px,-700px)'),
+                (2.08, 'transform:translate(270px,700px) scale(1.25) translate(-270px,-700px)', EIO),
+                (2.16, 'transform:translate(270px,708px) scale(1.255) translate(-270px,-700px)', 'ease-out'),
+                (2.26, 'transform:translate(270px,696px) scale(1.25) translate(-270px,-700px)', 'ease-in-out'),
+                (T, 'transform:translate(270px,701px) scale(1.25) translate(-270px,-700px)')]))
     s.append('<rect width="540" height="960" fill="url(#vignette)" opacity=".6"/>')
     s.append('<text x="270" y="150" font-size="56" text-anchor="middle" class="serif wsplit w2" fill="#2f2f2f" style="--d0:.2s">Im wyżej,</text>')
     s.append('<text x="270" y="214" font-size="56" text-anchor="middle" class="serif wsplit w2" fill="#2f2f2f" style="--d0:.8s">tym lżej.</text>')
@@ -650,48 +651,46 @@ def sc_przystanek():
     s.append('<g><rect x="440" y="600" width="12" height="202" fill="%s"/><rect x="600" y="600" width="12" height="202" fill="%s"/>' % (BROWN, BROWN) +
              ''.join('<rect x="452" y="%d" width="160" height="22" fill="%s"/>' % (y, '#8A6A55' if (y // 24) % 2 else '#7D5F4C') for y in range(612, 740, 24)) +
              '<path d="M420,612 L520,560 L640,612 Z" fill="#5A4539"/><rect x="460" y="746" width="140" height="10" rx="4" fill="#5A4539"/></g>')
-    # bus
-    s.append('<g><rect x="-230" y="430" width="400" height="392" rx="34" fill="%s"/><rect x="-230" y="740" width="400" height="60" fill="%s"/>' % (SAGE, DKG) +
-             '<rect x="-200" y="470" width="250" height="120" rx="14" fill="#E9EFEC"/><path d="M-150,470 l50,0 l-60,120 l-50,0 Z" fill="#fff" opacity=".5"/>'
-             '<rect x="70" y="452" width="80" height="352" rx="8" fill="#3F5750"/><rect x="72" y="790" width="76" height="14" fill="#6E8A80"/>'
-             '<g class="doorL"><rect x="70" y="452" width="40" height="352" fill="#C8D6D0" stroke="#8FA79E" stroke-width="3"/></g>'
-             '<g class="doorR"><rect x="110" y="452" width="40" height="352" fill="#C8D6D0" stroke="#8FA79E" stroke-width="3"/></g>'
-             '<circle cx="-120" cy="822" r="30" fill="#2F3B37"/><circle cx="-120" cy="822" r="12" fill="#8FA79E"/><circle cx="20" cy="822" r="30" fill="#2F3B37"/><circle cx="20" cy="822" r="12" fill="#8FA79E"/></g>')
-    A('.doorL', K([(0, 'transform:scaleX(1)'), (.08, 'transform:scaleX(1)'), (.3, 'transform:scaleX(.12)', EIO)]))
-    A('.doorR', K([(0, 'transform:scaleX(1)'), (.08, 'transform:scaleX(1)'), (.3, 'transform:scaleX(.12)', EIO)]))
-    S('.doorL{transform-origin:70px 0}.doorR{transform-origin:150px 0}')
-    # skaczące postacie z karteczkami
-    def jumper(who, cls, cx, t0, cards):
+    # bus (drzwi szerokie – postacie wychodzą z dwóch różnych miejsc w drzwiach)
+    s.append('<g><rect x="-240" y="430" width="445" height="392" rx="34" fill="%s"/><rect x="-240" y="740" width="445" height="60" fill="%s"/>' % (SAGE, DKG) +
+             '<rect x="-210" y="470" width="250" height="120" rx="14" fill="#E9EFEC"/><path d="M-160,470 l50,0 l-60,120 l-50,0 Z" fill="#fff" opacity=".5"/>'
+             '<rect x="62" y="452" width="138" height="352" rx="8" fill="#3F5750"/><rect x="64" y="790" width="134" height="14" fill="#6E8A80"/>'
+             '<g class="doorL"><rect x="62" y="452" width="69" height="352" fill="#C8D6D0" stroke="#8FA79E" stroke-width="3"/></g>'
+             '<g class="doorR"><rect x="131" y="452" width="69" height="352" fill="#C8D6D0" stroke="#8FA79E" stroke-width="3"/></g>'
+             '<circle cx="-130" cy="822" r="30" fill="#2F3B37"/><circle cx="-130" cy="822" r="12" fill="#8FA79E"/><circle cx="10" cy="822" r="30" fill="#2F3B37"/><circle cx="10" cy="822" r="12" fill="#8FA79E"/></g>')
+    S('.doorL{transform-origin:62px 0;transform:scaleX(.12)}.doorR{transform-origin:200px 0;transform:scaleX(.12)}')
+    # skaczące postacie z karteczkami (B pierwsza, A 0,32 s później; różne punkty startu)
+    def jumper(who, cls, cx, x0, t0, cards):
         jx, jy, sq = uid('jx'), uid('jy'), uid('sq')
         th = ''.join(c[0] for c in cards); cd = ''.join(c[1] for c in cards)
         g = '<g class="%s"><g class="%s"><g class="%s">%s%s%s</g></g></g>' % (jx, jy, sq, th, FIG(who, cls, cx, 850, .5), cd)
-        dx = 110 - cx
+        dx = x0 - cx
         A('.' + jx, K([(0, 'transform:translateX(%dpx)' % dx), (t0, 'transform:translateX(%dpx)' % dx), (t0 + .46, 'transform:translateX(0)', 'cubic-bezier(.3,.6,.5,1)')]))
-        A('.' + jy, K([(0, 'transform:translateY(-46px)'), (t0, 'transform:translateY(-46px)'), (t0 + .18, 'transform:translateY(-108px)', 'cubic-bezier(.2,.7,.4,1)'),
+        A('.' + jy, K([(0, 'transform:translateY(-46px)'), (t0, 'transform:translateY(-46px)'), (t0 + .18, 'transform:translateY(-104px)', 'cubic-bezier(.2,.7,.4,1)'),
                        (t0 + .46, 'transform:translateY(0)', 'cubic-bezier(.6,0,.9,.5)')]))
-        A('.' + sq, K([(0, 'transform:none'), (t0 - .12, 'transform:none'), (t0, 'transform:scale(1.04,.93)'), (t0 + .1, 'transform:scale(.97,1.04)'),
+        A('.' + sq, K([(0, 'transform:none'), (max(0, t0 - .12), 'transform:none'), (t0, 'transform:scale(1.04,.93)'), (t0 + .1, 'transform:scale(.97,1.04)'),
                        (t0 + .46, 'transform:none'), (t0 + .54, 'transform:scale(1.06,.9)', 'ease-out'), (t0 + .7, 'transform:none', EIN)]))
         S('.%s{transform-origin:%dpx 850px}' % (sq, cx))
         return g
-    SA = L2W(250, 850, .5, 168, 238); SAL = L2W(250, 850, .5, 52, 238); SB = L2W(378, 850, .5, 170, 238); SBL = L2W(378, 850, .5, 50, 238)
-    ca = [loop_card('szefowa', 232, 462, SA, ax=8, ay=5, period=2, sag=14, phase=.2)]
-    cb = [loop_card('córka', 372, 456, SBL, ax=8, ay=5, period=2, sag=14, phase=1.2), loop_card('na wczoraj', 470, 472, SB, ax=6, ay=5, period=2, sag=14, phase=3.2)]
-    s.append(jumper('B', 'has-pack packB', 378, .5, cb))
-    s.append(jumper('A', 'capA', 250, .2, ca))
-    A('.fig.capA .armR', K([(0, 'transform:rotate(-7deg)'), (.8, 'transform:rotate(-7deg)'), (1.1, 'transform:rotate(-150deg)', EIO), (1.45, 'transform:rotate(-150deg)'), (1.7, 'transform:rotate(-10deg)', EIO)]))
-    A('.fig.capA .foreR', K([(0, 'transform:rotate(6deg)'), (.8, 'transform:rotate(6deg)'), (1.1, 'transform:rotate(-75deg)', EIO), (1.45, 'transform:rotate(-75deg)'), (1.7, 'transform:rotate(4deg)', EIO)]))
-    A('.fig.capA .headWrap', K([(0, 'transform:none'), (1.05, 'transform:none'), (1.2, 'transform:translateY(3px) rotate(-3deg)'), (1.5, 'transform:none')]))
-    A('.fig.packB .body', K([(0, 'transform:none'), (1.05, 'transform:none'), (1.2, 'transform:translateY(-6px)', EIO), (1.3, 'transform:translateY(-6px)'), (1.45, 'transform:none', EIN)]))
-    A('.fig.packB .armL', K([(0, 'transform:rotate(7deg)'), (1.0, 'transform:rotate(7deg)'), (1.2, 'transform:rotate(-12deg)'), (1.5, 'transform:rotate(7deg)')]))
-    A('.fig.packB .foreL', K([(0, 'transform:rotate(-6deg)'), (1.0, 'transform:rotate(-6deg)'), (1.2, 'transform:rotate(-120deg)'), (1.5, 'transform:rotate(-6deg)')]))
-    A('.fig.packB .armR', K([(0, 'transform:rotate(-7deg)'), (1.0, 'transform:rotate(-7deg)'), (1.2, 'transform:rotate(12deg)'), (1.5, 'transform:rotate(-7deg)')]))
-    A('.fig.packB .foreR', K([(0, 'transform:rotate(6deg)'), (1.0, 'transform:rotate(6deg)'), (1.2, 'transform:rotate(120deg)'), (1.5, 'transform:rotate(6deg)')]))
+    SA = L2W(280, 850, .5, 168, 238); SB = L2W(400, 850, .5, 170, 238); SBL = L2W(400, 850, .5, 50, 238)
+    ca = [loop_card('szefowa', 262, 452, SA, ax=8, ay=5, period=2, sag=14, phase=.2, pop=.62)]
+    cb = [loop_card('córka', 372, 430, SBL, ax=7, ay=5, period=2, sag=14, phase=1.2), loop_card('liderka', 440, 386, SB, ax=5, ay=5, period=2, sag=14, phase=3.2)]
+    s.append(jumper('A', 'capA', 280, 102, .42, ca))
+    s.append(jumper('B', 'has-pack packB', 400, 170, .1, cb))
+    A('.fig.capA .armR', K([(0, 'transform:rotate(-7deg)'), (.98, 'transform:rotate(-7deg)'), (1.22, 'transform:rotate(-150deg)', EIO), (1.5, 'transform:rotate(-150deg)'), (1.7, 'transform:rotate(-10deg)', EIO)]))
+    A('.fig.capA .foreR', K([(0, 'transform:rotate(6deg)'), (.98, 'transform:rotate(6deg)'), (1.22, 'transform:rotate(-75deg)', EIO), (1.5, 'transform:rotate(-75deg)'), (1.7, 'transform:rotate(4deg)', EIO)]))
+    A('.fig.capA .headWrap', K([(0, 'transform:none'), (1.15, 'transform:none'), (1.28, 'transform:translateY(3px) rotate(-3deg)'), (1.55, 'transform:none')]))
+    A('.fig.packB .body', K([(0, 'transform:none'), (.75, 'transform:none'), (.9, 'transform:translateY(-6px)', EIO), (1.0, 'transform:translateY(-6px)'), (1.15, 'transform:none', EIN)]))
+    A('.fig.packB .armL', K([(0, 'transform:rotate(7deg)'), (.7, 'transform:rotate(7deg)'), (.9, 'transform:rotate(-12deg)'), (1.2, 'transform:rotate(7deg)')]))
+    A('.fig.packB .foreL', K([(0, 'transform:rotate(-6deg)'), (.7, 'transform:rotate(-6deg)'), (.9, 'transform:rotate(-120deg)'), (1.2, 'transform:rotate(-6deg)')]))
+    A('.fig.packB .armR', K([(0, 'transform:rotate(-7deg)'), (.7, 'transform:rotate(-7deg)'), (.9, 'transform:rotate(12deg)'), (1.2, 'transform:rotate(-7deg)')]))
+    A('.fig.packB .foreR', K([(0, 'transform:rotate(6deg)'), (.7, 'transform:rotate(6deg)'), (.9, 'transform:rotate(120deg)'), (1.2, 'transform:rotate(6deg)')]))
     # trawa na pierwszym planie
     s.append(grass(-40, 580, 915, 7, 'g6'))
     A('.g6', 'grassK 1.1s ease-in-out infinite alternate')
     s.append('</g>')
-    S('.c6{transform-origin:270px 620px}')
-    A('.c6', K([(0, 'transform:translateX(0) scale(1)'), (T, 'transform:translateX(-44px) scale(1.05)')]))
+    S('.c6{transform-origin:250px 900px}')
+    A('.c6', K([(0, 'transform:translateX(0) scale(1.2)'), (T, 'transform:translateX(-8px) scale(1.25)')]))
     s.append('<rect width="540" height="960" fill="url(#vignette)" opacity=".5"/>')
     return ''.join(s)
 
@@ -915,11 +914,11 @@ def sc_wiatr():
     # ostatni liść leci na kamerę → złoty kadr
     s.append('<g class="bigLeaf"><g class="bigLeafR"><use href="#beech" fill="url(#gGold)"/><use class="blv" href="#beechV" stroke="#B07F22" stroke-width=".6"/></g></g>')
     A('.bigLeaf', K([(0, 'transform:translate(480px,210px) scale(0);opacity:0'), (2.9, 'transform:translate(480px,210px) scale(0);opacity:0'),
-                     (3.0, 'transform:translate(470px,220px) scale(.9);opacity:1', 'ease-out'), (3.48, 'transform:translate(270px,480px) scale(46);opacity:1', 'cubic-bezier(.55,0,.85,.35)')]))
-    A('.bigLeafR', K([(0, 'transform:rotate(0)'), (2.9, 'transform:rotate(-30deg)'), (3.48, 'transform:rotate(150deg)', 'ease-in')]))
+                     (3.0, 'transform:translate(470px,220px) scale(.9);opacity:1', 'ease-out'), (3.52, 'transform:translate(270px,480px) scale(46);opacity:1', 'cubic-bezier(.55,0,.85,.35)')]))
+    A('.bigLeafR', K([(0, 'transform:rotate(0)'), (2.9, 'transform:rotate(-30deg)'), (3.52, 'transform:rotate(150deg)', 'ease-in')]))
     A('.blv', K([(0, 'opacity:.8'), (3.2, 'opacity:.8'), (3.4, 'opacity:0')]))
     s.append('<rect class="goldEnd" width="540" height="960" fill="%s"/>' % MUST)
-    A('.goldEnd', K([(0, 'opacity:0'), (3.38, 'opacity:0'), (3.5, 'opacity:1')]))
+    A('.goldEnd', K([(0, 'opacity:0'), (3.46, 'opacity:0'), (3.53, 'opacity:1')]))
     return ''.join(s)
 
 SVG['wiatr'] = sc_wiatr()
@@ -927,21 +926,26 @@ SVG['wiatr'] = sc_wiatr()
 # =====================================================================
 # 4  MONTAŻ (16,10–21,10): RANO: RUCH → POPOŁUDNIE: REGENERACJA → WIECZÓR: RAZEM, przejścia maską złotego liścia
 # =====================================================================
-def leaf_mask(mid, t0, cx, cy, r0, r1, dur=.48):
+def leaf_mask(mid, t0, cx, cy, r0, r1, dur=.48, s0=.3):
+    """Maska liścia: okno w kształcie liścia rośnie; wokół niego złoty liść (większy) – przejście „złotym liściem”."""
     g = uid('lm')
-    A('.' + g, K([(0, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(.01)' % (cx, cy, r0)), (t0, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(.01)' % (cx, cy, r0)),
-                  (t0 + dur, 'transform:translate(270px,480px) rotate(%ddeg) scale(52)' % r1, 'cubic-bezier(.55,0,.8,.45)')]))
+    A('.' + g, K([(0, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(%s)' % (cx, cy, r0, s0)), (t0, 'transform:translate(%dpx,%dpx) rotate(%ddeg) scale(%s)' % (cx, cy, r0, s0)),
+                  (t0 + dur, 'transform:translate(270px,480px) rotate(%ddeg) scale(52)' % r1, 'cubic-bezier(.5,0,.75,.35)')]))
     m = ('<mask id="%s" maskUnits="userSpaceOnUse" x="0" y="0" width="540" height="960"><rect width="540" height="960" fill="#000"/>'
          '<g class="%s"><use href="#beech" fill="#fff"/></g></mask>') % (mid, g)
-    rim = '<g class="%s"><g class="%s"><use href="#beechR" fill="none" stroke="#E8C872" stroke-width="5"/></g></g>' % (uid('rimo'), g)
-    A('.' + rim.split('"')[1], K([(0, 'opacity:0'), (t0, 'opacity:0'), (t0 + .04, 'opacity:1'), (t0 + dur - .05, 'opacity:1'), (t0 + dur + .05, 'opacity:0')]))
-    return m, rim
+    rim = '<g class="%s"><g class="%s"><use href="#beechR" fill="none" stroke="#FFF1C4" stroke-width="3"/></g></g>' % (uid('rimo'), g)
+    A('.' + rim.split('"')[1], K([(0, 'opacity:0'), (t0, 'opacity:0'), (t0 + .02, 'opacity:.9'), (t0 + dur - .05, 'opacity:.9'), (t0 + dur + .05, 'opacity:0')]))
+    gc = uid('gl')
+    gold = '<g class="%s"><g class="%s"><g transform="scale(1.45)"><use href="#beech" fill="url(#gGold)"/><use href="#beechV" stroke="#B07F22" stroke-width=".7" opacity=".6"/></g></g></g>' % (gc, g)
+    A('.' + gc, K([(0, 'opacity:0'), (t0, 'opacity:0'), (t0 + .01, 'opacity:1'), (t0 + dur, 'opacity:1'), (t0 + dur + .01, 'opacity:0')]))
+    return m, rim, gold
 
 def sc_montaz():
     T = 5.0; s = []
-    s.append('<rect width="540" height="960" fill="url(#gGold)"/>')
+    s.append('<rect width="540" height="960" fill="url(#gGold)"/><rect class="gSh" x="-300" y="-200" width="260" height="1400" fill="url(#gSheen)" opacity=".7" transform="rotate(18)"/>')
+    A('.gSh', K([(0, 'transform:translateX(0) rotate(18deg)'), (.4, 'transform:translateX(760px) rotate(18deg)', ESOFT)]))
     # ---------- 4a RANO: RUCH ----------
-    m1, rim1 = leaf_mask('mM1', 0, 270, 480, -70, 30)
+    m1, rim1, gold1 = leaf_mask('mM1', 0, 270, 480, -70, 30, dur=.42, s0=3)
     a = ['<g class="cam m1c">']
     a.append('<rect x="-100" y="-100" width="760" height="1160" fill="url(#gSkyDawn)"/>')
     a.append('<circle cx="410" cy="520" r="230" fill="url(#gGlow)"/><circle cx="410" cy="540" r="34" fill="#F7E7BE"/>')
@@ -957,15 +961,15 @@ def sc_montaz():
         a.append('<ellipse class="%s" cx="270" cy="%d" rx="460" ry="26" fill="#fff" opacity="%s" filter="url(#fB16)"/>' % (c, y, op))
         A('.' + c, K([(0, 'transform:translateX(%dpx)' % (-dx / 2)), (2.0, 'transform:translateX(%dpx)' % (dx / 2))]))
     a.append('<rect x="-100" y="650" width="760" height="500" fill="#9DB2A9"/><rect x="-100" y="650" width="760" height="18" fill="#B3C4BC" opacity=".8"/>')
-    a.append('<path d="M104,740 H258 L246,772 H88 Z" fill="%s"/><path d="M282,740 H436 L452,772 H294 Z" fill="#C9D6CF"/>' % BEIGE)
-    a.append(FIG('A', 'flow', 180, 756, .56))
-    a.append(FIG('B', 'flow', 360, 756, .56))
+    a.append('<path d="M74,740 H228 L216,772 H58 Z" fill="%s"/><path d="M312,740 H466 L482,772 H324 Z" fill="#C9D6CF"/>' % BEIGE)
+    a.append(FIG('A', 'flow', 148, 756, .56))
+    a.append(FIG('B', 'flow', 392, 756, .56))
     a.append('<ellipse class="fogF" cx="270" cy="800" rx="480" ry="24" fill="#fff" opacity=".55" filter="url(#fB16)"/>')
     A('.fogF', K([(0, 'transform:translateX(40px)'), (2.0, 'transform:translateX(-40px)')]))
     a.append('</g>')
     A('.m1c', K([(0, 'transform:translate(0px,0px) scale(1)'), (2.0, 'transform:translate(-40px,-10px) scale(1.03)')]))
     flow = [(0, 'L:168;R:-168;fL:14;fR:-14;b:0'), (.35, 'L:168;R:-168;fL:14;fR:-14;b:0'), (.8, 'L:176;R:-146;fL:10;fR:-30;b:9'),
-            (1.25, 'L:146;R:-176;fL:30;fR:-10;b:-9'), (1.7, 'L:96;R:-96;fL:0;fR:0;b:0'), (2.0, 'L:90;R:-90;fL:-4;fR:4;b:0')]
+            (1.25, 'L:146;R:-176;fL:30;fR:-10;b:-9'), (1.7, 'L:46;R:-46;fL:0;fR:0;b:0'), (2.0, 'L:40;R:-40;fL:-4;fR:4;b:0')]
     def fk(key, fmt):
         out = []
         for t_, sp in flow:
@@ -979,7 +983,7 @@ def sc_montaz():
     s.append(m1 + '<g mask="url(#mM1)">%s</g>' % ''.join(a))
     # ---------- 4b POPOŁUDNIE: REGENERACJA ----------
     t2 = 1.55
-    m2, rim2 = leaf_mask('mM2', t2, 400, 300, 40, 160)
+    m2, rim2, gold2 = leaf_mask('mM2', t2, 400, 300, 40, 160)
     b = ['<g class="cam m2c">']
     b.append('<rect x="-100" y="-100" width="760" height="1160" fill="#4E6961"/><rect x="-100" y="-100" width="760" height="300" fill="#C9D6CF"/>')
     b.append('<circle cx="430" cy="230" r="260" fill="url(#gGlow)" opacity=".7"/>')
@@ -1011,8 +1015,8 @@ def sc_montaz():
     for i in range(5):
         c = uid('dr')
         A('.' + c, K([(0, 'transform:translate(0,0);opacity:0'), (2.5 + i * .12, 'transform:translate(0,0);opacity:0'), (2.56 + i * .12, 'transform:translate(0,0);opacity:1'),
-                      (2.95 + i * .12, 'transform:translate(%dpx,120px);opacity:0' % ((i - 2) * 5), 'cubic-bezier(.5,0,1,.6)')]))
-        drops += '<ellipse class="%s" cx="%d" cy="430" rx="2.4" ry="3.6" fill="#E8F1EE"/>' % (c, 404 + (i % 3) * 5)
+                      (2.95 + i * .12, 'transform:translate(%dpx,56px);opacity:0' % ((i - 2) * 5), 'cubic-bezier(.5,0,1,.6)')]))
+        drops += '<ellipse class="%s" cx="%d" cy="552" rx="2.4" ry="3.6" fill="#E8F1EE"/>' % (c, 452 + (i % 3) * 5)
     b.append(drops)
     b.append('</g>')
     S('.m2c{transform-origin:270px 540px}')
@@ -1020,13 +1024,13 @@ def sc_montaz():
     A('.fig.spaA .headWrap', K([(0, 'transform:none'), (1.85, 'transform:none'), (2.3, 'transform:translate(-2px,-3px) rotate(-8deg)', EIO)]))
     A('.fig.spaA .eyes', K([(0, 'transform:scaleY(1)'), (2.0, 'transform:scaleY(1)'), (2.15, 'transform:scaleY(.1)')]))
     A('.fig.spaA .smile', K([(0, 'transform:scale(1)'), (2.1, 'transform:scale(1)'), (2.4, 'transform:scale(1.1,1.2)')]))
-    A('.fig.spaB .armR', K([(0, 'transform:rotate(-7deg)'), (2.05, 'transform:rotate(-7deg)'), (2.5, 'transform:rotate(-140deg)', EIO)]))
-    A('.fig.spaB .foreR', K([(0, 'transform:rotate(6deg)'), (2.05, 'transform:rotate(6deg)'), (2.5, 'transform:rotate(-28deg)', EIO), (2.9, 'transform:rotate(-16deg)'), (3.3, 'transform:rotate(-30deg)')]))
+    A('.fig.spaB .armR', K([(0, 'transform:rotate(-7deg)'), (2.05, 'transform:rotate(-7deg)'), (2.45, 'transform:rotate(-80deg)', EIO)]))
+    A('.fig.spaB .foreR', K([(0, 'transform:rotate(6deg)'), (2.05, 'transform:rotate(6deg)'), (2.5, 'transform:rotate(-100deg)', EIO), (2.9, 'transform:rotate(-92deg)'), (3.3, 'transform:rotate(-102deg)')]))
     A('.fig.spaB .pupils', K([(0, 'transform:none'), (2.4, 'transform:none'), (2.55, 'transform:translate(4px,-3px)')]))
-    s.append(m2 + '<g mask="url(#mM2)">%s</g>' % ''.join(b))
+    s.append(gold2 + m2 + '<g mask="url(#mM2)">%s</g>' % ''.join(b))
     # ---------- 4c WIECZÓR: RAZEM ----------
     t3 = 3.25
-    m3, rim3 = leaf_mask('mM3', t3, 170, 640, -20, 120)
+    m3, rim3, gold3 = leaf_mask('mM3', t3, 170, 640, -20, 120)
     c_ = ['<g class="cam m3c">']
     c_.append('<rect x="-200" y="-600" width="940" height="1800" fill="url(#gSkyDusk)"/>')
     rr = random.Random(61)
@@ -1079,7 +1083,7 @@ def sc_montaz():
                                   (4.4, 'transform:rotate(-4deg) translateY(-2px)'), (4.5, 'transform:rotate(2deg)'), (4.65, 'transform:none')]))
     A('.fig.toastB .smile', K([(0, 'transform:scale(1)'), (4.05, 'transform:scale(1)'), (4.2, 'transform:scale(1.2,1.45)', EIN)]))
     A('.fig.toast .eyes', K([(0, 'transform:scaleY(1)'), (4.15, 'transform:scaleY(1)'), (4.25, 'transform:scaleY(.4)'), (4.6, 'transform:scaleY(.4)'), (4.7, 'transform:scaleY(1)')]))
-    s.append(m3 + '<g mask="url(#mM3)">%s</g>' % ''.join(c_))
+    s.append(gold3 + m3 + '<g mask="url(#mM3)">%s</g>' % ''.join(c_))
     s.append(rim1 + rim2 + rim3)
     # iskry toastu (poza maską – nad kadrem stołu, w tym samym miejscu)
     # podpisy
@@ -1090,6 +1094,9 @@ def sc_montaz():
     A('.cap1m', K([(0, 'transform:scaleX(0)'), (.42, 'transform:scaleX(0)'), (.8, 'transform:scaleX(1)', 'cubic-bezier(.3,.1,.2,1)')]))
     A('.cap1', K([(0, 'opacity:1'), (1.4, 'opacity:1'), (1.52, 'opacity:0')]))
     A('.cap1l', K([(0, 'stroke-dasharray:1;stroke-dashoffset:1'), (.6, 'stroke-dasharray:1;stroke-dashoffset:1'), (1.0, 'stroke-dasharray:1;stroke-dashoffset:0', EIO)]))
+    s.append('<rect class="cap2b" x="36" y="136" width="468" height="50" rx="25" fill="%s" opacity=".92"/>' % CREAM)
+    A('.cap2b', K([(0, 'opacity:0;transform:scaleX(.3)'), (1.98, 'opacity:0;transform:scaleX(.3)'), (2.3, 'opacity:.92;transform:scaleX(1)', EIN), (3.12, 'opacity:.92;transform:scaleX(1)'), (3.24, 'opacity:0;transform:scaleX(1)')]))
+    S('.cap2b{transform-origin:270px 161px}')
     s.append('<text x="270" y="170" font-size="27" text-anchor="middle" class="caps capT cap2" fill="#2f2f2f">Popołudnie: regeneracja</text>')
     A('.cap2', K([(0, 'opacity:0;letter-spacing:.5em'), (2.05, 'opacity:0;letter-spacing:.5em'), (2.55, 'opacity:1;letter-spacing:.1em', 'cubic-bezier(.2,.8,.2,1)'),
                   (3.12, 'opacity:1;letter-spacing:.1em'), (3.24, 'opacity:0;letter-spacing:.1em')]))
@@ -1127,17 +1134,19 @@ def sc_taras():
     s.append(''.join('<rect x="%d" y="606" width="11" height="96" fill="#7D5F4C"/>' % x for x in range(-20, 600, 42)))
     s.append('<g><path d="M440,584 h92 v146 l-14,6 l-12,-6 l-14,6 l-14,-6 l-14,6 l-12,-6 l-12,6 Z" fill="url(#pPlaid)"/><path d="M440,584 h92 v10 h-92Z" fill="#000" opacity=".08"/></g>')
     s.append('<rect x="-100" y="760" width="740" height="400" fill="url(#gWood)"/>' + ''.join('<path d="M-100,%d H640" stroke="#5E4739" stroke-width="2"/>' % y for y in range(790, 960, 30)))
-    s.append('<rect x="60" y="690" width="420" height="18" rx="4" fill="#8A6A55"/><rect x="80" y="706" width="12" height="60" fill="#5A4539"/><rect x="448" y="706" width="12" height="60" fill="#5A4539"/>')
+    s.append('<rect x="70" y="600" width="400" height="16" rx="5" fill="#8A6A55"/><rect x="70" y="628" width="400" height="16" rx="5" fill="#8A6A55"/><rect x="84" y="600" width="12" height="96" fill="#5A4539"/><rect x="444" y="600" width="12" height="96" fill="#5A4539"/>'
+             '<rect x="60" y="690" width="420" height="18" rx="4" fill="#8A6A55"/><rect x="80" y="706" width="12" height="80" fill="#5A4539"/><rect x="448" y="706" width="12" height="80" fill="#5A4539"/>')
     mug = ('<g class="crT2"><path d="M-12,-26 L12,-26 L10,4 Q0,9 -10,4 Z" fill="%s"/><path d="M11,-20 q10,2 7,12 q-2,5 -8,5" fill="none" stroke="%s" stroke-width="3.5"/>'
            '<ellipse cx="0" cy="-26" rx="12" ry="3" fill="#8a5a3c"/><path class="steam" d="M-4,-32 q-6,-8 0,-16 q6,-8 0,-16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>'
            '<path class="steam" style="animation-delay:.6s" d="M5,-32 q-6,-8 0,-16 q6,-8 0,-16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></g>') % (BEIGE, BEIGE)
     s.append(FIG('A', 'sit terA', 205, 866, .6, post=ghost('A', 'sit terA', 'R', '<g transform="translate(168,452)">%s</g>' % mug)))
     s.append(FIG('B', 'sit terB', 335, 866, .6, mirror=True, post=ghost('B', 'sit terB', 'R', '<g transform="translate(170,452)">%s</g>' % mug)))
-    # niski stolik z dzbankiem (zasłania nogi siedzących)
-    s.append('<rect x="70" y="742" width="400" height="16" rx="4" fill="#8A6A55"/><rect x="84" y="756" width="372" height="80" fill="#6E5446"/>'
-             '<path d="M84,776 H456 M84,800 H456" stroke="#5E4739" stroke-width="2"/>'
-             '<g transform="translate(150,742)"><path d="M-22,0 C-26,-30 26,-30 22,0 Z" fill="%s"/><path d="M22,-14 q16,-6 20,-18" stroke="%s" stroke-width="5" fill="none"/><rect x="-6" y="-30" width="12" height="6" rx="3" fill="%s"/></g>'
-             '<g transform="translate(400,742)"><rect x="-8" y="-26" width="16" height="26" rx="2" fill="%s"/><circle cx="0" cy="-34" r="22" fill="url(#gWarm)"/><path class="flame" d="M0,-44 q7,9 0,17 q-7,-9 0,-17Z" fill="#F6C75A"/></g>' % (SAGE, SAGE, DKG, CREAM))
+    # koc w kratę na kolanach (zasłania nogi), dzbanek i świeca na deskach obok
+    s.append('<path d="M112,700 C160,690 220,712 270,700 C320,690 380,712 428,700 L440,790 C400,806 360,784 320,800 C280,814 240,788 200,804 C160,816 126,796 100,792 Z" fill="url(#pPlaid)"/>'
+             '<path d="M112,700 C160,690 220,712 270,700 C320,690 380,712 428,700" fill="none" stroke="#C9B6A9" stroke-width="3"/>'
+             '<path d="M160,712 q6,40 -4,80 M270,712 q-4,40 6,86 M360,712 q6,40 -2,82" stroke="#000" stroke-opacity=".06" stroke-width="10" fill="none"/>')
+    s.append('<g transform="translate(478,808)"><path d="M-22,0 C-26,-30 26,-30 22,0 Z" fill="%s"/><path d="M22,-14 q16,-6 20,-18" stroke="%s" stroke-width="5" fill="none"/><rect x="-6" y="-30" width="12" height="6" rx="3" fill="%s"/></g>'
+             '<g transform="translate(66,810)"><rect x="-8" y="-26" width="16" height="26" rx="2" fill="%s"/><circle cx="0" cy="-34" r="22" fill="url(#gWarm)"/><path class="flame" d="M0,-44 q7,9 0,17 q-7,-9 0,-17Z" fill="#F6C75A"/></g>' % (SAGE, SAGE, DKG, CREAM))
     # liść wraca jak wahadło i ląduje na barierce
     s.append('<g class="lfT"><g class="lfTr">%s</g></g>' % gold_leaf('b', 1.1))
     A('.lfT', K([(0, 'transform:translate(580px,250px)'), (.25, 'transform:translate(580px,250px)'), (.6, 'transform:translate(470px,318px)'), (.95, 'transform:translate(515px,392px)'),
@@ -1192,7 +1201,7 @@ def stone(cx, cy, rx, ry, col, rot=0):
         f(-rx * .3), f(-ry * .4), f(rx * .35), f(ry * .25))
 
 def sc_kamienie():
-    T = 2.1; s = []
+    T = 1.9; s = []
     s.append('<g class="cam c10">')
     s.append('<rect x="-100" y="-100" width="740" height="560" fill="url(#gSkyGold)"/>')
     s.append(rnd_ridge(-100, 700, 250, 22, 9, 91, 460, SAGE) + rnd_ridge(-100, 700, 310, 14, 9, 92, 460, DKG))
@@ -1220,7 +1229,7 @@ def sc_kamienie():
     s.append('</g>')
     A('.c10', K([(0, 'transform:translateY(0)'), (.15, 'transform:translateY(0)'), (1.15, 'transform:translateY(-690px)', EIO), (T, 'transform:translateY(-700px)')]))
     s.append('<circle class="wipeK" cx="%d" cy="%d" r="1200" fill="%s"/>' % (SX, SY - 690, CREAM))
-    A('.wipeK', K([(0, 'transform:scale(0)'), (1.5, 'transform:scale(0)'), (2.05, 'transform:scale(1)', 'cubic-bezier(.7,0,.25,1)')]))
+    A('.wipeK', K([(0, 'transform:scale(0)'), (1.42, 'transform:scale(0)'), (1.86, 'transform:scale(1)', 'cubic-bezier(.7,0,.25,1)')]))
     S('.wipeK{transform-origin:%dpx %dpx}' % (SX, SY - 690))
     return ''.join(s)
 
@@ -1230,56 +1239,57 @@ SVG['kamienie'] = sc_kamienie()
 # 6  LOGO + CTA (26,60–30,00)
 # =====================================================================
 def sc_logo():
-    T = 3.4; s = []
-    LXc, LYc, LS = 270, 318, 1.75
+    T = 3.6; s = []
+    LXc, LYc, LS = 270, 296, 1.7
     s.append('<rect width="540" height="960" fill="%s"/><g class="cam c11">' % CREAM)
     s.append('<g opacity=".22">%s%s</g>' % (rnd_ridge(-20, 560, 800, 26, 8, 95, 960, SAGE), rnd_ridge(-20, 560, 850, 18, 8, 96, 960, '#7F978E')))
     # trzy kamienie wskakują od dołu i układają wieżę
     st = ''
     for i, ((cx, cy), rx, ry, col) in enumerate(STONES):
-        t0 = .05 + .3 * i; c = uid('ls')
-        A('.' + c, K([(0, 'transform:translateY(460px)'), (t0, 'transform:translateY(460px)'), (t0 + .32, 'transform:translateY(-6px)', 'cubic-bezier(.2,.7,.3,1)'),
-                      (t0 + .44, 'transform:translateY(2px)', 'ease-in-out'), (t0 + .54, 'transform:translateY(0)')]))
+        t0 = .0 + .17 * i; c = uid('ls')
+        A('.' + c, K([(0, 'transform:translateY(460px)'), (t0, 'transform:translateY(460px)'), (t0 + .26, 'transform:translateY(-6px)', 'cubic-bezier(.2,.7,.3,1)'),
+                      (t0 + .36, 'transform:translateY(2px)', 'ease-in-out'), (t0 + .44, 'transform:translateY(0)')]))
         st += '<g class="%s"><ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s"/><ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#fff" opacity=".22"/></g>' % (
             c, f(cx), f(cy), f(rx), f(ry), col, f(cx - rx * .3), f(cy - ry * .4), f(rx * .35), f(ry * .25))
     s.append('<g transform="translate(%d,%d) scale(%s)"><g class="tower"><g class="fillSt">%s</g>' % (LXc, LYc, LS, st))
     mk = ''.join('<ellipse class="%s" cx="%s" cy="%s" rx="%s" ry="%s" fill="none" stroke="#fff" stroke-width="9" pathLength="1" stroke-dasharray="1"/>' % (
         'dr%d' % i, f(cx), f(cy), f(rx), f(ry)) for i, ((cx, cy), rx, ry, col) in enumerate(STONES))
     for i in range(3):
-        A('.dr%d' % i, K([(0, 'stroke-dashoffset:1'), (.95 + .12 * i, 'stroke-dashoffset:1'), (1.55 + .12 * i, 'stroke-dashoffset:0', EIO)]))
+        A('.dr%d' % i, K([(0, 'stroke-dashoffset:1'), (.55 + .08 * i, 'stroke-dashoffset:1'), (1.0 + .08 * i, 'stroke-dashoffset:0', EIO)]))
     s.append('<mask id="mLogo" maskUnits="userSpaceOnUse" x="-80" y="-80" width="160" height="160">%s<rect class="mkAll" x="-80" y="-80" width="160" height="160" fill="#fff"/></mask>' % mk)
-    A('.mkAll', K([(0, 'opacity:0'), (1.7, 'opacity:0'), (1.95, 'opacity:1')]))
+    A('.mkAll', K([(0, 'opacity:0'), (1.15, 'opacity:0'), (1.35, 'opacity:1')]))
     s.append('<g mask="url(#mLogo)"><use href="#logoSign" style="color:%s"/></g></g></g>' % DKG)
-    A('.fillSt', K([(0, 'opacity:1'), (1.05, 'opacity:1'), (1.6, 'opacity:0', EOUT)]))
-    A('.tower', K([(0, 'transform:rotate(0)'), (.95, 'transform:rotate(0)'), (1.1, 'transform:rotate(2.2deg)'), (1.28, 'transform:rotate(-1.6deg)'), (1.45, 'transform:rotate(.8deg)'), (1.6, 'transform:rotate(0)')]))
+    A('.fillSt', K([(0, 'opacity:1'), (.65, 'opacity:1'), (1.1, 'opacity:0', EOUT)]))
+    A('.tower', K([(0, 'transform:rotate(0)'), (.62, 'transform:rotate(0)'), (.76, 'transform:rotate(2.2deg)'), (.92, 'transform:rotate(-1.6deg)'), (1.06, 'transform:rotate(.8deg)'), (1.2, 'transform:rotate(0)')]))
     S('.tower{transform-origin:0 58px}')
     sp = ''
     for q in range(6):
         a = q / 6 * 2 * math.pi - .5; c = uid('lsp')
-        A('.' + c, K([(0, 'transform:translate(0,0) scale(0);opacity:0'), (1.4, 'transform:translate(0,0) scale(0);opacity:0'),
-                      (1.55, 'transform:translate(%spx,%spx) scale(1);opacity:1' % (f(math.cos(a) * 110), f(math.sin(a) * 110))),
-                      (2.1, 'transform:translate(%spx,%spx) scale(.2);opacity:0' % (f(math.cos(a) * 150), f(math.sin(a) * 150)), 'ease-out')]))
+        A('.' + c, K([(0, 'transform:translate(0,0) scale(0);opacity:0'), (.95, 'transform:translate(0,0) scale(0);opacity:0'),
+                      (1.1, 'transform:translate(%spx,%spx) scale(1);opacity:1' % (f(math.cos(a) * 110), f(math.sin(a) * 110))),
+                      (1.65, 'transform:translate(%spx,%spx) scale(.2);opacity:0' % (f(math.cos(a) * 150), f(math.sin(a) * 150)), 'ease-out')]))
         sp += '<g class="%s"><use href="#star" fill="%s" transform="scale(.9)"/></g>' % (c, MUST)
     s.append('<g transform="translate(%d,%d)">%s</g></g>' % (LXc, LYc, sp))
     S('.c11{transform-origin:270px 420px}')
     A('.c11', K([(0, 'transform:scale(1.06) translateY(10px)'), (1.6, 'transform:scale(1.01) translateY(0)', ESOFT), (T, 'transform:scale(1)')]))
-    s.append('<text x="270" y="496" font-size="60" text-anchor="middle" class="serif split" fill="%s" style="--d0:1.15s">SheBalance</text>' % DKG)
-    s.append('<text x="270" y="552" font-size="24" text-anchor="middle" class="wsplit w4 capT2" fill="%s" data-g="0,7,17" style="--d0:1.7s">5–7.11 · Beskidy · 20 miejsc</text>' % DKG)
+    s.append('<text x="270" y="530" font-size="60" text-anchor="middle" class="serif split" fill="%s" style="--d0:.72s">SheBalance</text>' % DKG)
+    s.append('<text x="270" y="580" font-size="24" text-anchor="middle" class="wsplit w4 capT2" fill="%s" data-g="0,7,17" style="--d0:1.1s">5–7.11 · Beskidy · 20 miejsc</text>' % DKG)
     S('.capT2{font-family:"Mulish",sans-serif;font-weight:700;letter-spacing:.06em}'
-      '.scene.active .w4.w{transform-box:fill-box;animation:wRise2 .45s %s both;animation-delay:calc(var(--d0) + var(--w)*.2s)}'
+      '.scene.active .w4.w{transform-box:fill-box;animation:wRise2 .4s %s both;animation-delay:calc(var(--d0) + var(--w)*.15s)}'
       '@keyframes wRise2{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}' % EIN)
-    s.append('<g transform="translate(270,626)"><g class="cta"><g class="ctaP"><rect x="-232" y="-32" width="464" height="64" rx="32" fill="%s"/>'
+    s.append('<g transform="translate(270,648)"><g class="cta"><g class="ctaP"><rect x="-232" y="-32" width="464" height="64" rx="32" fill="%s"/>'
              '<text x="0" y="10" font-size="28" text-anchor="middle" class="capT2" fill="%s" style="letter-spacing:.02em">Zapisz się → shebalance.pl</text></g></g></g>' % (DKG, CREAM))
-    A('.cta', K([(0, 'transform:scale(0);opacity:0'), (2.2, 'transform:scale(0);opacity:0'), (2.5, 'transform:scale(1.04);opacity:1', 'cubic-bezier(.3,1.4,.5,1)'), (2.62, 'transform:scale(1)')]))
-    A('.ctaP', 'ctaPulse .9s ease-in-out 2.7s infinite')
+    A('.cta', K([(0, 'transform:scale(0);opacity:0'), (1.5, 'transform:scale(0);opacity:0'), (1.76, 'transform:scale(1.04);opacity:1', 'cubic-bezier(.3,1.4,.5,1)'), (1.86, 'transform:scale(1)')]))
+    A('.ctaP', 'ctaPulse .9s ease-in-out 2.0s infinite')
     S('@keyframes ctaPulse{0%,100%{transform:scale(1)}40%{transform:scale(1.05)}}')
-    s.append('<text class="hnd" x="270" y="704" font-size="20" text-anchor="middle" fill="%s" style="font-family:Mulish,sans-serif;font-weight:600;letter-spacing:.04em">@shebalance_camp</text>' % BROWN)
-    A('.hnd', K([(0, 'opacity:0;transform:translateY(8px)'), (2.55, 'opacity:0;transform:translateY(8px)'), (2.8, 'opacity:1;transform:none', EIN)]))
+    s.append('<text class="hnd" x="270" y="724" font-size="20" text-anchor="middle" fill="%s" style="font-family:Mulish,sans-serif;font-weight:600;letter-spacing:.04em">@shebalance_camp</text>' % BROWN)
+    A('.hnd', K([(0, 'opacity:0;transform:translateY(8px)'), (1.9, 'opacity:0;transform:translateY(8px)'), (2.15, 'opacity:1;transform:none', EIN)]))
     s.append('<g class="lfL"><g class="lfLr">%s</g></g>' % gold_leaf('m', 1.2))
-    A('.lfL', K([(0, 'transform:translate(-40px,120px)'), (2.2, 'transform:translate(-40px,120px)'), (2.55, 'transform:translate(110px,168px)'), (2.9, 'transform:translate(270px,140px)'),
-                 (3.25, 'transform:translate(430px,178px)'), (T, 'transform:translate(590px,150px)')], ease='ease-in-out'))
-    A('.lfLr', K([(0, 'transform:rotate(-30deg)'), (2.2, 'transform:rotate(-30deg)'), (2.55, 'transform:rotate(40deg) scale(.8,1)'), (2.9, 'transform:rotate(-20deg)'),
-                  (3.25, 'transform:rotate(50deg) scale(.7,1)'), (T, 'transform:rotate(10deg)')], ease='ease-in-out'))
+    # ostatni liść przelatuje i ląduje tam, gdzie w klatce 0 była karteczka (pętla)
+    A('.lfL', K([(0, 'transform:translate(-40px,130px)'), (2.25, 'transform:translate(-40px,130px)'), (2.6, 'transform:translate(120px,170px)'), (2.9, 'transform:translate(420px,210px)'),
+                 (3.2, 'transform:translate(440px,420px)'), (3.5, 'transform:translate(270px,446px)', 'ease-out')], ease='ease-in-out'))
+    A('.lfLr', K([(0, 'transform:rotate(-30deg)'), (2.25, 'transform:rotate(-30deg)'), (2.6, 'transform:rotate(40deg) scale(.8,1)'), (2.9, 'transform:rotate(-20deg)'),
+                  (3.2, 'transform:rotate(50deg) scale(.7,1)'), (3.5, 'transform:rotate(80deg) scale(1,.8)')], ease='ease-in-out'))
     return ''.join(s)
 
 SVG['logo'] = sc_logo()

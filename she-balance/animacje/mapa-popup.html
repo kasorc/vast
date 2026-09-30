@@ -174,7 +174,10 @@
   .up,.upSh,.down,.pinDrop,.popC{transform-box:fill-box}
   .up,.down{transform-origin:50% 100%}
   .scene.active .up{animation:upY .7s var(--in) both;animation-delay:var(--dl,0s)}
-  @keyframes upY{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+  @keyframes upY{0%{transform:scaleY(0)}68%{transform:scaleY(1.03)}84%{transform:scaleY(.97)}100%{transform:scaleY(1)}}
+  .shG{transform-box:fill-box;transform-origin:0 100%}
+  .scene.active .shG{animation:shG .8s var(--soft) both;animation-delay:var(--dl)}
+  @keyframes shG{from{transform:scaleX(0);opacity:0}to{transform:none;opacity:1}}
   .scene.active .down{animation:downY .45s var(--out) both;animation-delay:var(--dl,0s)}
   @keyframes downY{0%{transform:scaleY(1)}100%{transform:scaleY(0);opacity:0}}
   .popC{transform-origin:50% 50%}
@@ -211,10 +214,10 @@
     78%{transform:translate(270px,500px) scale(.54) translate(-420px,-800px);animation-timing-function:cubic-bezier(.6,0,.35,1)}
     100%{transform:translate(270px,500px) scale(1.5) translate(-290px,-760px)}}
   .fRback,.fRfront{transform-origin:840px 0} .fLback,.fLfront{transform-origin:420px 0}
-  .s1.active .fRback{animation:foldAway .32s var(--out) .12s both}
-  .s1.active .fRfront{animation:foldOpen .5s var(--in) .44s both}
-  .s1.active .fLback{animation:foldAway .3s var(--out) .52s both}
-  .s1.active .fLfront{animation:foldOpen .5s var(--in) .82s both}
+  .s1.active .fRback{animation:foldAway .34s var(--out) 0s both}
+  .s1.active .fRfront{animation:foldOpen .5s var(--in) .34s both}
+  .s1.active .fLback{animation:foldAway .3s var(--out) .46s both}
+  .s1.active .fLfront{animation:foldOpen .5s var(--in) .76s both}
   @keyframes foldAway{from{transform:scaleX(1)}to{transform:scaleX(0)}}
   @keyframes foldOpen{0%{transform:scaleX(0)}70%{transform:scaleX(1.03)}100%{transform:scaleX(1)}}
   .s1.active .fRfront .crease{animation:crease .6s ease .44s both} .s1.active .fLfront .crease{animation:crease .6s ease .82s both}
@@ -242,10 +245,9 @@
   .scene.active .figB.b1 .headWrap{animation:b1H 2.6s var(--io) both}
   @keyframes b1H{0%,50%{transform:rotate(0)}62%,100%{transform:rotate(-5deg)}}
   .scene.active .t1a{transform-box:fill-box;transform-origin:50% 50%;animation:t1a 1.2s both}
-  @keyframes t1a{0%{transform:scale(1.12);opacity:1;animation-timing-function:var(--soft)}80%{transform:scale(1);opacity:1}100%{transform:scale(.96);opacity:0}}
-  .scene.active .t1b{animation:t1b 2.6s both}
-  @keyframes t1b{0%,44%{opacity:0;transform:translateY(-14px)}52%,86%{opacity:1;transform:none}94%,100%{opacity:0;transform:translateY(-30px)}}
-  .scene.active .t1b .ch{--d0:1.2s}
+  @keyframes t1a{0%{transform:scale(1.12);animation-timing-function:var(--soft)}78%{transform:scale(1);animation-timing-function:var(--out)}90%,100%{transform:scaleY(0)}}
+  .scene.active .t1b{transform-box:fill-box;transform-origin:50% 50%;animation:t1b 2.6s both}
+  @keyframes t1b{0%,41.5%{transform:scaleY(0);animation-timing-function:var(--in)}48%,86%{transform:none;opacity:1}94%,100%{opacity:0;transform:translateY(-24px)}}
 
   /* ---------- 2. MIASTO ---------- */
   .scene.active .mini{transform-box:fill-box;transform-origin:50% 100%;animation:miniLife 1.55s var(--io) .3s both}
@@ -276,7 +278,7 @@
   @keyframes rot3{0%{transform:rotate(0)}33%{transform:rotate(4deg)}68%{transform:rotate(-4deg)}100%{transform:rotate(0)}}
   .scene.active .w3{animation:w3 .5s var(--in) both;animation-delay:var(--dl)}
   @keyframes w3{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-  .scene.active .tag3{transform-box:fill-box;transform-origin:0 50%;animation:tag3 .45s var(--in) .05s both}
+  .scene.active .tag3{transform-box:fill-box;transform-origin:0 50%;animation:tag3 .4s var(--in) 0s both}
   @keyframes tag3{from{transform:scaleX(0)}to{transform:scaleX(1)}}
   .scene.active .t3out{animation:tOut .25s var(--out) 3.3s both}
   .busWave{transform-box:fill-box;transform-origin:50% 100%;animation:bw .3s ease-in-out infinite alternate}
@@ -286,10 +288,12 @@
   .scene.active .grey4{animation:grey4 1.1s ease .15s both}
   @keyframes grey4{to{opacity:0}}
   .hopA,.hopB{transform-origin:110px 712px}
-  .scene.active .hopA{animation:hopA .75s cubic-bezier(.3,0,.3,1) .55s both}
-  @keyframes hopA{0%{transform:translate(440px,-60px) scale(.35);opacity:0}15%{opacity:1}55%{transform:translate(200px,-260px) scale(.9,1.05)}82%{transform:translate(0,0) scale(1.06,.93)}100%{transform:none}}
-  .scene.active .hopB{animation:hopB .75s cubic-bezier(.3,0,.3,1) .8s both}
-  @keyframes hopB{0%{transform:translate(-340px,-60px) scale(.35);opacity:0}15%{opacity:1}55%{transform:translate(-150px,-260px) scale(.9,1.05)}82%{transform:translate(0,0) scale(1.06,.93)}100%{transform:none}}
+  .scene.active .hopA{animation:stepOut .85s ease-in-out .5s both}
+  .scene.active .hopB{animation:stepOut .85s ease-in-out .75s both}
+  @keyframes stepOut{0%{transform:translate(var(--sx),0);opacity:0}12%{opacity:1}25%{transform:translate(calc(var(--sx)*.74),-22px)}45%{transform:translate(calc(var(--sx)*.46),0)}65%{transform:translate(calc(var(--sx)*.2),-22px)}84%{transform:translate(0,0) scale(1.03,.97)}100%{transform:none}}
+  .scene.active .hopA .legL,.scene.active .hopB .legL{animation:stepL .42s ease-in-out 2;animation-delay:inherit}
+  .scene.active .hopA .legL{animation-delay:.5s} .scene.active .hopA .legR{animation:stepL .42s ease-in-out .71s 2}
+  .scene.active .hopB .legL{animation-delay:.75s} .scene.active .hopB .legR{animation:stepL .42s ease-in-out .96s 2}
   .scene.active .figA.a4 .armR{animation:a4R 3.8s var(--io) both}
   @keyframes a4R{0%,36%{transform:rotate(-7deg)}44%,100%{transform:rotate(-148deg)}}
   .scene.active .figA.a4 .foreR{animation:waveF .36s ease-in-out 1.55s infinite alternate}
@@ -309,7 +313,7 @@
   @keyframes pinHead{from{transform:scale(1)}to{transform:scale(36)}}
   .scene.active .t4{transform-box:fill-box;transform-origin:50% 0;animation:t4 3.8s both}
   @keyframes t4{0%,12%{transform:translateY(-40px) rotate(3deg);opacity:0;animation-timing-function:var(--in)}24%{transform:rotate(-1deg);opacity:1}60%{opacity:1;transform:rotate(-1deg)}66%,100%{opacity:0;transform:translateY(-12px) rotate(-1deg)}}
-  .scene.active .t4 .ch{--d0:.6s}
+  .scene.active .t4 .ch{--d0:.42s}
 
   /* ---------- 5. TRZY POP-UPY DNIA ---------- */
   .page{transform-origin:0 480px}
@@ -342,9 +346,9 @@
   @keyframes bdL{0%,35%,100%{transform:rotate(168deg)}50%,85%{transform:rotate(160deg)}}
   @keyframes bdR{0%,35%,100%{transform:rotate(-168deg)}50%,85%{transform:rotate(-48deg)}}
   @keyframes bdB{0%,35%,100%{transform:rotate(0)}50%,85%{transform:rotate(-9deg)}}
-  .figA.a5b .armR{transform:rotate(16deg)} .figA.a5b .headWrap{transform:rotate(4deg) translateY(3px)}
+  .figA.a5b .armR{transform:rotate(-34deg)} .figA.a5b .headWrap{transform:rotate(7deg) translateY(4px)}
   .scene.active .figA.a5b .foreR{animation:write .45s ease-in-out infinite alternate}
-  @keyframes write{from{transform:rotate(110deg)}to{transform:rotate(121deg)}}
+  @keyframes write{from{transform:rotate(-10deg)}to{transform:rotate(-20deg)}}
   .figB.b5b .armR{transform:rotate(30deg)}
   .scene.active .figB.b5b .foreR{animation:tap .5s ease-in-out infinite alternate}
   @keyframes tap{from{transform:rotate(12deg)}to{transform:rotate(26deg)}}
@@ -372,9 +376,12 @@
   @keyframes glow{from{opacity:.35}to{opacity:.7}}
 
   /* ---------- 6. MAPA SIĘ SKŁADA ---------- */
-  .whip6{transform-origin:270px 480px}
+  .whip6{transform-origin:272px 527px}
   .scene.active .whip6{animation:whip6 3.7s both}
-  @keyframes whip6{0%,90%{transform:none;filter:none;animation-timing-function:cubic-bezier(.7,0,.9,.4)}91%{filter:url(#vblur)}100%{transform:translateY(-900px);filter:url(#vblur)}}
+  @keyframes whip6{0%,82%{transform:none;animation-timing-function:cubic-bezier(.6,0,.85,.5)}100%{transform:scale(7)}}
+  .scene.active .flash6{animation:flash6 3.7s both}
+  @keyframes flash6{0%,90%{opacity:0}100%{opacity:1}}
+  .scene.active .t6out{animation:tOut .22s var(--out) 2.98s both}
   .rot6{transform-origin:270px 480px}
   .scene.active .rot6{animation:rot6 3.3s var(--io) .3s both}
   @keyframes rot6{0%{transform:rotate(0)}45%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
@@ -384,26 +391,23 @@
   .drop6{transform-origin:630px 550px}
   .scene.active .drop6{animation:drop6 .5s var(--in) both}
   @keyframes drop6{from{transform:scale(1.15);opacity:.0}30%{opacity:1}to{transform:none;opacity:1}}
-  .s6.active .fLfront{animation:foldAway .26s var(--out) 1.42s both}
-  .s6.active .fLback{animation:foldOpen2 .3s var(--in) 1.68s both}
-  .s6.active .fRfront{animation:foldAway .26s var(--out) 1.95s both}
-  .s6.active .fRback{animation:foldOpen2 .3s var(--in) 2.21s both}
+  .s6.active .fLfront{animation:foldAway .26s var(--out) 1.12s both}
+  .s6.active .fLback{animation:foldOpen2 .3s var(--in) 1.38s both}
+  .s6.active .fRfront{animation:foldAway .26s var(--out) 1.66s both}
+  .s6.active .fRback{animation:foldOpen2 .3s var(--in) 1.92s both}
   @keyframes foldOpen2{0%{transform:scaleX(0)}70%{transform:scaleX(1.03)}100%{transform:scaleX(1)}}
-  .guide6{transform-origin:630px 550px}
-  .scene.active .guide6{animation:guide6 3.7s both}
-  @keyframes guide6{0%,70%{transform:none;animation-timing-function:var(--io)}76%{transform:translateY(-40px) scale(1.06) rotate(-4deg);animation-timing-function:cubic-bezier(.5,0,.7,.6)}84%{transform:translate(-340px,260px) scale(.6) rotate(-14deg);animation-timing-function:cubic-bezier(.4,.2,.8,.6)}92%,100%{transform:translate(-460px,1000px) scale(.4) rotate(-26deg)}}
   .scene.active .b6pos{animation:b6pos 3.7s both}
   @keyframes b6pos{0%,6%{transform:translateY(330px);animation-timing-function:var(--in)}22%,100%{transform:none}}
   .scene.active .figB.b6 .armL{animation:b6L 3.7s var(--io) both}
-  @keyframes b6L{0%,38%{transform:rotate(153deg)}51%,72%{transform:rotate(174deg)}84%{transform:rotate(70deg)}95%,100%{transform:rotate(18deg)}}
+  @keyframes b6L{0%,30%{transform:rotate(153deg)}45%,100%{transform:rotate(174deg)}}
   .scene.active .figB.b6 .armR{animation:b6R 3.7s var(--io) both}
-  @keyframes b6R{0%,52%{transform:rotate(-153deg)}65%,72%{transform:rotate(-174deg)}86%,100%{transform:rotate(-12deg)}}
+  @keyframes b6R{0%,45%{transform:rotate(-153deg)}59%,100%{transform:rotate(-174deg)}}
   .figB.b6 .foreL{transform:rotate(-8deg)} .figB.b6 .foreR{transform:rotate(8deg)}
   .scene.active .figB.b6 .headWrap{animation:b6H 3.7s var(--io) both}
-  @keyframes b6H{0%,72%{transform:rotate(0)}82%{transform:rotate(7deg)}92%,100%{transform:rotate(-3deg)}}
-  .scene.active .t6 .ch{transform-origin:50% 100%;animation:chDrop .5s cubic-bezier(.3,1.5,.5,1) both;animation-delay:calc(2.3s + var(--i) * 40ms)}
+  @keyframes b6H{0%,60%{transform:rotate(0)}68%{transform:rotate(6deg)}76%{transform:rotate(-3deg)}84%,100%{transform:rotate(2deg)}}
+  .scene.active .t6 .ch{transform-origin:50% 100%;animation:chDrop .5s cubic-bezier(.3,1.5,.5,1) both;animation-delay:calc(1.98s + var(--i) * 40ms)}
   @keyframes chDrop{from{opacity:0;transform:translateY(-60px)}60%{opacity:1}to{opacity:1;transform:none}}
-  .scene.active .tag6{animation:fadeIn .2s ease 2.25s both}
+  .scene.active .tag6{animation:fadeIn .15s ease 1.95s both}
 
   /* ---------- 7. CTA ---------- */
   .scene.active .whip7{animation:whip7 .42s cubic-bezier(.2,.8,.3,1) both}
@@ -411,16 +415,14 @@
   .scene.active .push7{transform-origin:270px 380px;animation:push7 3.4s var(--soft) both}
   @keyframes push7{from{transform:scale(1)}to{transform:scale(1.06)}}
   .scene.active .contour7{animation:par 3.4s var(--soft) both;--px:-24px}
-  .scene.active .rv7{animation:rv7 .9s cubic-bezier(.45,0,.3,1) .15s both}
-  @keyframes rv7{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-  .scene.active .logoLine path{animation:draw 1.1s cubic-bezier(.45,0,.3,1) .8s both}
-  .scene.active .logoFill{animation:fadeIn .45s ease 1.65s both}
+  .scene.active .logoLine path{animation:draw 1.1s cubic-bezier(.45,0,.3,1) .55s both}
+  .scene.active .logoFill{animation:fadeIn .45s ease 1.4s both}
   .scene.active .cta1{animation:tx5 .45s var(--in) both;animation-delay:var(--dl)}
   .pill{transform-box:fill-box;transform-origin:50% 50%}
-  .scene.active .pill{animation:pill .5s var(--in) 1.9s both,pulse7 1.1s ease-in-out 2.4s infinite}
+  .scene.active .pill{animation:pill .5s var(--in) 1.55s both,pulse7 1.1s ease-in-out 2.1s infinite}
   @keyframes pill{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
   @keyframes pulse7{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-  .scene.active .pinIco{transform-box:fill-box;transform-origin:50% 100%;animation:pinIco 1.1s cubic-bezier(.3,1.5,.5,1) 2.4s infinite}
+  .scene.active .pinIco{transform-box:fill-box;transform-origin:50% 100%;animation:pinIco 1.1s cubic-bezier(.3,1.5,.5,1) 2.1s infinite}
   @keyframes pinIco{0%,60%,100%{transform:none}20%{transform:translateY(-6px)}}
 </style>
 </head>
@@ -465,7 +467,7 @@
       <ellipse cx="420" cy="76" rx="26" ry="8" fill="none" stroke="#8FA59C" stroke-width="2.5" opacity=".7"/>
     </pattern>
     <pattern id="stripesV" patternUnits="userSpaceOnUse" width="26" height="20"><rect width="26" height="20" fill="#f8f6f1"/><rect x="9" width="8" height="20" fill="#1f1f22"/></pattern>
-    <filter id="greyF"><feColorMatrix type="saturate" values=".06"/><feComponentTransfer><feFuncR type="linear" slope=".92" intercept=".05"/><feFuncG type="linear" slope=".92" intercept=".05"/><feFuncB type="linear" slope=".92" intercept=".06"/></feComponentTransfer></filter>
+    <filter id="greyF"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="linear" slope=".8" intercept=".1"/><feFuncG type="linear" slope=".8" intercept=".1"/><feFuncB type="linear" slope=".8" intercept=".12"/></feComponentTransfer></filter>
     <filter id="mblur" filterUnits="userSpaceOnUse" x="-400" y="-400" width="2100" height="1900"><feGaussianBlur stdDeviation="38"/></filter>
     <filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="10"/></filter>
     <filter id="soft4" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
@@ -477,6 +479,8 @@
     <radialGradient id="warm" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#F4E3B5" stop-opacity=".9"/><stop offset="1" stop-color="#F4E3B5" stop-opacity="0"/></radialGradient>
     <g id="worldArt"></g>
     <g id="coverArt"></g>
+    <g id="backArt"></g>
+    <g id="labelB"></g>
     <g id="pencilG"></g>
   </defs>
   <rect id="bg" width="540" height="960" fill="#A4B8B0"/>
@@ -492,9 +496,9 @@
         <use href="#worldArt" clip-path="url(#clipC)"/>
         <!-- lewe skrzydło -->
         <g class="fLfront"><rect x="14" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipL)"/><g class="needle"><path d="M175,90 L190,175 L175,260 L160,175 Z" fill="#6E5446"/><path d="M175,90 L190,175 L160,175 Z" fill="#B5582F"/><circle cx="175" cy="175" r="9" fill="#F2EFEB" stroke="#6E5446" stroke-width="3"/></g><rect class="crease" x="0" y="0" width="420" height="1100" fill="#000" opacity="0"/></g>
-        <g class="fLback"><rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#coverArt" transform="translate(0,0)"/></g>
+        <g class="fLback"><rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#backArt"/></g>
         <!-- prawe skrzydło (na wierzchu) -->
-        <g class="fRfront"><rect x="854" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipR)"/><rect class="crease" x="840" y="0" width="420" height="1100" fill="#000" opacity="0"/></g>
+        <g class="fRfront"><rect x="854" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipR)"/><use href="#labelB"/><rect class="crease" x="840" y="0" width="420" height="1100" fill="#000" opacity="0"/></g>
         <g class="fRback"><rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#coverArt"/></g>
         <!-- szarość codzienności -->
         <use class="grey1" href="#worldArt" filter="url(#greyF)"/>
@@ -589,8 +593,8 @@
     </g></g>
   </g></g></g></g>
       <!-- teksty -->
-      <g class="tag t1a" data-fill="#58756C" data-pad="26 14" transform="rotate(-1.5 270 138)"><text x="270" y="158" font-size="58" text-anchor="middle" class="serif" fill="#F2EFEB">Skąd?</text></g>
-      <g class="t1b"><g class="tag" data-fill="#58756C" data-pad="22 12" data-del="1.15" transform="rotate(-1.5 270 138)"><text x="270" y="156" font-size="50" text-anchor="middle" class="serif split" fill="#F2EFEB">Z codzienności.</text></g></g>
+      <g class="tag t1a" data-fill="#58756C" data-pad="26 14" transform="rotate(-1.5 270 138)"><text x="270" y="160" font-size="64" text-anchor="middle" class="serif" fill="#F2EFEB">Skąd?</text></g>
+      <g class="t1b"><g class="tag" data-fill="#58756C" data-pad="22 12" data-del="1.15" transform="rotate(-1.5 270 138)"><text x="270" y="156" font-size="50" text-anchor="middle" class="serif" fill="#F2EFEB">Z codzienności.</text></g></g>
     </g>
 
     <!-- ===== 2. MIASTO ===== -->
@@ -774,10 +778,10 @@
       </g></g>
       <g class="t3out"><g class="tag tag3" data-fill="#F4F2EF" data-pad="24 14" data-box="80 118 380 128"></g>
         <g class="words3" data-font="46">
-          <text class="serif w3" data-line="0" style="--dl:.2s" fill="#333">Im</text>
-          <text class="serif w3" data-line="0" style="--dl:.55s" fill="#333">bliżej,</text>
-          <text class="serif w3" data-line="1" style="--dl:1.15s" fill="#333">tym</text>
-          <text class="serif w3" data-line="1" style="--dl:1.5s" fill="#58756C">ciszej.</text>
+          <text class="serif w3" data-line="0" style="--dl:0s" fill="#333">Im</text>
+          <text class="serif w3" data-line="0" style="--dl:.4s" fill="#333">bliżej,</text>
+          <text class="serif w3" data-line="1" style="--dl:1.0s" fill="#333">tym</text>
+          <text class="serif w3" data-line="1" style="--dl:1.35s" fill="#58756C">ciszej.</text>
         </g></g>
     </g>
 
@@ -789,8 +793,7 @@
         <g class="sunStick" transform="translate(0,0)"><g><rect x="1147" y="170" width="6" height="190" fill="#6E5446"/><circle cx="1150" cy="150" r="46" fill="#B8892F"/><circle cx="1146" cy="146" r="46" fill="#D4A23A"/><circle cx="1146" cy="146" r="30" fill="none" stroke="#F4F2EF" stroke-width="3" stroke-dasharray="6 7" opacity=".7"/></g></g>
         <g id="trees4"></g>
         <g id="pinB4"></g>
-        <g id="bus4"></g>
-        <g transform="translate(822,327) scale(.25)"><g class="hopA"><g class="fig figA a4"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body">
+        <g transform="translate(812,327) scale(.25)"><g class="hopA" style="--sx:484px"><g class="fig figA a4"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body">
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
     <g class="legR"><g class="thighR"><rect x="114.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
@@ -864,7 +867,7 @@
       <path d="M56,130 C76,115 144,115 164,130" fill="none" stroke="#27272c" stroke-width="1.1" stroke-dasharray="3 3"/>
     </g></g></g>
   </g></g></g></g>
-        <g transform="translate(1017,327) scale(.25)"><g class="hopB"><g class="fig figB b4 has-pack"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+        <g transform="translate(1055,327) scale(.25)"><g class="hopB" style="--sx:-488px"><g class="fig figB b4 has-pack"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
@@ -944,6 +947,7 @@
       <path d="M100,50 q-6,-8 -2,-14 M118,48 q6,-6 4,-12" fill="none" stroke="#6a4328" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
     </g></g>
   </g></g></g></g>
+        <g id="bus4"></g>
         <g id="pen_beskidy"><use href="#pencilG"/></g>
         <g id="pinHead4"></g>
       </g>
@@ -962,6 +966,7 @@
         <ellipse cx="420" cy="660" rx="120" ry="70" fill="url(#warm)" class="glow"/>
         <g><path d="M322,720 L420,556 L518,720 Z" fill="#C9B2A6"/><path d="M420,556 L518,720 L470,720 Z" fill="#B09A8F"/><path d="M398,720 L420,610 L442,720 Z" fill="#6E5446"/><path d="M420,610 L442,720 L430,720 Z" fill="#F4E3B5" opacity=".7"/></g>
         <path d="M-40,850 C120,830 400,830 600,850 V1000 H-40 Z" fill="#3A514A"/>
+        <g><rect x="46" y="690" width="370" height="50" rx="25" fill="#5F4739"/><rect x="46" y="690" width="370" height="16" rx="8" fill="#6E5446"/><ellipse cx="416" cy="715" rx="14" ry="25" fill="#C9B2A6"/><ellipse cx="416" cy="715" rx="7" ry="13" fill="none" stroke="#8A6A57" stroke-width="2"/></g>
         <g transform="translate(96,410) scale(.62)"><g class="fig figA sit hold has-mug a5c"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body">
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
@@ -1116,12 +1121,12 @@
       <path d="M100,50 q-6,-8 -2,-14 M118,48 q6,-6 4,-12" fill="none" stroke="#6a4328" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
     </g></g>
   </g></g></g>
-        <g><path d="M86,712 C120,690 170,706 196,700 C230,690 280,704 312,694 C350,688 372,706 392,724 C410,780 430,840 452,888 C330,902 150,904 16,890 C38,836 60,772 86,712 Z" fill="#000" opacity=".2" transform="translate(6,8)"/>
-          <path d="M86,712 C120,690 170,706 196,700 C230,690 280,704 312,694 C350,688 372,706 392,724 C410,780 430,840 452,888 C330,902 150,904 16,890 C38,836 60,772 86,712 Z" fill="#E3CCC1"/>
-          <path d="M80,730 C140,716 250,720 396,740 L402,756 C250,736 140,734 76,748 Z M52,818 C160,806 300,810 424,826 L430,844 C300,828 160,824 46,838 Z" fill="#B5582F" opacity=".6"/>
-          <path d="M152,702 C150,760 140,820 130,896 M292,700 C300,760 312,820 322,896" stroke="#B5582F" stroke-width="8" fill="none" opacity=".4"/>
-          <path d="M140,760 C150,800 176,840 172,890 M250,750 C240,800 250,850 262,896 M350,760 C372,800 384,850 390,892" stroke="#C9B2A6" stroke-width="3" fill="none"/>
-          <path d="M392,724 C410,780 430,840 452,888 L420,872 C404,820 396,770 392,724 Z" fill="#C9B2A6"/></g>
+        <g><path d="M70,752 C100,730 140,738 172,748 C204,732 246,736 276,748 C310,732 356,738 392,756 C402,800 410,846 420,884 C320,896 150,898 44,886 C54,840 62,796 70,752 Z" fill="#000" opacity=".22" transform="translate(6,8)"/>
+          <path d="M70,752 C100,730 140,738 172,748 C204,732 246,736 276,748 C310,732 356,738 392,756 C402,800 410,846 420,884 C320,896 150,898 44,886 C54,840 62,796 70,752 Z" fill="#E3CCC1"/>
+          <path d="M66,776 C160,764 300,768 398,780 L400,794 C300,782 160,780 64,790 Z M52,840 C160,830 300,834 412,846 L414,860 C300,848 160,846 50,856 Z" fill="#B5582F" opacity=".55"/>
+          <path d="M150,742 C146,790 140,840 136,892 M300,742 C306,790 312,840 318,892" stroke="#B5582F" stroke-width="7" fill="none" opacity=".35"/>
+          <path d="M172,748 C178,790 170,840 176,890 M276,748 C270,800 282,850 280,894" stroke="#C9B2A6" stroke-width="3" fill="none"/>
+        </g>
         <g class="fadeIn" style="--dl:3.66s"><g class="tag p5c" data-fill="#F4F2EF" data-pad="26 12"><text x="270" y="190" font-size="62" text-anchor="middle" class="serif split" fill="#333" style="--d0:3.7s">Oddech.</text></g></g>
       </g><rect class="shade" width="540" height="960" fill="#000" opacity="0"/><rect x="540" width="46" height="960" fill="url(#edgeSh)"/></g>
       <!-- strona 2: rozmowa -->
@@ -1129,7 +1134,7 @@
         <rect x="-40" y="-40" width="620" height="1040" fill="#E3CCC1"/>
         <rect x="150" y="300" width="240" height="170" fill="#F4F2EF" stroke="#C9B2A6" stroke-width="6" opacity=".0"/>
         <g opacity=".55"><path d="M40,110 L500,110" stroke="#C9B2A6" stroke-width="2"/><path d="M60,110 l20,40 l20,-40 M140,110 l20,40 l20,-40 M360,110 l20,40 l20,-40 M440,110 l20,40 l20,-40" fill="#F4F2EF" stroke="#C9B2A6" stroke-width="2"/></g>
-        <g transform="translate(20,250) scale(.85)"><g class="fig figA holdL has-notes a5b"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body">
+        <g transform="translate(20,250) scale(.85)"><g class="fig figA a5b"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body">
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
     <g class="legR"><g class="thighR"><rect x="114.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
@@ -1285,6 +1290,7 @@
   </g></g></g>
         <rect x="-40" y="604" width="620" height="400" fill="#6E5446"/><rect x="-40" y="596" width="620" height="16" fill="#8A6A57"/><path d="M-40,640 H580 M-40,700 H580 M-40,780 H580" stroke="#5F4739" stroke-width="3" opacity=".5"/>
         <g transform="translate(270,640) rotate(-4)"><rect x="-95" y="-34" width="190" height="96" fill="#000" opacity=".2" transform="translate(6,6)"/><rect x="-95" y="-34" width="190" height="96" fill="#F2EFEB"/><path d="M-32,-34 V62 M32,-34 V62" stroke="#E3CCC1" stroke-width="2"/><path d="M-80,40 C-50,10 -20,40 10,0 S60,-10 78,-22" stroke="#B5582F" stroke-width="4" stroke-dasharray="8 6" fill="none"/><circle cx="78" cy="-22" r="7" fill="#58756C"/></g>
+        <g id="notes5"><g transform="translate(270,574) rotate(8)"><path d="M-44,-30 L44,-30 L50,26 L-50,26 Z" fill="#000" opacity=".18" transform="translate(5,5)"/><path d="M-44,-30 L0,-26 L0,30 L-50,26 Z" fill="#F4F2EF"/><path d="M0,-26 L44,-30 L50,26 L0,30 Z" fill="#F2EFEB"/><path d="M0,-26 V30" stroke="#C9B2A6" stroke-width="2"/><path d="M-36,-12 H-10 M-38,-2 H-8 M-40,8 H-14 M8,-14 H34" stroke="#6E5446" stroke-width="2" opacity=".6"/></g></g>
         <g transform="translate(78,610)"><rect x="-44" y="-14" width="88" height="16" rx="2" fill="#58756C"/><rect x="-38" y="-28" width="80" height="14" rx="2" fill="#A4B8B0"/><rect x="-42" y="-40" width="84" height="12" rx="2" fill="#E3CCC1"/></g>
         <g transform="translate(462,606) scale(1.15)"><use href="#mug"/></g>
         <g class="bub" style="--dl:2.1s"><g transform="translate(252,300)"><path d="M-30,-24 H30 Q38,-24 38,-16 V12 Q38,20 30,20 H8 L-8,34 L-6,20 H-30 Q-38,20 -38,12 V-16 Q-38,-24 -30,-24 Z" fill="#F4F2EF" stroke="#58756C" stroke-width="2"/><circle cx="-14" cy="-2" r="4.5" fill="#58756C"/><circle cx="0" cy="-2" r="4.5" fill="#58756C"/><circle cx="14" cy="-2" r="4.5" fill="#58756C"/></g></g>
@@ -1297,9 +1303,9 @@
         <rect x="-40" y="-40" width="620" height="1040" fill="url(#skyM)"/>
         <g class="sunUp"><circle cx="400" cy="470" r="70" fill="#E9CFA0"/><circle cx="400" cy="470" r="96" fill="#E9CFA0" opacity=".3"/></g>
         <g class="par1"><path d="M-60,560 C40,470 120,520 200,450 C280,380 360,470 440,420 C500,390 560,430 620,460 V1000 H-60 Z" fill="#A4B8B0"/></g>
-        <g class="mistB"><rect x="-40" y="520" width="360" height="22" rx="11" fill="#F4F2EF" opacity=".75"/></g>
+        <g class="mistB"><ellipse cx="40" cy="560" rx="110" ry="12" fill="#F4F2EF" opacity=".8" filter="url(#soft4)"/></g>
         <g class="par2"><path d="M-60,650 C60,590 160,640 260,590 C360,540 460,620 620,580 V1000 H-60 Z" fill="#58756C"/></g>
-        <g class="mistB" style="animation-direction:alternate-reverse"><rect x="220" y="612" width="380" height="20" rx="10" fill="#F4F2EF" opacity=".6"/></g>
+        <g class="mistB" style="animation-direction:alternate-reverse"><ellipse cx="510" cy="640" rx="100" ry="11" fill="#F4F2EF" opacity=".7" filter="url(#soft4)"/></g>
         <rect x="-60" y="720" width="660" height="300" fill="#8FA69C"/>
         <g class="par3">
           <path d="M52,772 L232,772 L252,812 L32,812 Z" fill="#E3CCC1"/><path d="M32,812 L252,812 L252,820 L32,820 Z" fill="#C9B2A6"/>
@@ -1471,14 +1477,14 @@
       <g class="whip6"><g class="rot6">
         <g id="cam6">
           <rect x="-3000" y="-3000" width="7300" height="7100" fill="url(#wood)"/>
-          <g class="guide6"><g class="drop6">
+          <g><g class="drop6">
             <rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/>
             <use href="#worldArt" clip-path="url(#clipC)"/>
             <g class="fLfront"><rect x="14" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipL)"/><g class="needleS"><path d="M175,90 L190,175 L175,260 L160,175 Z" fill="#6E5446"/><path d="M175,90 L190,175 L160,175 Z" fill="#B5582F"/><circle cx="175" cy="175" r="9" fill="#F2EFEB" stroke="#6E5446" stroke-width="3"/></g><g class="route6" data-clip="clipL"></g></g>
-            <g class="fRfront"><rect x="854" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipR)"/><g class="route6" data-clip="clipR"></g></g>
+            <g class="fRfront"><rect x="854" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#worldArt" clip-path="url(#clipR)"/><use href="#labelB"/><g class="route6" data-clip="clipR"></g></g>
             <g id="route6" data-clip="clipC"></g>
             <g id="pops6"></g>
-            <g class="fLback"><use href="#coverArt"/></g>
+            <g class="fLback"><use href="#backArt"/></g>
             <g class="fRback"><rect x="434" y="22" width="420" height="1100" fill="#000" opacity=".3" filter="url(#soft)"/><use href="#coverArt"/></g>
           </g></g>
         </g>
@@ -1563,12 +1569,13 @@
     </g></g>
   </g></g></g></g>
       </g></g>
-      <g class="tag6"><g class="tag t6" data-fill="#58756C" data-pad="24 12" transform="rotate(-1.5 270 140)"><text x="270" y="160" font-size="54" text-anchor="middle" class="serif split" fill="#F2EFEB">Trasa gotowa.</text></g></g>
+      <g class="t6out"><g class="tag6"><g class="tag t6" data-fill="#58756C" data-pad="24 12" transform="rotate(-1.5 270 140)"><text x="270" y="160" font-size="54" text-anchor="middle" class="serif split" fill="#F2EFEB">Trasa gotowa.</text></g></g></g>
+      <rect class="flash6" x="-10" y="-10" width="560" height="980" fill="#F4F2EF" opacity="0"/>
     </g>
 
     <!-- ===== 7. CTA ===== -->
     <g class="scene s7" data-s="cta">
-      <g class="whip7"><g class="push7">
+      <g><g class="push7">
         <rect x="-60" y="-200" width="660" height="1400" fill="#F4F2EF"/>
         <g class="contour7" id="contour7"></g>
         <g id="route7"></g>
@@ -1577,14 +1584,14 @@
           <g class="logoLine" id="logoLine"></g>
         </g>
       </g></g>
-      <g class="cta1" style="--dl:1.4s"><text x="270" y="492" font-size="22" text-anchor="middle" class="sans" fill="#58756C" letter-spacing="1">5–7.11 · Beskidy · 20 miejsc</text></g>
-      <g class="pill">
-        <rect x="92" y="530" width="356" height="68" rx="34" fill="#46605A" transform="translate(0,5)" opacity=".5"/>
-        <rect x="92" y="530" width="356" height="68" rx="34" fill="#58756C"/>
-        <g class="pinIco"><path d="M140,586 C128,570 122,562 122,552 A18,18 0 0 1 158,552 C158,562 152,570 140,586 Z" fill="#B5582F"/><circle cx="140" cy="552" r="6.5" fill="#F4F2EF"/></g>
-        <text x="296" y="574" font-size="28" text-anchor="middle" class="bold" fill="#F4F2EF">Zaznacz trasę →</text>
+      <g class="cta1" style="--dl:1.15s"><text x="270" y="492" font-size="22" text-anchor="middle" class="sans" fill="#58756C" letter-spacing="1">5–7.11 · Beskidy · 20 miejsc</text></g>
+      <g class="pill" id="pill7">
+        <rect class="pSh" x="60" y="532" width="420" height="68" rx="34" fill="#46605A" transform="translate(0,5)" opacity=".5"/>
+        <rect class="pBg" x="60" y="532" width="420" height="68" rx="34" fill="#58756C"/>
+        <text x="270" y="576" font-size="28" text-anchor="middle" class="bold" fill="#F4F2EF">Zapisz się → shebalance.pl</text>
+        <g class="pinP"><g class="pinIco"><path d="M0,0 C-12,-16 -18,-24 -18,-34 A18,18 0 0 1 18,-34 C18,-24 12,-16 0,0 Z" fill="#B5582F"/><circle cx="0" cy="-34" r="6.5" fill="#F4F2EF"/></g></g>
       </g>
-      <g class="cta1" style="--dl:2.15s"><text x="270" y="650" font-size="26" text-anchor="middle" class="sans" fill="#333" letter-spacing=".5">shebalance.pl</text></g>
+      <g class="cta1" style="--dl:1.9s"><text x="270" y="652" font-size="20" text-anchor="middle" class="sans" fill="#6E5446" letter-spacing="2">LINK W BIO</text></g>
     </g>
 
   </g>
@@ -1664,10 +1671,10 @@ function buildWorld(){
   E('path',{d:gd,stroke:'#A4B8B0','stroke-width':1.5,opacity:.45,fill:'none'},g);
   // pola i łąki
   [[560,830,90,48,'#E3CCC1'],[700,900,110,56,'#E3CCC1'],[640,380,90,50,'#E3CCC1'],[980,700,120,60,'#E3CCC1'],[1120,900,90,70,'#A4B8B0'],[540,500,70,40,'#A4B8B0'],[880,800,80,50,'#A4B8B0'],[330,400,130,70,'#A4B8B0'],[150,500,90,60,'#E3CCC1'],[1130,640,80,50,'#A4B8B0'],[640,1010,120,50,'#A4B8B0']].forEach((a,i)=>{
-    E('path',{d:blob(a[0],a[1],a[2],a[3],7,.35,i+11),fill:a[4],opacity:.75},g);
+    E('path',{d:blob(a[0],a[1],a[2],a[3],7,.35,i+11),fill:a[4]==='#A4B8B0'?'#98AFA6':'#E3C3B4',opacity:1},g);
     E('path',{d:blob(a[0],a[1],a[2]*.7,a[3]*.6,7,.3,i+31),fill:'none',stroke:'#fff',opacity:.5,'stroke-width':2,'stroke-dasharray':'3 6'},g);});
   // lasy
-  [[620,290,9],[1100,770,10],[220,300,7],[790,990,8],[960,880,6],[470,420,6]].forEach((c,i)=>{for(let j=0;j<c[2];j++){E('circle',{cx:f(c[0]+(rnd()-.5)*120),cy:f(c[1]+(rnd()-.5)*70),r:f(12+rnd()*9),fill:'#58756C',opacity:.38},g);}});
+  [[620,290,9],[1100,770,10],[220,300,7],[790,990,8],[960,880,6],[470,420,6]].forEach((c,i)=>{for(let j=0;j<c[2];j++){E('circle',{cx:f(c[0]+(rnd()-.5)*120),cy:f(c[1]+(rnd()-.5)*70),r:f(12+rnd()*9),fill:'#58756C',opacity:.62},g);}});
   // rzeka
   E('path',{d:'M-10,560 C120,540 200,600 260,560 S420,470 540,560 S610,760 700,800 S900,1000 1010,1110',stroke:'#A4B8B0','stroke-width':18,fill:'none','stroke-linecap':'round'},g);
   E('path',{d:'M-10,560 C120,540 200,600 260,560 S420,470 540,560 S610,760 700,800 S900,1000 1010,1110',stroke:'#F2EFEB','stroke-width':3,fill:'none',opacity:.8,'stroke-dasharray':'14 10'},g);
@@ -1679,9 +1686,8 @@ function buildWorld(){
   BLD.forEach(b=>E('rect',{x:b[0],y:b[1]-24,width:b[2],height:24,fill:'#C9C9C4'},g));
   [[190,900,50,30],[260,960,60,26],[380,940,50,30],[110,980,40,26],[420,880,40,24]].forEach(b=>E('rect',{x:b[0],y:b[1],width:b[2],height:b[3],fill:'#D5D5D0'},g));
   // napisy
-  E('text',{x:1045,y:84,'font-size':46,'text-anchor':'middle',class:'serif',fill:'#6E5446','letter-spacing':12,text:'BESKIDY'},g);
   E('text',{x:120,y:676,'font-size':30,class:'serif',fill:'#6E5446','letter-spacing':4,text:'Miasto'},g);
-  E('text',{x:392,y:910,'font-size':24,class:'bold',fill:'#B5582F','letter-spacing':4,text:'START'},g);
+  E('text',{x:350,y:910,'font-size':24,'text-anchor':'end',class:'bold',fill:'#B5582F','letter-spacing':4,text:'START'},g);
   // kompas (róża)
   const c=E('g',{},g);E('circle',{cx:175,cy:175,r:98,fill:'#F4F2EF',stroke:'#6E5446','stroke-width':3},c);E('circle',{cx:175,cy:175,r:86,fill:'none',stroke:'#6E5446','stroke-width':1.2},c);
   for(let i=0;i<32;i++){const a=i/32*Math.PI*2,r1=i%8?80:70;E('line',{x1:f(175+Math.cos(a)*r1),y1:f(175+Math.sin(a)*r1),x2:f(175+Math.cos(a)*86),y2:f(175+Math.sin(a)*86),stroke:'#6E5446','stroke-width':i%8?1.2:3},c);}
@@ -1704,9 +1710,16 @@ function buildCover(){
   E('path',{d:'M500,380 L570,270 L610,330 L660,230 L760,380 Z',fill:'none',stroke:'#58756C','stroke-width':6,'stroke-linejoin':'round'},g);
   E('path',{d:'M470,380 H790',stroke:'#58756C','stroke-width':4},g);
   E('text',{x:630,y:500,'font-size':46,'text-anchor':'middle',class:'bold',fill:'#6E5446','letter-spacing':9,text:'PRZEWODNIK'},g);
-  E('text',{x:630,y:620,'font-size':86,'text-anchor':'middle',class:'serif',fill:'#333',text:'SheBalance'},g);
+  E('text',{x:630,y:620,'font-size':66,'text-anchor':'middle',class:'serif',fill:'#6E5446',text:'SheBalance'},g);
   E('text',{x:630,y:706,'font-size':60,'text-anchor':'middle',class:'serif',fill:'#58756C',text:'Beskidy'},g);
   E('path',{d:'M480,900 C560,840 620,960 700,880 S780,860 790,840',stroke:'#B5582F','stroke-width':6,fill:'none','stroke-dasharray':'16 10'},g);
+}
+function buildBack(){
+  const g=$('#backArt');
+  E('rect',{x:420,y:0,width:420,height:H,fill:'#EFE6DE'},g);
+  let d='';for(let y=60;y<H;y+=70)d+=`M444,${y} H816`;E('path',{d,stroke:'#E3CCC1','stroke-width':2,opacity:.8},g);
+  E('rect',{x:420,y:0,width:26,height:H,fill:'url(#creaseG)'},g);
+  const l=$('#labelB');E('text',{x:1045,y:84,'font-size':46,'text-anchor':'middle',class:'serif',fill:'#6E5446','letter-spacing':12,text:'BESKIDY'},l);
 }
 function buildPencil(){
   const g=E('g',{transform:'rotate(40)'},$('#pencilG'));
@@ -1718,7 +1731,8 @@ function buildPencil(){
 
 /* --- elementy pop-up --- */
 function building(p,b,cls,dl){
-  const [x,y,w,h,s]=b, gg=E('g',{class:cls,style:`--dl:${dl}s`},p);
+  const [x,y,w,h,s]=b; if(cls==='up') E('path',{d:`M${x},${y} H${x+w+10} L${f(x+w+10+h*.45)},${y-18} H${f(x+h*.45)} Z`,fill:'#000',opacity:.13,class:'shG',style:`--dl:${dl+.1}s`},p);
+  const gg=E('g',{class:cls,style:`--dl:${dl}s`},p);
   E('path',{d:`M${x+w},${y-h} l14,-12 v${h-6} l-14,12 Z`,fill:GREYS[s][1]},gg);
   E('path',{d:`M${x},${y-h} l14,-12 h${w} l-14,12 Z`,fill:'#DADAD6'},gg);
   E('rect',{x,y:y-h,width:w,height:h,fill:GREYS[s][0]},gg);
@@ -1790,7 +1804,7 @@ function busAnim(sid,host,t0,d){
 function treesFor(host,t0,d){TREES.forEach(t=>{const tp=tpass(t.q)-.08;if(tp>t0+d)return; if(tp<t0) tree(host,t,'',0); else tree(host,t,'up',(tp-t0));});}
 
 /* ===== budowa ===== */
-buildWorld(); buildCover(); buildPencil();
+buildWorld(); buildCover(); buildBack(); buildPencil();
 
 // SCENA 2
 const S2=[2.6,3.0];
@@ -1805,7 +1819,7 @@ penAnim('miasto',S2[0],S2[1],tg=>{const st=P(0),off=[st[0]+300,st[1]-260];const 
 const S3=[5.6,3.6];
 worldBase('trasa',$('#cam_trasa'),S3[0],S3[1],{});
 treesFor($('#trees3'),S3[0],S3[1]);
-[['BESKIDY 120',.5],['BESKIDY 40',1.3],['BESKIDY 5',2.1]].forEach((s,i)=>{const q=F(S3[0]+s[1]+.3);const [x,y]=P(q),[x2,y2]=P(q+.01);let nx=-(y2-y),ny=x2-x;const nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;let side=i%2?1:-1;let sx=x+nx*62*side,sy=y+ny*62*side;if(distR(sx,sy)<45){side=-side;sx=x+nx*62*side;sy=y+ny*62*side;}
+[['BESKIDY 120',.5],['BESKIDY 40',1.3],['BESKIDY 5',2.1]].forEach((s,i)=>{const q=F(S3[0]+s[1]+.38);const [x,y]=P(q),[x2,y2]=P(q+.01);let nx=-(y2-y),ny=x2-x;const nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;let side=(nx*.64-ny*.77)<0?1:-1;let sx=x+nx*72*side,sy=y+ny*72*side;
   const g=E('g',{transform:`translate(${f(sx)},${f(sy)})`},$('#signs3'));const u=E('g',{class:'up',style:`--dl:${s[1]}s`},g);
   E('ellipse',{cx:6,cy:0,rx:26,ry:6,fill:'#000',opacity:.15},u);E('rect',{x:-3,y:-74,width:7,height:74,fill:'#6E5446'},u);
   E('path',{d:'M-66,-114 H56 L72,-96 L56,-78 H-66 Z',fill:'#46605A',transform:'translate(5,4)'},u);
@@ -1831,7 +1845,7 @@ penAnim('beskidy',S4[0],S4[1],tg=>{const p=P(1),a=sm((tg-9.2)/.7);return [mix(p[
 
 // SCENA 6 – pop-upy opadają falą, trasa w kolorze
 {document.querySelectorAll('#route6,.route6').forEach(r6=>E('path',{d:ROUTE,fill:'none',stroke:'#B5582F','stroke-width':8,'stroke-dasharray':'18 12','stroke-linecap':'round','clip-path':`url(#${r6.dataset.clip})`},r6));
- const p6=$('#pops6'); const wave=(x,y)=>.85+((x/W)*.6+((H-y)/H)*.25)*.75;
+ const p6=$('#pops6'); const wave=(x,y)=>.55+((x/W)*.6+((H-y)/H)*.25)*.75;
  terraces(p6,'fall',(m,mi,k)=>wave(m.cx,m.cy)+(3-k)*.03);
  BLD.slice().sort((a,b)=>a[1]-b[1]).forEach(b=>building(p6,b,'down',wave(b[0],b[1])));
  TREES.forEach(t=>tree(p6,t,'down',wave(t.x,t.y)));
@@ -1845,11 +1859,17 @@ penAnim('beskidy',S4[0],S4[1],tg=>{const p=P(1),a=sm((tg-9.2)/.7);return [mix(p[
  const R7='M34,960 C30,860 22,720 38,600 S80,450 150,428 S232,440 258,418';
  const r=$('#route7'); const m=E('mask',{id:'rm7',maskUnits:'userSpaceOnUse',x:-50,y:-50,width:640,height:1100},r);
  E('path',{d:R7,class:'rv7',pathLength:1,'stroke-dasharray':'1 1',fill:'none',stroke:'#fff','stroke-width':20},m);
+ const p7=E('path',{d:R7},defs),L7=p7.getTotalLength(),U7=t=>cosE(t/.85);
+ KF('rv7',3.4,t=>`stroke-dashoffset:${(1-U7(t)).toFixed(4)}`); CSS.push('.scene.active .rv7{animation:rv7 3.4s linear both}');
+ const gl=E('g',{id:'glow7'},r); E('circle',{r:30,fill:'url(#warm)'},gl); E('circle',{r:6,fill:'#D4A23A',opacity:.9},gl);
+ KF('glow7',3.4,t=>{const q=p7.getPointAtLength(U7(t)*L7);const o=t<.9?1:Math.max(0,1-(t-.9)/.5);return `transform:translate(${f(q.x)}px,${f(q.y)}px);opacity:${o.toFixed(2)}`;}); CSS.push('.scene.active #glow7{animation:glow7 3.4s linear both}');
  E('path',{d:R7,fill:'none',stroke:'#B5582F','stroke-width':5,'stroke-dasharray':'12 9','stroke-linecap':'round',mask:'url(#rm7)'},r);
  const ll=$('#logoLine'); const gi=E('g',{transform:'scale(.1) translate(-711,-738)'},ll);
  document.querySelectorAll('#logoSign path').forEach(p=>{E('path',{d:p.getAttribute('d'),fill:'none',stroke:'#58756C','stroke-width':14,pathLength:1,'stroke-dasharray':'1','stroke-dashoffset':'1'},gi);});
 }
 
+// długopis w dłoni A (scena 5)
+document.querySelectorAll('.figA.a5b .foreR').forEach(fr=>{E('rect',{x:166,y:440,width:7,height:44,rx:2,fill:'#58756C',transform:'rotate(-20 170 452)'},fr);});
 // telefon w dłoni A (scena 2)
 document.querySelectorAll('.figA.phoneA .foreR').forEach(fr=>{E('rect',{x:152,y:436,width:32,height:50,rx:6,fill:'#2a2a2e'},fr);E('rect',{x:156,y:441,width:24,height:36,rx:2,fill:'#A4B8B0'},fr);});
 
@@ -1857,6 +1877,7 @@ const st=document.createElement('style');st.textContent=CSS.join('\n');document.
 
 /* --- metki pod tekst i układ słów (po załadowaniu fontów) --- */
 window.beforeSplit=function(){
+  {const pl=$('#pill7'),t=pl.querySelector('text');const w=t.getComputedTextLength()+64;pl.querySelectorAll('rect').forEach(r=>{r.setAttribute('x',f(270-w/2));r.setAttribute('width',f(w));});pl.querySelector('.pinP').setAttribute('transform',`translate(${f(270-w/2+30)},${532-2})`);}
   document.querySelectorAll('.words3').forEach(w=>{const fs=+w.dataset.font;const lines={};w.querySelectorAll('text').forEach(t=>{t.setAttribute('font-size',fs);(lines[t.dataset.line]=lines[t.dataset.line]||[]).push(t);});
     Object.keys(lines).forEach(k=>{const ts=lines[k];const gap=fs*.28;const tot=ts.reduce((a,t)=>a+t.getComputedTextLength(),0)+gap*(ts.length-1);let x=270-tot/2;ts.forEach(t=>{t.setAttribute('x',x.toFixed(1));t.setAttribute('y',(170+ +k*58));x+=t.getComputedTextLength()+gap;});});});
   document.querySelectorAll('.tag').forEach(t=>{let bb;
