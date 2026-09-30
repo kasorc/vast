@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>She Balance – animacja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,500&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --page:#f4f1ea; --ink:#3d4a3f; --muted:#7c877d; --accent:#9fb0a0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --page:#1c211d; --ink:#e7ebe4; --muted:#9aa59b; }
+  }
+  :root[data-theme="dark"]{ --page:#1c211d; --ink:#e7ebe4; --muted:#9aa59b; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Josefin Sans",system-ui,sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px}
+  .stage-wrap{width:min(100%, calc((100vh - 110px) * 9 / 16));aspect-ratio:9/16;border-radius:22px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.18)}
+  svg#stage{width:100%;height:100%;display:block}
+  .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+  .controls button{font:inherit;background:none;border:1px solid var(--muted);color:var(--ink);border-radius:999px;
+    padding:6px 14px;cursor:pointer;letter-spacing:.08em;font-size:13px}
+  .dots{display:flex;gap:6px}
+  .dots button{width:10px;height:10px;padding:0;border-radius:50%;border:1px solid var(--muted);background:none}
+  .dots button.on{background:var(--ink);border-color:var(--ink)}
+  .bar{width:min(100%, 360px);height:3px;background:rgba(127,127,127,.25);border-radius:3px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--ink)}
+
+  /* ---------- typografia w SVG ---------- */
+  .caps{font-family:"Josefin Sans",sans-serif;font-weight:300;text-transform:uppercase;letter-spacing:.14em}
+  .thin{font-weight:200}
+  .serif{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500}
+
+  /* ---------- tło ---------- */
+  #bg{transition:fill 1.2s ease}
+
+  /* ---------- sceny ---------- */
+  .scene{opacity:0;transition:opacity .7s ease;pointer-events:none}
+  .scene.active{opacity:1}
+  .scene.active .rise{animation:rise 1s cubic-bezier(.2,.8,.2,1) both}
+  .scene.active .d1{animation-delay:.25s}.scene.active .d2{animation-delay:.5s}
+  .scene.active .d3{animation-delay:.8s}.scene.active .d4{animation-delay:1.1s}
+  @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+  .scene.active .spread{animation:spread 1.6s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes spread{from{letter-spacing:.02em;opacity:0}to{letter-spacing:.22em;opacity:1}}
+  .scene.active .draw{stroke-dasharray:1;animation:draw 1.8s ease both}
+  @keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  .scene.active .pop{animation:pop .7s cubic-bezier(.3,1.6,.5,1) both}
+  @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+
+  .float{animation:float 3.2s ease-in-out infinite alternate}
+  @keyframes float{from{transform:translateY(-6px) rotate(-3deg)}to{transform:translateY(8px) rotate(3deg)}}
+  .spin{animation:spin 30s linear infinite;transform-origin:0 0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .twinkle{animation:twinkle 1.8s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+  .steam{animation:steam 2.4s ease-in-out infinite;opacity:0}
+  @keyframes steam{0%{opacity:0;transform:translateY(6px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-22px)}}
+  .heart{animation:heart 3s ease-out infinite;opacity:0}
+  @keyframes heart{0%{opacity:0;transform:translateY(0) scale(.4)}20%{opacity:1;transform:translateY(-20px) scale(1)}100%{opacity:0;transform:translateY(-150px) scale(.8)}}
+  .leafFall{animation:fall linear infinite}
+  @keyframes fall{from{transform:translate(0,-60px) rotate(0)}50%{transform:translate(30px,480px) rotate(180deg)}to{transform:translate(-20px,1020px) rotate(360deg)}}
+  .sunRise{transition:transform 2s cubic-bezier(.2,.8,.2,1);transform:translateY(260px)}
+  .scene.active .sunRise{transform:none}
+
+  /* ---------- postacie ---------- */
+  .pos{transition:transform 1.3s cubic-bezier(.65,0,.25,1)}
+  .lean{transition:transform 1s ease;transform-origin:110px 300px}
+  .breathe{animation:breathe 4s ease-in-out infinite}
+  @keyframes breathe{50%{transform:translateY(-2.5px)}}
+  .tilt{transform-origin:110px 190px;animation:tilt 6.5s ease-in-out infinite}
+  @keyframes tilt{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2.2deg) translateY(-2px)}}
+  .charB .tilt{animation-duration:7.3s;animation-delay:-2s}
+  .sway{transform-origin:110px 60px;animation:sway 5s ease-in-out infinite}
+  @keyframes sway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.4deg)}}
+  .eyes{transform-origin:110px 131px;animation:blink 4.6s infinite}
+  .charB .eyes{animation-duration:5.3s;animation-delay:-1.3s}
+  @keyframes blink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
+  .pupils{animation:look 9s ease-in-out infinite}
+  @keyframes look{0%,40%,100%{transform:none}48%,62%{transform:translateX(2.5px)}70%,85%{transform:translateX(-2px)}}
+  .smile{transform-origin:110px 168px;animation:smile 6s ease-in-out infinite}
+  @keyframes smile{0%,60%,100%{transform:scale(1)}70%,90%{transform:scale(1.12,1.25)}}
+
+  /* pozycje postaci w każdej scenie */
+  .posA{transform:translate(10px,1000px) scale(1.18)} .posB{transform:translate(270px,1000px) scale(1.18)}
+  #stage[data-scene="meet"] .posA,#stage[data-scene="healthy"] .posA,#stage[data-scene="selfdev"] .posA,#stage[data-scene="autumn"] .posA{transform:translate(10px,600px) scale(1.18)}
+  #stage[data-scene="meet"] .posB,#stage[data-scene="healthy"] .posB,#stage[data-scene="selfdev"] .posB,#stage[data-scene="autumn"] .posB{transform:translate(270px,600px) scale(1.18)}
+  #stage[data-scene="networking"] .posA{transform:translate(48px,600px) scale(1.18)}
+  #stage[data-scene="networking"] .posB{transform:translate(232px,600px) scale(1.18)}
+  #stage[data-scene="networking"] .leanA{transform:rotate(4deg)}
+  #stage[data-scene="networking"] .leanB{transform:rotate(-4deg)}
+  #stage[data-scene="outro"] .posA{transform:translate(92px,715px) scale(.8)}
+  #stage[data-scene="outro"] .posB{transform:translate(272px,715px) scale(.8)}
+
+  /* ?rec – sam kadr 9:16 do nagrywania ekranu */
+  body.rec{padding:0;gap:0} body.rec .stage-wrap{width:100vw;height:100vh;border-radius:0;box-shadow:none}
+  body.rec .controls, body.rec .bar{display:none}
+
+  @media (prefers-reduced-motion: reduce){
+    .breathe,.tilt,.sway,.eyes,.pupils,.smile,.float,.spin,.twinkle,.steam,.heart,.leafFall{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="stage-wrap">
+<svg id="stage" viewBox="0 0 540 960" data-scene="intro" role="img" aria-label="Animacja SHE BALANCE Women Camp">
+  <defs>
+    <path id="leaf" d="M0,-12 C9,-6 9,6 0,13 C-9,6 -9,-6 0,-12 Z M0,-12 L0,13" />
+    <path id="star" d="M0,-10 Q1.5,-1.5 10,0 Q1.5,1.5 0,10 Q-1.5,1.5 -10,0 Q-1.5,-1.5 0,-10 Z"/>
+    <path id="heartShape" d="M0,6 C-12,-2 -10,-12 -4,-12 C-1,-12 0,-9 0,-8 C0,-9 1,-12 4,-12 C10,-12 12,-2 0,6 Z"/>
+    <g id="logo" fill="none" stroke="currentColor" stroke-width="2.2">
+      <circle cx="0" cy="-40" r="9" pathLength="1" class="draw"/>
+      <ellipse cx="0" cy="-14" rx="17" ry="11" pathLength="1" class="draw d1"/>
+      <ellipse cx="0" cy="17" rx="28" ry="15" pathLength="1" class="draw d2"/>
+    </g>
+    <g id="mug">
+      <path d="M-22,-20 L22,-20 L19,20 Q18,26 12,26 L-12,26 Q-18,26 -19,20 Z" fill="#f6efe4"/>
+      <path d="M21,-10 Q36,-10 34,4 Q32,14 19,12" fill="none" stroke="#f6efe4" stroke-width="6"/>
+      <ellipse cx="0" cy="-20" rx="22" ry="5" fill="#8a5a3c"/>
+      <path d="M-19,2 L19,2 L18.3,10 L-18.3,10 Z" fill="#c9846a"/>
+      <path class="steam" d="M-8,-30 q-6,-8 0,-16 q6,-8 0,-16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      <path class="steam" style="animation-delay:.8s" d="M6,-30 q-6,-8 0,-16 q6,-8 0,-16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <clipPath id="clipTorsoA"><path d="M14,300 C16,246 50,222 92,206 Q110,214 128,206 C170,222 204,246 206,300 Z"/></clipPath>
+    <clipPath id="clipTorsoB"><path d="M12,300 C14,246 50,222 92,206 Q110,214 128,206 C170,222 206,246 208,300 Z"/></clipPath>
+    <linearGradient id="fadeBottom" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/>
+    </linearGradient>
+  </defs>
+
+  <rect id="bg" width="540" height="960" fill="#9fb0a0"/>
+
+  <!-- ================= TYŁ SCEN (za postaciami) ================= -->
+  <g class="scene" data-s="selfdev">
+    <g class="sunRise">
+      <g transform="translate(270,690)">
+        <g class="spin" fill="#f3c982" opacity=".55">
+          <rect x="-3" y="-250" width="6" height="70" rx="3"/><rect x="-3" y="-250" width="6" height="70" rx="3" transform="rotate(30)"/>
+          <rect x="-3" y="-250" width="6" height="70" rx="3" transform="rotate(60)"/><rect x="-3" y="-250" width="6" height="70" rx="3" transform="rotate(90)"/>
+          <rect x="-3" y="-250" width="6" height="70" rx="3" transform="rotate(-30)"/><rect x="-3" y="-250" width="6" height="70" rx="3" transform="rotate(-60)"/>
+          <rect x="-3" y="-250" width="6" height="70" rx="3" transform="rotate(-90)"/>
+        </g>
+        <circle r="160" fill="#f3c982" opacity=".9"/>
+        <circle r="200" fill="#f3c982" opacity=".25"/>
+      </g>
+    </g>
+  </g>
+  <g class="scene" data-s="networking">
+    <g stroke="#c98f86" stroke-width="1.5" fill="#c98f86">
+      <path class="draw" pathLength="1" fill="none" d="M110,470 L200,420 L300,455 L420,410 M200,420 L240,520 L300,455 M110,470 L240,520 L360,540 L420,410 M300,455 L360,540"/>
+      <circle cx="110" cy="470" r="6" class="pop d1" style="transform-box:fill-box;transform-origin:center"/>
+      <circle cx="200" cy="420" r="5" class="pop d1" style="transform-box:fill-box;transform-origin:center"/>
+      <circle cx="300" cy="455" r="7" class="pop d2" style="transform-box:fill-box;transform-origin:center"/>
+      <circle cx="420" cy="410" r="5" class="pop d2" style="transform-box:fill-box;transform-origin:center"/>
+      <circle cx="240" cy="520" r="6" class="pop d3" style="transform-box:fill-box;transform-origin:center"/>
+      <circle cx="360" cy="540" r="5" class="pop d3" style="transform-box:fill-box;transform-origin:center"/>
+    </g>
+  </g>
+  <g class="scene" data-s="outro">
+    <circle cx="270" cy="860" r="230" fill="#fff" opacity=".12"/>
+    <circle cx="270" cy="860" r="170" fill="#fff" opacity=".12"/>
+  </g>
+
+  <!-- ================= POSTACIE ================= -->
+  <!-- Dziewczyna 1: czapka z daszkiem, blond włosy spięte, zielone oczy, biała bluzka w paski -->
+  <g class="pos posA"><g class="lean leanA"><g class="char charA">
+    <g class="breathe">
+      <path d="M96,168 L96,210 Q110,218 124,210 L124,168 Z" fill="#dfa888"/>
+      <path d="M14,300 C16,246 50,222 92,206 Q110,214 128,206 C170,222 204,246 206,300 Z" fill="#f7f4ee"/>
+      <g clip-path="url(#clipTorsoA)" fill="#1f1f22">
+        <rect x="0" y="236" width="220" height="9"/><rect x="0" y="262" width="220" height="9"/><rect x="0" y="288" width="220" height="9"/>
+        <path d="M14,300 C16,246 50,222 92,206 Q110,214 128,206 C170,222 204,246 206,300 Z" fill="url(#fadeBottom)"/>
+      </g>
+      <path d="M90,206 Q110,224 130,206" fill="none" stroke="#1f1f22" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <g class="tilt">
+      <!-- włosy z tyłu (spięte) -->
+      <path d="M60,100 C48,140 56,172 80,186 L84,124 Z" fill="#c9a06a"/>
+      <path d="M160,100 C172,140 164,172 140,186 L136,124 Z" fill="#c9a06a"/>
+      <ellipse cx="59" cy="132" rx="8" ry="12" fill="#eab896"/>
+      <ellipse cx="161" cy="132" rx="8" ry="12" fill="#eab896"/>
+      <circle cx="58" cy="146" r="2.4" fill="#d8b56a"/><circle cx="162" cy="146" r="2.4" fill="#d8b56a"/>
+      <!-- twarz -->
+      <path d="M60,108 C60,70 160,70 160,108 C160,150 142,184 110,189 C78,184 60,150 60,108 Z" fill="#f2c9aa"/>
+      <path d="M62,120 C64,160 84,184 110,189 C90,180 74,160 70,122 Z" fill="#e7b392" opacity=".6"/>
+      <!-- pasma przy skroniach -->
+      <path d="M64,100 C60,122 64,142 70,156" fill="none" stroke="#d6ae78" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M156,100 C160,122 156,142 150,156" fill="none" stroke="#d6ae78" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M66,100 Q92,112 108,100 L104,96 Q86,102 70,96 Z" fill="#d6ae78"/>
+      <!-- czapka -->
+      <path d="M57,106 C55,64 84,44 110,44 C136,44 165,64 163,106 Q110,96 57,106 Z" fill="#1d1d20"/>
+      <path d="M72,60 C86,50 100,48 110,48 L110,98 Q88,99 72,102 Z" fill="#2a2a2e" opacity=".6"/>
+      <path d="M110,46 L110,98 M88,50 Q78,76 80,101 M132,50 Q142,76 140,101" fill="none" stroke="#313136" stroke-width="1.6"/>
+      <circle cx="110" cy="46" r="3.5" fill="#313136"/>
+      <path d="M62,113 Q110,105 158,113 L157,123 Q110,113 63,123 Z" fill="#000" opacity=".13"/>
+      <path d="M44,106 Q110,92 176,106 Q179,119 160,123 Q110,112 60,123 Q41,119 44,106 Z" fill="#141416"/>
+      <path d="M52,108 Q110,96 168,108" fill="none" stroke="#2c2c30" stroke-width="1.5"/>
+      <!-- brwi -->
+      <path d="M77,119 Q88,113 100,117" fill="none" stroke="#a47b52" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M120,117 Q132,113 143,119" fill="none" stroke="#a47b52" stroke-width="3.2" stroke-linecap="round"/>
+      <!-- oczy -->
+      <g class="eyes">
+        <path d="M78,132 Q88,124 99,132 Q88,138 78,132 Z" fill="#fff"/>
+        <path d="M142,132 Q132,124 121,132 Q132,138 142,132 Z" fill="#fff"/>
+        <g class="pupils">
+          <circle cx="88.5" cy="131" r="4.4" fill="#6f8c5a"/><circle cx="88.5" cy="131" r="2" fill="#1a1a1a"/><circle cx="90" cy="129.6" r="1.1" fill="#fff"/>
+          <circle cx="131.5" cy="131" r="4.4" fill="#6f8c5a"/><circle cx="131.5" cy="131" r="2" fill="#1a1a1a"/><circle cx="133" cy="129.6" r="1.1" fill="#fff"/>
+        </g>
+        <path d="M100,131 Q88,121 76,131 L72,128" fill="none" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M120,131 Q132,121 144,131 L148,128" fill="none" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- nos, policzki, usta -->
+      <path d="M110,136 Q106,150 104,154 Q110,158 116,154" fill="none" stroke="#d99f80" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="82" cy="152" r="10" fill="#f09a8c" opacity=".25"/><circle cx="138" cy="152" r="10" fill="#f09a8c" opacity=".25"/>
+      <g class="smile">
+        <path d="M95,166 Q110,176 125,166 Q110,170 95,166 Z" fill="#d98a8c"/>
+        <path d="M95,166 Q110,162 125,166" fill="none" stroke="#c6757a" stroke-width="1.6" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g></g></g>
+
+  <!-- Dziewczyna 2: długie falowane włosy z grzywką, ciemne oczy, biały sweter z kolorowym, etnicznym wzorem -->
+  <g class="pos posB"><g class="lean leanB"><g class="char charB">
+    <g class="tilt"><g class="sway">
+      <path d="M36,112 C26,50 80,26 110,28 C150,26 196,52 184,114 C198,150 206,192 198,232 C208,262 202,290 196,300 L24,300 C16,288 12,262 22,234 C12,196 22,150 36,112 Z" fill="#6b3f26"/>
+      <path d="M36,140 q-12,20 2,36 q-12,20 0,38 q-10,22 4,40 M184,140 q12,20 -2,36 q12,20 0,38 q10,22 -4,40" fill="none" stroke="#9a5f37" stroke-width="3.5" stroke-linecap="round" opacity=".7"/>
+      <path d="M26,260 q-4,20 6,40 M196,260 q4,20 -6,40" fill="none" stroke="#c08450" stroke-width="5" stroke-linecap="round"/>
+    </g></g>
+    <g class="breathe">
+      <path d="M96,168 L96,210 Q110,218 124,210 L124,168 Z" fill="#dca889"/>
+      <path d="M12,300 C14,246 50,222 92,206 Q110,214 128,206 C170,222 206,246 208,300 Z" fill="#efeae1"/>
+      <g clip-path="url(#clipTorsoB)">
+        <g transform="rotate(-18 60 260)">
+          <rect x="18" y="170" width="12" height="200" fill="#c9463d"/>
+          <rect x="30" y="170" width="8" height="200" fill="#3f6fa8"/>
+          <rect x="38" y="170" width="6" height="200" fill="#e0b54a"/>
+          <rect x="44" y="170" width="14" height="200" fill="#f6f2ea"/>
+          <path d="M44,170 l7,8 l-7,8 l7,8 l-7,8 l7,8 l-7,8 l7,8 l-7,8 l7,8 l-7,8 l7,8 l-7,8 l7,8 l-7,8 l7,8" fill="none" stroke="#2a2a2a" stroke-width="2"/>
+          <rect x="58" y="170" width="8" height="200" fill="#5d8a55"/>
+          <rect x="66" y="170" width="6" height="200" fill="#c9463d"/>
+        </g>
+        <path d="M150,230 l6,6 l6,-6 M150,250 l6,6 l6,-6 M150,270 l6,6 l6,-6 M172,244 l6,6 l6,-6 M172,264 l6,6 l6,-6" fill="none" stroke="#d8d1c4" stroke-width="2"/>
+        <path d="M12,300 C14,246 50,222 92,206 Q110,214 128,206 C170,222 206,246 208,300 Z" fill="url(#fadeBottom)"/>
+      </g>
+      <path d="M92,206 Q110,220 128,206" fill="none" stroke="#d8d1c4" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <g class="tilt">
+      <!-- pasma opadające na ramiona -->
+      <path d="M62,140 C44,180 62,212 44,242 C34,264 48,284 40,300 L70,300 C78,274 62,252 76,224 C86,196 70,170 76,146 Z" fill="#7a4a2d"/>
+      <path d="M158,140 C176,180 158,212 176,242 C186,264 172,284 180,300 L150,300 C142,274 158,252 144,224 C134,196 150,170 144,146 Z" fill="#7a4a2d"/>
+      <path d="M52,250 q-8,18 -4,40 M168,250 q8,18 4,40" fill="none" stroke="#c08450" stroke-width="3" opacity=".8" stroke-linecap="round"/>
+      <!-- twarz -->
+      <path d="M61,110 C61,72 159,72 159,110 C159,152 140,184 110,189 C80,184 61,152 61,110 Z" fill="#f1caae"/>
+      <path d="M63,122 C66,160 84,184 110,189 C90,180 75,160 71,124 Z" fill="#e3b394" opacity=".6"/>
+      <!-- grzywka typu curtain bangs -->
+      <path d="M58,116 C54,72 86,54 110,58 C134,54 166,72 162,116 C152,98 140,90 128,94 C122,84 116,80 110,83 C104,80 98,84 92,94 C80,90 68,98 58,116 Z" fill="#6b3f26"/>
+      <path d="M58,110 C48,134 58,152 52,176 L64,172 C66,150 62,130 70,114 Z" fill="#6b3f26"/>
+      <path d="M162,110 C172,134 162,152 168,176 L156,172 C154,150 158,130 150,114 Z" fill="#6b3f26"/>
+      <path d="M86,68 q-10,12 -8,28 M134,68 q10,12 8,28 M100,62 q-4,10 -2,20 M72,84 q-8,10 -8,24" fill="none" stroke="#9a5f37" stroke-width="2.4" stroke-linecap="round"/>
+      <!-- brwi -->
+      <path d="M78,116 Q89,111 100,115" fill="none" stroke="#4a2c1c" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M120,115 Q131,111 142,116" fill="none" stroke="#4a2c1c" stroke-width="3.4" stroke-linecap="round"/>
+      <!-- oczy -->
+      <ellipse cx="88.5" cy="137" rx="10" ry="3.5" fill="#8a5a4a" opacity=".15"/>
+      <ellipse cx="131.5" cy="137" rx="10" ry="3.5" fill="#8a5a4a" opacity=".15"/>
+      <g class="eyes">
+        <path d="M78,132 Q88,124 99,132 Q88,138 78,132 Z" fill="#fff"/>
+        <path d="M142,132 Q132,124 121,132 Q132,138 142,132 Z" fill="#fff"/>
+        <g class="pupils">
+          <circle cx="89" cy="131" r="4.6" fill="#4a2e1f"/><circle cx="89" cy="131" r="2.1" fill="#140d09"/><circle cx="90.6" cy="129.5" r="1.2" fill="#fff"/>
+          <circle cx="132" cy="131" r="4.6" fill="#4a2e1f"/><circle cx="132" cy="131" r="2.1" fill="#140d09"/><circle cx="133.6" cy="129.5" r="1.2" fill="#fff"/>
+        </g>
+        <path d="M100,131 Q88,122 77,131" fill="none" stroke="#2a1a12" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M120,131 Q132,122 143,131" fill="none" stroke="#2a1a12" stroke-width="2.2" stroke-linecap="round"/>
+      </g>
+      <!-- nos, piegi, usta -->
+      <path d="M110,136 Q106,150 104,154 Q110,158 116,154" fill="none" stroke="#d49c7f" stroke-width="2" stroke-linecap="round"/>
+      <g fill="#c98b6b" opacity=".55"><circle cx="96" cy="148" r="1.2"/><circle cx="100" cy="152" r="1"/><circle cx="92" cy="153" r="1.1"/><circle cx="124" cy="148" r="1.2"/><circle cx="120" cy="152" r="1"/><circle cx="128" cy="153" r="1.1"/></g>
+      <circle cx="84" cy="154" r="9" fill="#e99a8a" opacity=".18"/><circle cx="136" cy="154" r="9" fill="#e99a8a" opacity=".18"/>
+      <g class="smile">
+        <path d="M98,167 Q111,172 124,165 Q112,176 98,167 Z" fill="#c97c7c"/>
+        <path d="M98,167 Q111,172 124,165" fill="none" stroke="#b1666a" stroke-width="2" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g></g></g>
+
+  <!-- ================= PRZÓD SCEN (teksty, rekwizyty) ================= -->
+  <g class="scene" data-s="intro" fill="#fff" text-anchor="middle">
+    <use href="#logo" x="270" y="360" style="color:#fff"/>
+    <text x="270" y="480" font-size="44" class="caps thin spread">She Balance</text>
+    <text x="270" y="522" font-size="15" class="caps rise d3" letter-spacing=".5em">Women Camp</text>
+    <text x="270" y="600" font-size="30" class="serif rise d4">przestrzeń dla kobiet</text>
+  </g>
+
+  <g class="scene" data-s="meet" fill="#3d4a3f" text-anchor="middle">
+    <text x="270" y="170" font-size="20" class="caps rise">Kto stoi za marką</text>
+    <text x="270" y="236" font-size="52" class="caps thin rise d1">She Balance</text>
+    <text x="270" y="296" font-size="30" class="serif rise d2">dwie kobiety, jedna idea</text>
+    <g transform="translate(150,420)" fill="#9fb0a0"><use href="#star" class="twinkle" style="transform-box:fill-box;transform-origin:center"/></g>
+    <g transform="translate(400,380)" fill="#9fb0a0"><use href="#star" class="twinkle" style="animation-delay:.6s;transform-box:fill-box;transform-origin:center"/></g>
+    <g transform="translate(270,470)" fill="#9fb0a0"><use href="#star" class="twinkle" style="animation-delay:1.1s;transform-box:fill-box;transform-origin:center"/></g>
+  </g>
+
+  <g class="scene" data-s="healthy" fill="#3d4a3f" text-anchor="middle">
+    <text x="270" y="150" font-size="16" class="caps rise">01</text>
+    <text x="270" y="240" font-size="84" class="serif rise d1">healthy</text>
+    <text x="270" y="292" font-size="17" class="caps rise d2">ruch · natura · dobre jedzenie</text>
+    <g transform="translate(95,420)"><g class="float"><use href="#leaf" transform="scale(2.6) rotate(30)" fill="#6f8f5e" stroke="#4f6b41" stroke-width=".6"/></g></g>
+    <g transform="translate(445,400)"><g class="float" style="animation-delay:-1s">
+      <circle r="22" fill="#d9674f"/><circle cx="-7" cy="-6" r="6" fill="#fff" opacity=".25"/>
+      <path d="M0,-20 q2,-10 6,-14" stroke="#5a3b24" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <use href="#leaf" transform="translate(12,-26) rotate(60) scale(.8)" fill="#6f8f5e"/>
+    </g></g>
+    <g transform="translate(180,520)"><g class="float" style="animation-delay:-2s">
+      <path d="M-30,-6 L30,-6 Q28,24 0,26 Q-28,24 -30,-6 Z" fill="#efe7da"/>
+      <ellipse cy="-6" rx="30" ry="7" fill="#8fb06a"/><path d="M-10,-7 q10,-6 20,0" stroke="#b5cf8d" stroke-width="2" fill="none"/>
+    </g></g>
+    <g transform="translate(370,515)"><g class="float" style="animation-delay:-.5s">
+      <rect x="-40" y="-14" width="80" height="28" rx="14" fill="#b7a3c9"/>
+      <circle cx="40" cy="0" r="14" fill="#9d87b3"/><circle cx="40" cy="0" r="6" fill="#b7a3c9"/>
+    </g></g>
+  </g>
+
+  <g class="scene" data-s="networking" fill="#3d4a3f" text-anchor="middle">
+    <text x="270" y="150" font-size="16" class="caps rise">02</text>
+    <text x="270" y="240" font-size="76" class="serif rise d1">networking</text>
+    <text x="270" y="292" font-size="17" class="caps rise d2">kobiety, które się wspierają</text>
+    <g transform="translate(150,420)"><g class="pop d3" style="transform-box:fill-box;transform-origin:bottom left">
+      <rect x="0" y="-26" width="104" height="40" rx="20" fill="#fff"/><path d="M14,12 l-6,14 l18,-12 Z" fill="#fff"/>
+      <text x="52" y="1" font-size="22" class="serif">cześć!</text>
+    </g></g>
+    <g transform="translate(300,455)"><g class="pop d4" style="transform-box:fill-box;transform-origin:bottom right">
+      <rect x="0" y="-26" width="96" height="40" rx="20" fill="#fff"/><path d="M82,12 l6,14 l-18,-12 Z" fill="#fff"/>
+      <text x="48" y="1" font-size="22" class="serif">kawa?</text>
+    </g></g>
+    <g fill="#d9837a">
+      <g transform="translate(250,560)"><use href="#heartShape" class="heart" transform="scale(1.4)"/></g>
+      <g transform="translate(290,580)"><use href="#heartShape" class="heart" style="animation-delay:1s" transform="scale(1)"/></g>
+      <g transform="translate(270,550)"><use href="#heartShape" class="heart" style="animation-delay:2s" transform="scale(1.2)"/></g>
+    </g>
+  </g>
+
+  <g class="scene" data-s="selfdev" fill="#3d4a3f" text-anchor="middle">
+    <text x="270" y="150" font-size="16" class="caps rise">03</text>
+    <text x="270" y="236" font-size="62" class="serif rise d1">self-development</text>
+    <text x="270" y="290" font-size="17" class="caps rise d2">czas tylko dla siebie</text>
+    <g transform="translate(270,420)"><g class="float">
+      <path d="M0,-4 C-20,-16 -44,-16 -60,-10 L-60,30 C-44,24 -20,24 0,36 Z" fill="#fbf7ef" stroke="#c9b797" stroke-width="1.5"/>
+      <path d="M0,-4 C20,-16 44,-16 60,-10 L60,30 C44,24 20,24 0,36 Z" fill="#fbf7ef" stroke="#c9b797" stroke-width="1.5"/>
+      <path d="M-50,2 q20,-6 40,2 M-50,12 q20,-6 40,2 M10,2 q20,-6 40,-2 M10,12 q20,-6 40,-2" stroke="#d4c6ac" stroke-width="1.5" fill="none"/>
+    </g></g>
+    <g fill="#fff">
+      <g transform="translate(110,380)"><use href="#star" class="twinkle" style="transform-box:fill-box;transform-origin:center"/></g>
+      <g transform="translate(440,450)"><use href="#star" class="twinkle" style="animation-delay:.7s;transform-box:fill-box;transform-origin:center"/></g>
+      <g transform="translate(420,350)"><use href="#star" class="twinkle" style="animation-delay:1.2s;transform-box:fill-box;transform-origin:center"/></g>
+      <g transform="translate(140,500)"><use href="#star" class="twinkle" style="animation-delay:.3s;transform-box:fill-box;transform-origin:center"/></g>
+    </g>
+  </g>
+
+  <g class="scene" data-s="autumn" text-anchor="middle">
+    <g id="leaves"></g>
+    <text x="270" y="170" font-size="24" fill="#fff" class="caps rise">Jesienne</text>
+    <text x="270" y="262" font-size="96" fill="#fff" class="serif rise d1">self-care</text>
+    <text x="270" y="316" font-size="21" fill="#fff" class="serif rise d2">czyli jak zadbać o swoją psychikę,</text>
+    <text x="270" y="344" font-size="21" fill="#fff" class="serif rise d2">gdy na zewnątrz coraz bardziej szaro</text>
+    <g transform="translate(140,908)"><g class="rise d3"><use href="#mug"/></g></g>
+    <g transform="translate(400,908)"><g class="rise d4"><use href="#mug"/></g></g>
+  </g>
+
+  <g class="scene" data-s="outro" fill="#fff" text-anchor="middle">
+    <use href="#logo" x="270" y="220" style="color:#fff"/>
+    <text x="270" y="330" font-size="42" class="caps thin spread">She Balance</text>
+    <text x="270" y="368" font-size="14" class="caps rise d2" letter-spacing=".5em">Women Camp</text>
+    <text x="270" y="450" font-size="34" class="serif rise d3">Pierwsza edycja — wkrótce</text>
+    <text x="270" y="510" font-size="16" class="caps rise d4">shebalance.pl  ·  @shebalance_camp</text>
+  </g>
+</svg>
+</div>
+
+<div class="bar"><i id="prog"></i></div>
+<div class="controls">
+  <button id="play">Pauza</button>
+  <button id="restart">Od początku</button>
+  <div class="dots" id="dots"></div>
+</div>
+
+<script>
+const scenes=[
+  {id:'intro',d:4200,bg:'#9fb0a0'},
+  {id:'meet',d:5200,bg:'#ece6db'},
+  {id:'healthy',d:4400,bg:'#cbd8c4'},
+  {id:'networking',d:4600,bg:'#f0dcd2'},
+  {id:'selfdev',d:4600,bg:'#f3e7cc'},
+  {id:'autumn',d:5000,bg:'#c98f5e'},
+  {id:'outro',d:6000,bg:'#9fb0a0'}
+];
+const total=scenes.reduce((a,s)=>a+s.d,0);
+const stage=document.getElementById('stage'), bg=document.getElementById('bg');
+const prog=document.getElementById('prog'), dots=document.getElementById('dots'), playBtn=document.getElementById('play');
+
+// spadające liście
+const NS='http://www.w3.org/2000/svg', leaves=document.getElementById('leaves');
+const leafColors=['#e8b04e','#d9743d','#b8502f','#f0c979','#9c6b3a'];
+for(let i=0;i<18;i++){
+  const g=document.createElementNS(NS,'g');
+  g.setAttribute('transform',`translate(${Math.random()*540},0)`);
+  const u=document.createElementNS(NS,'use');
+  u.setAttribute('href','#leaf');
+  u.setAttribute('fill',leafColors[i%leafColors.length]);
+  u.setAttribute('class','leafFall');
+  const dur=5+Math.random()*5;
+  u.style.animationDuration=dur+'s';
+  u.style.animationDelay=(-Math.random()*dur)+'s';
+  u.style.scale=(0.9+Math.random()*1.1).toFixed(2);
+  g.appendChild(u); leaves.appendChild(g);
+}
+
+scenes.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.title=s.id; b.setAttribute('aria-label','Scena '+(i+1));
+  b.onclick=()=>{t=scenes.slice(0,i).reduce((a,x)=>a+x.d,0)+1;current=-1;};
+  dots.appendChild(b);
+});
+
+let t=0,last=performance.now(),playing=true,current=-1;
+function show(i){
+  current=i;
+  const id=scenes[i].id;
+  stage.dataset.scene=id;
+  bg.setAttribute('fill',scenes[i].bg);
+  document.querySelectorAll('.scene').forEach(el=>el.classList.toggle('active',el.dataset.s===id));
+  [...dots.children].forEach((d,j)=>d.classList.toggle('on',j===i));
+}
+function frame(now){
+  if(playing){t+=now-last; if(t>=total) {t=0;current=-1;}}
+  last=now;
+  let acc=0,i=0;
+  while(i<scenes.length-1 && t>=acc+scenes[i].d){acc+=scenes[i].d;i++;}
+  if(i!==current) show(i);
+  prog.style.width=(t/total*100)+'%';
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+playBtn.onclick=()=>{playing=!playing;playBtn.textContent=playing?'Pauza':'Odtwórz';
+  document.getAnimations().forEach(a=>playing?a.play():a.pause());};
+document.getElementById('restart').onclick=()=>{t=0;current=-1;};
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();playBtn.click();}});
+// ?scene=nazwa – podgląd konkretnej sceny
+if(new URLSearchParams(location.search).has('rec')) document.body.classList.add('rec');
+const q=new URLSearchParams(location.search).get('scene');
+if(q){const i=scenes.findIndex(s=>s.id===q); if(i>=0){t=scenes.slice(0,i).reduce((a,x)=>a+x.d,0)+1;}}
+</script>
+</body>
+</html>
