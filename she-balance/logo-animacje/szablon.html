@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SheBalance – animacje logo</title>
+<style>
+  /*FONTS*/
+  :root{--page:#F4F2EF;--ink:#333;--muted:#6B6B6B;--line:#E0D9CF;--sage:#A4B8B0;--dark:#58756C;--beige:#E3CCC1}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#1f2321;--ink:#EDEBE7;--muted:#A6ADA9;--line:#343a37}}
+  :root[data-theme="dark"]{--page:#1f2321;--ink:#EDEBE7;--muted:#A6ADA9;--line:#343a37}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Mulish",system-ui,sans-serif;font-weight:300;padding:28px 16px 60px}
+  header{max-width:1180px;margin:0 auto 22px}
+  h1{font-family:"Forum",Georgia,serif;font-weight:400;font-size:clamp(30px,5vw,46px);letter-spacing:.08em;margin:0 0 6px}
+  header p{margin:0 0 18px;color:var(--muted);max-width:680px;line-height:1.55}
+  .bar{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .grp span{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+  .grp button{font:inherit;font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:none;color:var(--ink);border:1px solid var(--line);padding:7px 12px;cursor:pointer}
+  .grp button.on{background:var(--ink);color:var(--page);border-color:var(--ink)}
+  .grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+  .card{border:1px solid var(--line);background:var(--page)}
+  .view{position:relative;aspect-ratio:1;overflow:hidden;container-type:inline-size}
+  .card h2{font-family:"Forum",Georgia,serif;font-weight:400;font-size:22px;letter-spacing:.06em;margin:0}
+  .meta{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px}
+  .meta p{margin:0;font-size:14px;color:var(--muted);line-height:1.5}
+  .dl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .dl a,.dl button{font:inherit;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);text-decoration:none;border:1px solid var(--line);padding:6px 10px;background:none;cursor:pointer}
+  .tag{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  /* tła podglądu */
+  .bg-foto .view{background:linear-gradient(160deg,#8f9f97 0%,#6f7f78 40%,#6E5446 100%)}
+  .bg-szach .view{background:repeating-conic-gradient(#d8d8d8 0 25%,#fff 0 50%) 0 0/28px 28px}
+  .bg-krem .view{background:#F2EFEB}
+  .bg-szalwia .view{background:#A4B8B0}
+  .bg-ciemne .view{background:#333}
+
+  /* ================= SCENA 1080×1080 ================= */
+  .stage{position:absolute;left:0;top:0;width:1080px;height:1080px;transform-origin:0 0;transform:scale(calc(100cqw / 1080px));
+    --c:#fff;--a:#E3CCC1;--glint:#F6E7C8;color:var(--c)}
+  .k-zielony .stage{--c:#58756C;--a:#E3CCC1;--glint:#D9B98A}
+  .stage svg.sign{position:absolute;left:260px;top:100px;width:560px;height:560px;overflow:visible}
+  .word{position:absolute;left:0;right:0;top:700px;text-align:center;font-family:"Forum",Georgia,serif;font-size:96px;letter-spacing:.16em;line-height:1;white-space:nowrap;padding-left:.16em}
+  .sub{position:absolute;left:0;right:0;top:830px;text-align:center;font-family:"Mulish",sans-serif;font-weight:300;font-size:28px;letter-spacing:.5em;padding-left:.5em;text-transform:uppercase}
+  .tagline{position:absolute;left:0;right:0;top:900px;text-align:center;font-family:"Mulish",sans-serif;font-weight:300;font-size:26px;letter-spacing:.12em}
+  .stage *{animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,.8,.2,1)}
+  .fb{transform-box:fill-box}
+
+  /* 1 · RYSOWANIE */
+  .a-rysowanie .pie{fill:none;stroke:#fff;stroke-dasharray:1;animation:pie 1s both;animation-timing-function:cubic-bezier(.55,.1,.35,1)}
+  .a-rysowanie .p1{animation-duration:.9s;animation-delay:.2s}
+  .a-rysowanie .p2{animation-duration:1.1s;animation-delay:.8s}
+  .a-rysowanie .p3{animation-duration:1.4s;animation-delay:1.45s}
+  @keyframes pie{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  .a-rysowanie .word{animation:track 1.4s 2.6s both}
+  .a-rysowanie .sub{animation:fadeUp 1s 3.3s both}
+  @keyframes track{from{opacity:0;letter-spacing:.02em}to{opacity:1;letter-spacing:.16em}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+  /* 2 · BALANS */
+  .a-balans .base{animation:baseIn 1s .1s both}
+  @keyframes baseIn{from{opacity:0;transform:translateY(90px)}to{opacity:1;transform:none}}
+  .a-balans .head{transform-origin:50% 100%;animation:headDrop 1.6s 1s both;animation-timing-function:linear}
+  @keyframes headDrop{
+    0%{opacity:0;transform:translateY(-1100px)} 5%{opacity:1}
+    40%{transform:translateY(0) scale(1.08,.86);animation-timing-function:ease-out}
+    52%{transform:translateY(-120px) scale(.96,1.05);animation-timing-function:ease-in}
+    64%{transform:translateY(0) scale(1.04,.93);animation-timing-function:ease-out}
+    74%{transform:translateY(-30px);animation-timing-function:ease-in}
+    84%{transform:translateY(0) scale(1.01,.98)} 100%{opacity:1;transform:none}}
+  .a-balans .tip{transform-origin:50% 100%;animation:wobble 2.2s 1.62s both;animation-timing-function:ease-in-out}
+  @keyframes wobble{0%{transform:rotate(0)}14%{transform:rotate(5deg)}32%{transform:rotate(-4deg)}50%{transform:rotate(2.4deg)}68%{transform:rotate(-1.2deg)}84%{transform:rotate(.5deg)}100%{transform:rotate(0)}}
+  .a-balans .word{animation:fadeUp 1.1s 3.4s both}
+  .a-balans .sub{animation:fadeUp 1s 3.8s both}
+
+  /* 3 · ODDECH (pętla 6 s) */
+  .a-oddech .breathe{transform-origin:50% 100%;animation:breathe 6s infinite ease-in-out}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  .a-oddech .ring{fill:none;stroke:currentColor;stroke-width:5;transform-origin:710px 1290px;animation:ripple 6s infinite linear}
+  .a-oddech .r2{animation-delay:-2s}.a-oddech .r3{animation-delay:-4s}
+  @keyframes ripple{0%{transform:scale(.55);opacity:0}15%{opacity:.7}100%{transform:scale(1.9);opacity:0}}
+  .a-oddech .word,.a-oddech .sub{animation:glow 6s infinite ease-in-out}
+  @keyframes glow{0%,100%{opacity:.82}50%{opacity:1}}
+
+  /* 4 · PIECZĄTKA (pętla 12 s) */
+  .a-pieczatka svg.sign{left:350px;top:330px;width:380px;height:380px}
+  .a-pieczatka .ring-text{position:absolute;inset:0;width:1080px;height:1080px}
+  .a-pieczatka .spin{transform-origin:540px 540px;animation:spin 12s infinite linear}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .a-pieczatka .ring-text text{font-family:"Mulish",sans-serif;font-weight:400;font-size:40px;letter-spacing:.3em;fill:currentColor}
+  .a-pieczatka .word,.a-pieczatka .sub,.a-pieczatka .tagline{display:none}
+  .a-pieczatka .sign{animation:bob 6s infinite ease-in-out}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+  /* 5 · LITERY */
+  .a-litery .sign{animation:signIn 1.4s .1s both}
+  @keyframes signIn{from{opacity:0;transform:scale(.7);filter:blur(16px)}to{opacity:1;transform:none;filter:none}}
+  .a-litery .word span{display:inline-block;animation:letterIn .9s both}
+  @keyframes letterIn{from{opacity:0;transform:translateY(50px) rotate(8deg);filter:blur(14px)}to{opacity:1;transform:none;filter:none}}
+  .a-litery .sub{animation:track2 1.2s 2.7s both}
+  @keyframes track2{from{opacity:0;letter-spacing:.1em}to{opacity:1;letter-spacing:.5em}}
+  .a-litery .tagline{animation:fadeUp 1s 3.3s both}
+
+  /* 6 · WSCHÓD */
+  .a-wschod svg.sign{top:70px;width:520px;height:520px;left:280px}
+  .a-wschod .sky{position:absolute;inset:0;width:1080px;height:1080px}
+  .a-wschod .sun{opacity:.55}
+  .k-zielony .a-wschod .sun{opacity:.95}
+  .a-wschod .sun{fill:var(--a);animation:sunUp 2.6s .2s both;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
+  @keyframes sunUp{from{transform:translateY(520px)}to{transform:none}}
+  .a-wschod .horizon{stroke:currentColor;stroke-width:3;transform-origin:540px 560px;animation:grow 1.2s .1s both}
+  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .a-wschod .sign{animation:fadeUp 1.2s 1.6s both}
+  .a-wschod .word{top:640px;animation:track 1.4s 2.5s both}
+  .a-wschod .sub{top:770px;animation:fadeUp 1s 3.2s both}
+
+  /* 7 · POŁYSK (pętla 4 s) */
+  .a-polysk .band{animation:sweep 4s infinite;animation-timing-function:cubic-bezier(.45,0,.3,1)}
+  @keyframes sweep{0%{transform:translateX(-900px) skewX(-22deg)}50%,100%{transform:translateX(2100px) skewX(-22deg)}}
+  .a-polysk .gl{fill:var(--glint)}
+  .a-polysk .spark{fill:var(--glint);transform-origin:50% 50%;animation:spark 4s infinite}
+  @keyframes spark{0%,38%{transform:scale(0) rotate(0);opacity:0}46%{transform:scale(1) rotate(45deg);opacity:1}60%,100%{transform:scale(0) rotate(90deg);opacity:0}}
+  .a-polysk .word{background:linear-gradient(100deg,var(--c) 40%,var(--glint) 50%,var(--c) 60%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:wordGlint 4s infinite}
+  @keyframes wordGlint{0%,20%{background-position:100% 0}65%,100%{background-position:0 0}}
+
+  /* 8 · LIŚCIE */
+  .a-liscie .leaf{position:absolute;left:540px;top:380px;width:96px;height:96px;margin:-48px 0 0 -48px;animation:leafIn 2.4s both;animation-timing-function:cubic-bezier(.5,0,.3,1)}
+  @keyframes leafIn{
+    0%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1.1)}
+    15%{opacity:1}
+    55%{transform:translate(calc(var(--x)*.45 + var(--sx)),calc(var(--y)*.45 + var(--sy))) rotate(calc(var(--r)*.4)) scale(1)}
+    85%{opacity:1}
+    100%{opacity:0;transform:translate(var(--ex),var(--ey)) rotate(0) scale(.2)}}
+  .a-liscie .sign{animation:signBloom 1.3s 1.9s both}
+  @keyframes signBloom{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+  .a-liscie .word{animation:fadeUp 1.1s 2.8s both}
+  .a-liscie .sub{animation:fadeUp 1s 3.3s both}
+
+  /* tryb renderowania: tylko jedna scena, przezroczyste tło */
+  body.render{padding:0;background:transparent}
+  body.render header, body.render .meta{display:none}
+  body.render .grid{display:block;max-width:none;margin:0}
+  body.render .card{border:0;background:transparent;display:none}
+  body.render .card.target{display:block}
+  body.render .view{width:1080px;height:1080px;background:transparent !important;aspect-ratio:auto}
+  @media (prefers-reduced-motion: reduce){.stage *{animation-duration:.01s !important;animation-iteration-count:1 !important}}
+</style>
+</head>
+<body class="bg-foto">
+<header>
+  <h1>SHE BALANCE · animacje logo</h1>
+  <p>Osiem animacji na oryginalnym znaku marki. Każda jest dostępna z przezroczystym tłem w dwóch kolorach: białym (na zdjęcia i ciemne tła) i zielonym (na jasne tła). Pliki .mov (QuickTime Animation z kanałem alfa) otwierają Premiere, Final Cut, DaVinci i CapCut na komputerze, a pliki .webm działają w Canvie i na stronach www.</p>
+  <div class="bar">
+    <div class="grp" id="gKolor"><span>Logo</span><button data-v="bialy" class="on">białe</button><button data-v="zielony">zielone</button></div>
+    <div class="grp" id="gTlo"><span>Tło podglądu</span><button data-v="foto" class="on">zdjęcie</button><button data-v="szach">przezroczyste</button><button data-v="krem">krem</button><button data-v="szalwia">szałwia</button><button data-v="ciemne">ciemne</button></div>
+  </div>
+</header>
+<main class="grid" id="grid">
+<!--CARDS-->
+</main>
+<script>
+const params=new URLSearchParams(location.search);
+const LEAVES=['#A4B8B0','#E3CCC1','#58756C','#C6B8AA','#8F9894'];
+// deterministyczne "losowe" liście
+let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+document.querySelectorAll('.a-liscie').forEach(st=>{
+  for(let i=0;i<22;i++){
+    const ang=i/22*Math.PI*2+rnd()*.4, dist=520+rnd()*260;
+    const d=document.createElement('div'); d.className='leaf';
+    const x=Math.cos(ang)*dist, y=Math.sin(ang)*dist;
+    d.style.cssText=`--x:${x}px;--y:${y}px;--sx:${-y*.35}px;--sy:${x*.35}px;--r:${(rnd()*540-270).toFixed(0)}deg;--ex:${(rnd()*80-40).toFixed(0)}px;--ey:${(rnd()*80-20).toFixed(0)}px;animation-delay:${(i%8*0.07+rnd()*0.25).toFixed(2)}s`;
+    d.innerHTML=`<svg viewBox="-30 -30 60 60" width="96" height="96"><path d="M0,-26 C18,-12 18,12 0,27 C-18,12 -18,-12 0,-26 Z" fill="${LEAVES[i%LEAVES.length]}"/><path d="M0,-22 L0,24" stroke="rgba(255,255,255,.55)" stroke-width="1.6"/></svg>`;
+    st.prepend(d);
+  }
+});
+// litery w osobnych spanach
+document.querySelectorAll('.a-litery .word').forEach(w=>{
+  w.innerHTML=[...w.textContent].map((ch,i)=>`<span style="animation-delay:${(0.9+i*0.09).toFixed(2)}s">${ch===' '?'&nbsp;':ch}</span>`).join('');
+});
+function setKolor(v){document.body.classList.toggle('k-zielony',v==='zielony');
+  document.querySelectorAll('[data-file]').forEach(a=>a.href=a.dataset.file.replace('{k}',v));}
+function setTlo(v){document.body.className=document.body.className.replace(/bg-\w+/,'bg-'+v);}
+function bind(id,fn){const g=document.getElementById(id);g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  g.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v);});}
+bind('gKolor',setKolor); bind('gTlo',setTlo); setKolor('bialy');
+// odtwarzanie intro w pętli w galerii
+function replay(card){card.querySelectorAll('.stage *').forEach(el=>el.getAnimations().forEach(a=>{if(a.effect.getTiming().iterations!==Infinity){a.currentTime=0;a.play();}}));}
+document.querySelectorAll('.card').forEach(card=>{
+  card.querySelector('.replay')?.addEventListener('click',()=>replay(card));
+  const d=+card.dataset.d; if(!card.dataset.loop) setInterval(()=>{ if(!document.body.classList.contains('render')) replay(card); }, (d+1.2)*1000);
+});
+// tryb renderowania klatek
+if(params.has('render')){
+  document.body.classList.add('render');
+  if(params.get('kolor')==='zielony') setKolor('zielony');
+  document.querySelector(`.card[data-id="${params.get('render')}"]`).classList.add('target');
+  window.seek=t=>{document.getAnimations().forEach(a=>{a.pause();a.currentTime=t;});};
+}
+</script>
+</body>
+</html>
