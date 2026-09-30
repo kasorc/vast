@@ -403,7 +403,7 @@
           <g transform="translate(205,712) scale(.42) translate(-110,-712)">/*FIG_A:giveA7*/</g>
           <g transform="translate(335,712) scale(.42) translate(-110,-712)">/*FIG_B:has-pack takeB7*/</g>
         </g>
-        <g class="mg7"><use href="#mug" transform="scale(.46)"/></g>
+        <g class="mg7"><use href="#mug" transform="scale(.68)" stroke="#58756C" stroke-width="2.6" stroke-linejoin="round"/></g>
         <circle class="ring" style="animation-delay:1.95s" cx="270" cy="592" r="14" fill="none" stroke="#F4F2EF" stroke-width="3"/>
         <g id="s7conf"></g>
       </g>
@@ -714,7 +714,7 @@ window.beforeSplit=function(){
     const aA=[[0,-7],[1.1,-7,'EO'],[1.45,-25.5],[1.95,-25.5,'IO'],[2.3,-7]], aB=[[0,7],[1.25,7,'EO'],[1.6,25.5],[1.95,25.5,'IO'],[2.4,14]];
     track('give7',3,t=>`transform:rotate(${f3(ev(aA,t))}deg)`);track('take7',3,t=>`transform:rotate(${f3(ev(aB,t))}deg)`);
     const hand=(sx,th)=>{const r=th*Math.PI/180;return [sx-90*Math.sin(r),513+90*Math.cos(r)];};
-    track('mg7',3,t=>{const [x,y]=t<1.95?hand(229.4,ev(aA,t)):hand(309.8,ev(aB,t));const o=t<1.08?0:t<1.2?(t-1.08)/.12:1;return `transform:translate(${f3(x)}px,${f3(y-7)}px);opacity:${f3(o)}`;});
+    track('mg7',3,t=>{const [x,y]=t<1.95?hand(229.4,ev(aA,t)):hand(309.8,ev(aB,t));const o=t<1.08?0:t<1.2?(t-1.08)/.12:1;return `transform:translate(${f3(x)}px,${f3(y-10)}px);opacity:${f3(o)}`;});
     CSS.push('.fig.giveA7 .armR{animation:give7 3s linear both}','.fig.takeB7 .armL{animation:take7 3s linear both}','.scene.active .mg7{animation:mg7 3s linear both}');})();
   A('.rw7','rw7',3,[[0,'opacity:0;transform:translateY(16px)'],[.95,'opacity:0;transform:translateY(16px)',IN],[1.35,'opacity:1;transform:none']]);
   A('.irisH7','irisH7',3,[[0,'r:720px'],[2.7,'r:720px','cubic-bezier(.5,0,.9,.6)'],[3,'r:0px']]);
