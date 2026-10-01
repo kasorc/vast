@@ -14,8 +14,8 @@
     </g>
     <clipPath id="clipTorsoA"><path d="M14,300 C16,246 50,222 92,206 Q110,214 128,206 C170,222 204,246 206,300 Z"/></clipPath>
     <clipPath id="clipTorsoB"><path d="M8,300 C6,262 14,236 36,226 C52,218 72,214 90,206 L110,248 L130,206 C148,214 168,218 184,226 C206,236 214,262 212,300 Z"/></clipPath>
-    <linearGradient id="hairA" gradientUnits="userSpaceOnUse" x1="0" y1="100" x2="0" y2="190">
-      <stop offset="0" stop-color="#b48a58"/><stop offset=".5" stop-color="#d6b37c"/><stop offset="1" stop-color="#e8cc96"/>
+    <linearGradient id="hairA" gradientUnits="userSpaceOnUse" x1="0" y1="45" x2="0" y2="270">
+      <stop offset="0" stop-color="#a7804f"/><stop offset=".3" stop-color="#d1aa70"/><stop offset=".7" stop-color="#e3c48d"/><stop offset="1" stop-color="#ecd3a3"/>
     </linearGradient>
     <linearGradient id="hairB" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="275">
       <stop offset="0" stop-color="#6a4328"/><stop offset=".4" stop-color="#7d5132"/><stop offset=".72" stop-color="#a5723f"/><stop offset="1" stop-color="#cf9b5e"/>

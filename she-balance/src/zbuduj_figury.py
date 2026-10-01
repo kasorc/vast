@@ -2,7 +2,7 @@
 # Układ współrzędnych jak w popiersiach: środek x=110, stopy ok. y=712.
 import pathlib
 src = pathlib.Path(__file__).parent
-headA = (src / '_headA.svg').read_text(); backB = (src / '_backB.svg').read_text(); headB = (src / '_headB.svg').read_text()
+headA = (src / '_headA.svg').read_text(); backA = (src / '_backA.svg').read_text(); backB = (src / '_backB.svg').read_text(); headB = (src / '_headB.svg').read_text()
 
 def leg(side, x, pants, thigh_w, shin, shoe):
     return f'''<g class="leg{side}"><g class="thigh{side}"><rect x="{x-thigh_w/2}" y="436" width="{thigh_w}" height="138" rx="{thigh_w/2-2}" fill="{pants}"/></g>
@@ -16,7 +16,7 @@ def figA():
       <g class="fore{s}"><rect x="{x-12}" y="334" width="24" height="108" rx="12" fill="url(#stripesA)" stroke="#d6cfc2" stroke-width="1.5"/><rect x="{x-12}" y="430" width="24" height="10" rx="4" fill="#ece8df"/><ellipse cx="{x}" cy="452" rx="11" ry="13" fill="#f2c9aa"/>
       {'<g class="prop notes"><rect x="'+str(x-26)+'" y="418" width="34" height="44" rx="3" fill="#E3CCC1" transform="rotate(-8 '+str(x)+' 440)"/><rect x="'+str(x-22)+'" y="424" width="26" height="3" fill="#6E5446" transform="rotate(-8 '+str(x)+' 440)"/></g>' if s=='L' else '<g class="prop mug"><path d="M'+str(x-15)+',432 L'+str(x+15)+',432 L'+str(x+13)+',462 Q'+str(x)+',468 '+str(x-13)+',462 Z" fill="#F4F2EF"/><path d="M'+str(x+14)+',438 q12,2 8,14 q-2,6 -9,6" fill="none" stroke="#F4F2EF" stroke-width="4"/><ellipse cx="'+str(x)+'" cy="432" rx="15" ry="4" fill="#8a5a3c"/><path class="steam" d="M'+str(x-4)+',424 q-5,-7 0,-14 q5,-7 0,-14" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></g>'}
       </g></g>'''
-    return f'''<g class="fig figA"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body">
+    return f'''<g class="fig figA"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body">{backA}
     {leg('L', 86, pants, 40, shin(86), shoe(86,-1))}
     {leg('R', 134, pants, 40, shin(134), shoe(134,1))}
     <path d="M58,424 L162,424 L166,474 L54,474 Z" fill="{pants}"/>
