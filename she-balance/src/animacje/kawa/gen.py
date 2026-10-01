@@ -160,6 +160,8 @@ def steam_paths(cls, n=3, h=44, w=7, sw=3.2, col='#fff', spread=11, halo='#9fb3a
 S('.stm{animation:stm 1.6s ease-in-out infinite;opacity:0}'
   '@keyframes stm{0%{opacity:0;transform:translateY(4px) scaleY(.8)}35%{opacity:.95}100%{opacity:0;transform:translateY(-26px) scaleY(1.1)}}')
 
+R_HOLD, R_SIP = (184, 230), (158, 236)   # kubek przy barku / przy ustach – łokieć w dół, po prawej
+
 def mug_hand(steam_cls='', skin=SKIN, col='#F4F2EF', band=SAGE):
     """Kubek trzymany w dłoni; (0,0) = środek dłoni (układ lokalny postaci)."""
     return ('<g transform="scale(1.22)"><g transform="translate(-4,-6)">'
@@ -323,8 +325,8 @@ def sc_poranek():
     s.append(counter(cy))
     # zegar 6:47 na mikrofalówce (duży odpowiednik w rogu kadru)
     s.append('</g>')
-    rig(inst, 'A', T, [(0, {'R': (150, 336), 'L': (60, 452)}), (.25, {'R': (150, 336)}), (1.3, {'R': (130, 214)}, 'cubic-bezier(.4,0,.2,1)'),
-                       (1.42, {'R': (130, 216)}), (1.58, {'R': (136, 236)}, ESNAP), (2.2, {'R': (138, 240)}), (2.75, {'R': (146, 300)})])
+    rig(inst, 'A', T, [(0, {'R': R_HOLD, 'L': (62, 452)}), (.35, {'R': R_HOLD}), (1.3, {'R': R_SIP}, 'cubic-bezier(.4,0,.2,1)'),
+                       (1.42, {'R': R_SIP}), (1.62, {'R': R_HOLD}, ESNAP), (2.4, {'R': R_HOLD}), (2.75, {'R': (186, 232)})])
     head(inst, T, [(0, 0, 0, 0), (.9, 2, 0, 1), (1.45, 2, 0, 1), (1.62, -9, -5, 0, ESNAP), (2.4, -8, -5, 0), (2.9, -4, -2, 0)])
     pupils(inst, T, [(0, 0), (1.45, 0), (1.55, -3.2), (2.6, -3.2), (2.9, -1.5)])
     A('.fig.%s .eyes' % inst, K([(0, 'transform:scaleY(1)'), (.95, 'transform:scaleY(1)'), (1.15, 'transform:scaleY(.15)'), (1.42, 'transform:scaleY(.15)'), (1.52, 'transform:scaleY(1.12)', ESNAP), (2.3, 'transform:scaleY(1.05)'), (2.6, 'transform:scaleY(1)')], T))
@@ -376,12 +378,12 @@ def sc_lawina():
     inst = 'kA2'
     mugR = '<g class="mugR">%s</g>' % mug_hand('st2')
     mugL = '<g class="mugL">%s</g>' % mug_hand('st2')
-    pen = '<g class="penR"><path d="M-6,-2 L-22,26" stroke="%s" stroke-width="4" stroke-linecap="round"/><path d="M-22,26 L-24,31" stroke="#333" stroke-width="2.4"/></g>' % RUST
+    pen = '<g class="penR"><path d="M6,-2 L22,26" stroke="%s" stroke-width="4" stroke-linecap="round"/><path d="M22,26 L24,31" stroke="#333" stroke-width="2.4"/></g>' % RUST
     hoodA = '<g class="hoodA" transform="translate(-6,-8)">%s</g>' % child_hoodie()
     shirtA = '<g class="shirtA" transform="translate(0,-14) scale(.9)">%s</g>' % shirt_hanger()
-    post = ghost('A', inst, '', mugR + pen + shirtA, arm='R') + ghost('A', inst, '', mugL + hoodA, arm='L')
+    post = ghost('A', inst, '', mugR, arm='R') + ghost('A', inst, '', hoodA + pen, arm='L')
     s.append('<g class="c2">')
-    phone = ('<g transform="translate(420,800)"><g class="ph2"><path d="M-30,-6 L22,-10 L34,6 L-20,10 Z" fill="#2f3b37"/><path d="M-26,-4 L20,-8 L30,5 L-17,8 Z" fill="#46564f"/>'
+    phone = ('<g transform="translate(470,806)"><g class="ph2"><path d="M-30,-6 L22,-10 L34,6 L-20,10 Z" fill="#2f3b37"/><path d="M-26,-4 L20,-8 L30,5 L-17,8 Z" fill="#46564f"/>'
              '<path class="phGlow" d="M-26,-4 L20,-8 L30,5 L-17,8 Z" fill="#F6DDA8"/></g></g>')
     s.append(kitchen(cy, window=(24, 340, 160, 300), shelf=(372, 560)))
     s.append(FIG('A', inst, cx, feet, s1, post=post))
@@ -389,7 +391,7 @@ def sc_lawina():
     # stos rzeczy na blacie (rośnie)
     hood_pile = ('<g transform="translate(118,792)"><g class="pl1"><path d="M-46,0 C-44,-22 -10,-30 10,-26 C34,-22 48,-12 46,0 Z" fill="%s"/>' % MUST +
                  '<path d="M-30,-10 Q-6,-20 20,-12 M-10,-2 Q10,-8 30,-2" stroke="#b9862a" stroke-width="2.4" fill="none"/></g></g>')
-    shirt_pile = ('<g transform="translate(330,794)"><g class="pl2"><path d="M-40,0 L-36,-18 L36,-20 L42,0 Z" fill="#F7F4EE" stroke="#cfc6b9" stroke-width="1.4"/>' +
+    shirt_pile = ('<g transform="translate(398,794)"><g class="pl2"><path d="M-40,0 L-36,-18 L36,-20 L42,0 Z" fill="#F7F4EE" stroke="#cfc6b9" stroke-width="1.4"/>' +
                   ''.join('<path d="M%s,-18 V0" stroke="%s" stroke-width="2" opacity=".55"/>' % (x, SAGE) for x in (-24, -12, 12, 24)) +
                   '<path d="M-10,-19 L0,-10 L10,-19" fill="none" stroke="#cfc6b9" stroke-width="1.4"/></g></g>')
     s.append(hood_pile + shirt_pile)
@@ -397,40 +399,33 @@ def sc_lawina():
     s.append(phone)
     # ręce z krawędzi (świat)
     s.append('<g transform="translate(150,664)"><g class="hc1">%s</g></g>' % side_arm(DKG, 'open', '<g class="hood1">%s</g>' % child_hoodie(), width=28))
-    s.append('<g transform="translate(410,640) scale(-1,1)"><g class="hh1">%s</g></g>' % side_arm('#7d6a5c', 'fist', '<g transform="translate(0,-6) scale(-1,1)"><g class="shirt1">%s</g></g>' % shirt_hanger(), width=36))
+    s.append('<g transform="translate(404,690) scale(-1,1)"><g class="hh1">%s</g></g>' % side_arm('#7d6a5c', 'fist', '<g transform="translate(0,-6) scale(-1,1)"><g class="shirt1">%s</g></g>' % shirt_hanger(), width=36))
     s.append('<g transform="translate(206,742) rotate(-14)"><g class="hc2">%s</g></g>' % side_arm(DKG, 'open', '<g transform="translate(4,-8)">%s</g>' % notebook(), width=28))
     s.append('</g>')
-    L_REST, R_REST = (62, 452), (158, 452)
-    MOUTH_L = (92, 222)
+    L_REST = (62, 452)
     fr = [
-        (0, {'R': (150, 336), 'L': L_REST}),
-        (.5, {'R': (150, 336), 'L': L_REST}),
-        (.85, {'R': (152, 340), 'L': (-24, 352), 'eL': 'down'}, ESNAP),   # sięga po bluzę
+        (0, {'R': R_HOLD, 'L': L_REST}),
+        (.5, {'L': L_REST}),
+        (.85, {'L': (-24, 352)}, ESNAP),                 # wolna lewa sięga po bluzę
         (1.0, {'L': (-20, 356)}),
-        (1.28, {'L': (20, 470)}, EIO),                                    # rzuca bluzę na blat
-        (1.48, {'R': (122, 356), 'L': (98, 362)}),                        # kubek z ręki do ręki
-        (1.62, {'R': (118, 358), 'L': (102, 360)}),
-        (1.95, {'R': (262, 330), 'L': (76, 352), 'eR': 'down'}, ESNAP),   # sięga po koszulę
-        (2.1, {'R': (258, 334)}),
-        (2.38, {'R': (196, 470)}, EIO),                                   # odkłada koszulę
-        (2.6, {'R': R_REST, 'L': (78, 340)}),
-        (3.05, {'L': MOUTH_L}, 'cubic-bezier(.4,0,.2,1)'),                # próba 1
-        (3.15, {'L': MOUTH_L}),
-        (3.3, {'L': (82, 258)}, ESNAP),
-        (3.6, {'L': (74, 330)}),
-        (4.2, {'L': (76, 326)}),
-        (4.55, {'L': (90, 236)}),                                         # próba 2
-        (4.65, {'L': (90, 236)}),
-        (4.85, {'L': (70, 340), 'R': (60, 420)}, ESNAP),                  # podpis w zeszycie
-        (5.0, {'R': (52, 426)}), (5.08, {'R': (66, 422)}), (5.16, {'R': (50, 430)}), (5.24, {'R': (70, 426)}),
-        (5.45, {'R': R_REST}),
-        (5.9, {'R': (232, 236), 'eR': 'down'}, ESNAP),                    # „chwila!”
-        (6.3, {'R': (232, 240)}),
-        (6.55, {'R': (178, 380)}),
-        (6.9, {'L': (84, 300)}),
-        (7.25, {'L': (92, 230)}, ESNAP),                                  # próba 3 – zimna
-        (7.6, {'L': (92, 232)}),
-        (8.0, {'L': (92, 234)}),
+        (1.28, {'L': (20, 470)}, EIO),                   # rzuca bluzę na blat
+        (1.5, {'L': L_REST}),
+        (2.65, {'R': R_HOLD}),
+        (3.0, {'R': R_SIP}, 'cubic-bezier(.4,0,.2,1)'),  # próba 1
+        (3.15, {'R': R_SIP}),
+        (3.35, {'R': R_HOLD}, ESNAP),
+        (4.3, {'R': R_HOLD, 'L': L_REST}),
+        (4.55, {'R': R_SIP}),                            # próba 2
+        (4.65, {'R': R_SIP}),
+        (4.85, {'R': R_HOLD, 'L': (36, 412)}, ESNAP),    # podpis lewą ręką
+        (5.0, {'L': (28, 418)}), (5.08, {'L': (42, 414)}), (5.16, {'L': (26, 422)}), (5.24, {'L': (44, 418)}),
+        (5.45, {'L': L_REST}),
+        (5.9, {'L': (-6, 250)}, ESNAP),                  # „chwila!”
+        (6.3, {'L': (-4, 254)}),
+        (6.6, {'L': L_REST}),
+        (6.9, {'R': R_HOLD}),
+        (7.25, {'R': R_SIP}, ESNAP),                     # próba 3 – zimna
+        (8.0, {'R': R_SIP}),
     ]
     rig(inst, 'A', T, fr)
     head(inst, T, [(0, 0, 0, 0), (.35, 0, 0, 0), (.55, -9, -5, 0, ESNAP), (1.3, -8, -5, 0), (1.45, 8, 5, 0, ESNAP), (2.2, 7, 4, 0),
@@ -442,18 +437,15 @@ def sc_lawina():
                      (4.72, -3), (5.3, -3), (5.38, 3.2), (6.3, 3.2), (6.35, -3.2), (6.68, -3.2), (6.72, 3.2), (7.0, 3.2), (7.04, -3.2), (7.3, -3.2), (7.34, 3.2), (7.6, 0)])
     A('.fig.%s .eyes' % inst, K([(0, 'transform:scaleY(1)'), (7.55, 'transform:scaleY(1)'), (7.7, 'transform:scaleY(1.15)')], T))
     A('.fig.%s .body' % inst, K([(0, 'transform:translateY(0)'), (7.5, 'transform:translateY(0)'), (7.7, 'transform:translateY(4px) scaleY(.99)'), (8, 'transform:translateY(4px) scaleY(.99)')], T))
-    A('.mugR', K([(0, 'opacity:1'), (1.55, 'opacity:1', 'steps(1,end)'), (1.56, 'opacity:0')], T, 'linear'))
-    A('.mugL', K([(0, 'opacity:0'), (1.55, 'opacity:0', 'steps(1,end)'), (1.56, 'opacity:1')], T, 'linear'))
     A('.penR', K([(0, 'opacity:0'), (4.7, 'opacity:0'), (4.8, 'opacity:1'), (5.35, 'opacity:1'), (5.45, 'opacity:0')], T, 'linear'))
     A('.st2', K([(0, 'opacity:1;transform:scale(1)'), (2.5, 'opacity:.7;transform:scale(.85)'), (4.5, 'opacity:.3;transform:scale(.7)'), (5.9, 'opacity:0;transform:scale(.6)')], T, 'ease-in-out'))
     # bluza: dłoń dziecka → dłoń A → blat; koszula: dłoń męża → dłoń A → blat
     A('.hood1', K([(0, 'opacity:1'), (.95, 'opacity:1', 'steps(1,end)'), (.96, 'opacity:0')], T, 'linear'))
     A('.hoodA', K([(0, 'opacity:0'), (.95, 'opacity:0', 'steps(1,end)'), (.96, 'opacity:1'), (1.24, 'opacity:1', 'steps(1,end)'), (1.25, 'opacity:0')], T, 'linear'))
-    A('.shirt1', K([(0, 'opacity:1'), (2.05, 'opacity:1', 'steps(1,end)'), (2.06, 'opacity:0')], T, 'linear'))
-    A('.shirtA', K([(0, 'opacity:0'), (2.05, 'opacity:0', 'steps(1,end)'), (2.06, 'opacity:1'), (2.34, 'opacity:1', 'steps(1,end)'), (2.35, 'opacity:0')], T, 'linear'))
+    A('.shirt1', K([(0, 'opacity:1'), (1.95, 'opacity:1', 'steps(1,end)'), (1.96, 'opacity:0')], T, 'linear'))
     S('.pl1,.pl2{transform-box:fill-box;transform-origin:50% 100%}')
     A('.pl1', K([(0, 'opacity:0;transform:translateY(-30px) scale(1,1)'), (1.22, 'opacity:0;transform:translateY(-30px) scale(1,1)', 'cubic-bezier(.5,0,.9,.5)'), (1.25, 'opacity:1;transform:translateY(-24px) scale(1,1)'), (1.36, 'opacity:1;transform:translateY(0) scale(1.08,.86)', ESOFT), (1.5, 'opacity:1;transform:translateY(0) scale(1,1)')], T))
-    A('.pl2', K([(0, 'opacity:0;transform:translateY(-30px) scale(1,1)'), (2.32, 'opacity:0;transform:translateY(-30px) scale(1,1)', 'cubic-bezier(.5,0,.9,.5)'), (2.35, 'opacity:1;transform:translateY(-24px) scale(1,1)'), (2.46, 'opacity:1;transform:translateY(0) scale(1.08,.86)', ESOFT), (2.6, 'opacity:1;transform:translateY(0) scale(1,1)')], T))
+    A('.pl2', K([(0, 'opacity:0;transform:translateY(-60px) scale(1,1)'), (1.93, 'opacity:0;transform:translateY(-60px) scale(1,1)', 'cubic-bezier(.5,0,.9,.5)'), (1.96, 'opacity:1;transform:translateY(-54px) scale(1,1)'), (2.1, 'opacity:1;transform:translateY(0) scale(1.08,.86)', ESOFT), (2.25, 'opacity:1;transform:translateY(0) scale(1,1)')], T))
     slide_x('hc1', T, [(0, -260, 30), (.15, -260, 30), (.55, 0, 0), (.95, 6, 0), (1.1, 0, 0), (1.5, -280, 30)], ESOFT)
     slide_x('hh1', T, [(0, -280, 20), (1.25, -280, 20), (1.62, 0, 0), (2.05, 4, 0), (2.2, 0, 0), (2.6, -300, 20)], ESOFT)
     slide_x('hc2', T, [(0, -300, 40), (4.6, -300, 40), (4.92, 0, 0), (5.3, 3, 0, 2), (5.5, 0, 0), (5.9, -320, 40)], ESOFT)
@@ -478,46 +470,70 @@ def sc_lawina():
     cam('c2', T, cf, 'linear')
     s.append('<rect width="540" height="960" fill="url(#warm)" pointer-events="none"/>')
     s.append(vignette(.5))
-    # ---- nakładka: dymki (ekran) ----
-    ov = []
-    P = lambda t1, dx, dy: (t1, dx, dy, .6, .45)
+    # ---- nakładka: prośby wsuwają się z boków kadru (ekran), środek zostaje czysty ----
+    REQ = [  # (t, strona, slot_y, linie, kolor)
+        (.15, 'L', 262, ['Gdzie moje', 'skarpetki?!'], BEIGE),
+        (1.25, 'R', 262, ['Kochanie,', 'wyprasujesz?'], SAGE),
+        (2.25, 'R', 664, None, None),                      # SMS
+        (3.15, 'L', 462, ['Co na', 'obiad?'], BEIGE),
+        (3.95, 'L', 262, ['Zebranie', 'o 9!'], SAGE),
+        (4.65, 'L', 664, ['Podpisz', 'zeszyt!'], BEIGE),
+        (5.3, 'R', 462, ['Mama,', 'zadzwoń'], CREAM2),
+        (5.9, 'R', 262, ['Odbierzesz', 'paczkę?'], SAGE),
+        (6.35, 'L', 462, ['Mamo!'], BEIGE),
+        (6.7, 'R', 664, ['Kochanie!'], SAGE),
+        (7.0, 'L', 262, ['Szybko!'], BEIGE),
+        (7.3, 'R', 462, ['Gdzie', 'klucze?'], CREAM2),
+    ]
     fs = 21
-    b, w, h = bubble(['Gdzie moje', 'skarpetki?!'], fill=BEIGE, tail=(-40, 60), fs=fs)
-    ov.append(place_bubble(b, 128, 262, T, .2, pile=P(3.1, -56, -40)))
-    b, w, h = bubble(['Kochanie,', 'wyprasujesz?'], fill=SAGE, tail=(40, 60), fs=fs)
-    ov.append(place_bubble(b, 378, 262, T, 1.3, pile=P(5.25, 62, -50)))
-    sms = ('<g><rect x="-80" y="-40" width="160" height="80" rx="14" fill="#3a2a20" opacity=".14" transform="translate(3,4)"/>'
-           '<rect x="-80" y="-40" width="160" height="80" rx="14" fill="#FBF9F6" stroke="%s" stroke-width="1.6"/>' % DKG +
-           '<circle cx="-60" cy="-20" r="8" fill="%s"/><path d="M-64,-21 h8 M-64,-18 h5" stroke="#fff" stroke-width="1.6"/>' % DKG +
-           '<text x="-46" y="-14" font-size="15" fill="%s" style="font-weight:800;letter-spacing:.08em">SMS</text>' % DKG +
-           '<text x="-66" y="10" font-size="20" fill="%s" style="font-weight:700">Hej, raport</text><text x="-66" y="31" font-size="20" fill="%s" style="font-weight:700">na dziś?</text></g>' % (INK, INK))
-    ov.append(place_bubble(sms, 386, 668, T, 2.3, pile=P(5.85, 60, 50)))
-    b, w, h = bubble(['Co na', 'obiad?'], fill=BEIGE, tail=(-60, 20), fs=fs)
-    ov.append(place_bubble(b, 92, 470, T, 3.15, pile=P(6.3, -40, 60)))
-    b, w, h = bubble(['Zebranie o 9!'], fill=SAGE, tail=(50, 34), fs=fs)
-    ov.append(place_bubble(b, 150, 262, T, 3.95, pile=P(6.65, -30, -60)))
-    b, w, h = bubble(['Podpisz', 'zeszyt!'], fill=BEIGE, tail=(-30, 50), fs=fs)
-    ov.append(place_bubble(b, 100, 640, T, 4.68, pile=P(7.0, -40, 60)))
-    b, w, h = bubble(['Mama,', 'zadzwoń'], fill=CREAM2, tail=(30, 50), fs=fs, padx=12)
-    ov.append(place_bubble(b, 414, 450, T, 5.35, pile=P(7.3, 40, 40)))
-    b, w, h = bubble(['Odbierzesz', 'paczkę?'], fill=SAGE, tail=(30, 50), fs=fs)
-    ov.append(place_bubble(b, 384, 262, T, 5.92))
-    small = [('Mamo!', 92, 380, 6.35, BEIGE, (-40, 30)), ('Kochanie!', 400, 600, 6.7, SAGE, (30, 34)), ('Szybko!', 112, 560, 7.0, BEIGE, (-40, 30)), ('Gdzie klucze?', 270, 330, 7.3, CREAM2, (0, -40))]
-    for txt, x, y, t0, col, tl in small:
-        b, w, h = bubble([txt], fill=col, tail=tl, fs=fs)
-        ov.append(place_bubble(b, x, y, T, t0, pop_dur=.22))
+    ov = []
+    for i, (t0, side, y, lines, col) in enumerate(REQ):
+        nxt = [r[0] for r in REQ[i + 1:] if r[1] == side and r[2] == y]
+        if lines is None:
+            b = ('<g><rect x="-80" y="-40" width="160" height="80" rx="14" fill="#3a2a20" opacity=".14" transform="translate(3,4)"/>'
+                 '<rect x="-80" y="-40" width="160" height="80" rx="14" fill="#FBF9F6" stroke="%s" stroke-width="1.6"/>' % DKG +
+                 '<circle cx="-60" cy="-20" r="8" fill="%s"/><path d="M-64,-21 h8 M-64,-18 h5" stroke="#fff" stroke-width="1.6"/>' % DKG +
+                 '<text x="-46" y="-14" font-size="15" fill="%s" style="font-weight:800;letter-spacing:.08em">SMS</text>' % DKG +
+                 '<text x="-66" y="10" font-size="20" fill="%s" style="font-weight:700">Hej, raport</text><text x="-66" y="31" font-size="20" fill="%s" style="font-weight:700">na dziś?</text></g>' % (INK, INK))
+            w = 160
+        else:
+            narrow = (y == 462)
+            b, w, h = bubble(lines, fill=col, fs=fs if not narrow else 19, padx=10 if narrow else 16,
+                             tail=((-1 if side == 'L' else 1) * 40, 34))
+        x = (34 + w / 2) if side == 'L' else ((474 if y == 462 else 466) - w / 2)
+        sgn = -1 if side == 'L' else 1
+        c = uid('sb')
+        off = sgn * (w + 130)
+        fr = [(0, 'opacity:1;transform:translate(%spx,0) scale(1)' % f(off)),
+              (t0, 'opacity:1;transform:translate(%spx,0) scale(1)' % f(off), 'cubic-bezier(.2,.8,.3,1)'),
+              (t0 + .22, 'opacity:1;transform:translate(%spx,0) scale(1)' % f(-sgn * 6), ESOFT),
+              (t0 + .34, 'opacity:1;transform:translate(0px,0) scale(1)')]
+        if nxt:
+            t1 = nxt[0]
+            fr += [(t1 - .02, 'opacity:1;transform:translate(0px,0) scale(1)', EIO),
+                   (t1 + .25, 'opacity:.5;transform:translate(%spx,%spx) scale(.62)' % (f(sgn * w * .55), f(-46 if y < 400 else 46)))]
+        S('.%s{transform-origin:%spx 0}' % (c, f(sgn * w / 2)))
+        A('.' + c, K(fr, T))
+        ov.append('<g transform="translate(%s,%s)"><g class="%s">%s</g></g>' % (f(x), f(y), c, b))
+    # licznik: +1 z każdą prośbą
+    times = [r[0] for r in REQ]
     hud = ['<g transform="translate(270,142)"><g class="hud2">'
            '<rect x="-122" y="-30" width="244" height="58" rx="29" fill="#FBF9F6" stroke="%s" stroke-width="1.6"/>' % DKG +
            '<text x="-26" y="9" font-size="22" text-anchor="middle" fill="%s" style="font-weight:800;letter-spacing:.12em">PROŚBY:</text>' % INK]
-    for i, (n, t0, t1) in enumerate([('3', 2.35, 5.33), ('7', 5.33, 7.33), ('12', 7.33, 99)]):
+    for i, t0 in enumerate(times):
+        t1 = times[i + 1] if i + 1 < len(times) else 99
         c = uid('n')
-        hud.append('<g transform="translate(70,0)"><g class="%s"><text x="0" y="14" font-size="40" text-anchor="middle" class="serif" fill="%s">%s</text></g></g>' % (c, RUST, n))
-        fr2 = [(0, 'opacity:0;transform:translateY(16px) scale(.6)'), (t0, 'opacity:0;transform:translateY(16px) scale(.6)', 'cubic-bezier(.2,.9,.3,1.05)'), (t0 + .2, 'opacity:1;transform:translateY(0) scale(1)')]
-        if t1 < T: fr2 += [(t1, 'opacity:1;transform:translateY(0) scale(1)', EOUT), (t1 + .12, 'opacity:0;transform:translateY(-16px) scale(.8)')]
+        hud.append('<g transform="translate(72,0)"><g class="%s"><text x="0" y="14" font-size="40" text-anchor="middle" class="serif" fill="%s">%d</text></g></g>' % (c, RUST, i + 1))
+        fr2 = [(0, 'opacity:0;transform:translateY(14px)'), (t0 + .06, 'opacity:0;transform:translateY(14px)', ESNAP), (t0 + .16, 'opacity:1;transform:translateY(0)')]
+        if t1 < T: fr2 += [(t1, 'opacity:1;transform:translateY(0)', EOUT), (t1 + .06, 'opacity:0;transform:translateY(-14px)')]
         A('.' + c, K(fr2, T))
     hud.append('</g></g>')
-    A('.hud2', K([(0, 'opacity:0;transform:translateY(-20px)'), (2.3, 'opacity:0;transform:translateY(-20px)', ESNAP), (2.55, 'opacity:1;transform:translateY(0)'),
-                  (7.33, 'opacity:1;transform:translateY(0) rotate(0)'), (7.4, 'opacity:1;transform:translateY(0) rotate(-4deg) scale(1.08)'), (7.48, 'opacity:1;transform:translateY(0) rotate(3deg) scale(1.08)'), (7.6, 'opacity:1;transform:translateY(0) rotate(0) scale(1)')], T))
+    hf = [(0, 'opacity:0;transform:translateY(-20px) scale(1)'), (.1, 'opacity:0;transform:translateY(-20px) scale(1)', ESNAP), (.3, 'opacity:1;transform:translateY(0) scale(1)')]
+    for i, t0 in enumerate(times[1:], 1):
+        big = 1.1 + .012 * i
+        hf += [(t0, 'opacity:1;transform:translateY(0) scale(1)', 'cubic-bezier(.2,.8,.3,1)'), (t0 + .08, 'opacity:1;transform:translateY(0) scale(%s)' % f(big), ESOFT), (min(t0 + .24, T), 'opacity:1;transform:translateY(0) scale(1)')]
+    S('.hud2{transform-origin:0 0}')
+    A('.hud2', K(hf, T))
     s.append('<g class="ov2">' + ''.join(ov) + ''.join(hud) + '</g>')
     return ''.join(s), T
 
@@ -541,14 +557,14 @@ def sc_przeciazenie():
         b, w, h = bubble([wd], fill=col, tail=((fx - x) * .2, 30 if y < fy else -30), fs=fs)
         t0 = -1 if i % 3 else .05 + (i // 3) * .07
         ov.append(place_bubble('<g transform="rotate(%s)">%s</g>' % (f(rr.uniform(-8, 8)), b), x, y, T, t0, pop_dur=.18, push=(.45, .85, (x - fx) * 1.6, (y - fy) * 1.6)))
-    s.append(FIG('A', inst, cx, feet, s1, post=ghost('A', inst, '', mug_hand('st3'), arm='L')))
+    s.append(FIG('A', inst, cx, feet, s1, post=ghost('A', inst, '', mug_hand('st3'), arm='R')))
     s.append(counter(cy))
     s.append(''.join(ov))
     s.append('</g>')
     A('.st3', K([(0, 'opacity:0'), (T, 'opacity:0')], T))
     head(inst, T, [(0, 6, 3, 0), (.1, -7, -3, 0, ESNAP), (.2, 7, 3, 0, ESNAP), (.3, -6, -3, 0, ESNAP), (.42, 2, 0, 0, ESNAP), (.85, 0, 0, 0)])
     pupils(inst, T, [(0, 3), (.1, -3), (.2, 3), (.3, -3), (.42, 0), (2, 0)])
-    rig(inst, 'A', T, [(0, {'L': (90, 236), 'R': (160, 450)}), (.4, {'L': (86, 250)}), (.85, {'L': (84, 258)}), (2, {'L': (84, 258)})])
+    rig(inst, 'A', T, [(0, {'R': R_HOLD, 'L': (62, 452)}), (.4, {'R': (186, 232)}), (.85, {'R': (186, 234)}), (2, {'R': (186, 234)})])
     for part in ('body', 'tilt', 'smile'):
         A('.fig.%s .%s' % (inst, part), K([(0, 'transform:none'), (T, 'transform:none')], T))
     A('.fig.%s .eyes' % inst, K([(0, 'transform:scaleY(1)'), (.75, 'transform:scaleY(1)'), (.85, 'transform:scaleY(1.14)'), (T, 'transform:scaleY(1.14)')], T))
@@ -645,7 +661,7 @@ def sc_brunetka():
                         (1.45, {'L': (-20, 330)}, EIO), (1.62, {'L': bl}), (1.98, {'L': bl}), (2.3, {'L': (56, 452)})])
     head(instB, T, [(0, 0, 0, 0), (1.0, -4, -2, 0), (1.6, -6, -3, 2), (2.6, -5, -2, 1), (T, -3, -1, 0)])
     pupils(instB, T, [(0, 0), (1.0, -3), (T, -3)])
-    rig(instA, 'A', T, [(0, {'R': (158, 452), 'L': (64, 452)}), (1.55, {'R': (158, 452)}), (1.8, {'R': ar, 'eR': 'down'}), (1.98, {'R': ar}), (2.35, {'R': (120, 372)}, EIO), (T, {'R': (120, 374)})])
+    rig(instA, 'A', T, [(0, {'R': (158, 452), 'L': (64, 452)}), (1.55, {'R': (158, 452)}), (1.8, {'R': ar, 'eR': 'down'}), (1.98, {'R': ar}), (2.35, {'R': (134, 372)}, EIO), (T, {'R': (134, 374)})])
     head(instA, T, [(0, 4, 0, 6), (.7, 4, 0, 6), (.95, 8, 3, 0, ESNAP), (1.7, 7, 3, 0), (2.4, 2, 0, 0), (T, 0, 0, 0)])
     pupils(instA, T, [(0, 0), (.7, 0), (.9, 3), (2.2, 3), (2.5, 0), (T, 0)])
     S('.aSlump{transform-origin:%spx %spx}' % (cxA, feetA))
@@ -656,7 +672,7 @@ def sc_brunetka():
     A('.tixShine', K([(0, 'transform:rotate(18deg) translateX(-120px)'), (2.75, 'transform:rotate(18deg) translateX(-120px)', EIO), (3.3, 'transform:rotate(18deg) translateX(200px)')], T))
     A('.st4', K([(0, 'opacity:0'), (T, 'opacity:0')], T))
     # kamera: szeroko → wjazd w bilet
-    tix_w = L2W(cxA, feetA, sA, 120, 374 - 60)
+    tix_w = L2W(cxA, feetA, sA, 134, 374 - 60)
     cam('c4', T, [(0, 300, 560, 1.06, 300, 560, 0), (1.9, 270, 560, 1.0, 270, 560, 0), (2.0, 270, 560, 1.0, 270, 560, 0, 'cubic-bezier(.6,0,.2,1)'),
                   (2.5, tix_w[0], tix_w[1], 2.95, 270, 610, -2), (T, tix_w[0], tix_w[1], 3.02, 270, 610, -2)])
     s.append('<rect width="540" height="960" fill="url(#warm)" pointer-events="none"/>')
@@ -815,8 +831,8 @@ def sc_taras():
     s.append('<rect x="-100" y="%s" width="740" height="14" fill="#8a6a56"/>' % (rail + 110))
     s.append('</g>')
     MOUTH = (128, 214)
-    rig(instA, 'A', T, [(0, {'R': (150, 340), 'L': (70, 452)}), (.2, {'R': (150, 340)}), (.75, {'R': MOUTH}, 'cubic-bezier(.4,0,.2,1)'), (1.35, {'R': (128, 212)}),
-                        (1.7, {'R': (146, 318)}), (T, {'R': (148, 326)})])
+    rig(instA, 'A', T, [(0, {'R': R_HOLD, 'L': (62, 452)}), (.2, {'R': R_HOLD}), (.75, {'R': R_SIP}, 'cubic-bezier(.4,0,.2,1)'), (1.35, {'R': (157, 235)}),
+                        (1.7, {'R': R_HOLD}), (T, {'R': (186, 232)})])
     head(instA, T, [(0, 0, 0, 0), (.6, -2, 0, 0), (.8, -4, 0, -2), (1.35, -4, 0, -2), (1.7, 3, 1, 3), (2.1, 6, 2, 1), (T, 6, 2, 1)])
     A('.fig.%s .eyes' % instA, K([(0, 'transform:scaleY(1)'), (.75, 'transform:scaleY(1)'), (.9, 'transform:scaleY(.1)'), (1.55, 'transform:scaleY(.1)'), (1.72, 'transform:scaleY(1)')], T))
     S('.sigh{transform-origin:%spx %spx}' % (cxA, feet))
@@ -829,7 +845,7 @@ def sc_taras():
     sighs = ''.join('<path d="M%s,%s q12,-8 24,0" fill="none" stroke="#FBF9F6" stroke-width="3.2" stroke-linecap="round"/>' % (f(face[0] - 120 - i * 6), f(face[1] - 10 + i * 16)) for i in range(3))
     s.append('<g class="sg">%s</g>' % sighs)
     A('.sg', K([(0, 'opacity:0;transform:translateX(0)'), (1.65, 'opacity:0;transform:translateX(0)', ESOFT), (1.8, 'opacity:1;transform:translateX(-8px)'), (2.3, 'opacity:0;transform:translateX(-26px)')], T))
-    mug_w = L2W(cxA, feet, sF, 148, 290)
+    mug_w = L2W(cxA, feet, sF, 184, 200)
     cam('c5c', T, [(0, 270, 520, 1.0, 270, 520, 0), (1.9, 262, 520, 1.07, 270, 524, 0), (2.05, 262, 520, 1.07, 270, 524, 0, 'cubic-bezier(.6,0,.3,1)'), (T, mug_w[0], mug_w[1], 1.7, 270, 540, 0)])
     s.append(vignette(.4))
     s.append('<g class="t5"><text x="270" y="182" font-size="54" text-anchor="middle" class="serif" fill="%s">W końcu…</text>' % INK +

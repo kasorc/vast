@@ -211,9 +211,9 @@ def song_kawa(d, cuts):
     m = Mix(d)
     # 0–11 s: zegar + narastający chaos próśb
     for k in range(int(11.85 / 0.5)): m.add(tick(0.22 + 0.1 * (k % 2)), k * 0.5, pan=0.4 * (-1) ** k)
-    asks = [1.42, 3.15, 4.25, 5.25, 6.15, 6.95, 7.65, 8.3, 8.9, 9.35, 9.7, 10.0, 10.3]
+    asks = [1.42, 3.15, 4.25, 5.25, 6.15, 6.95, 7.65, 8.3, 8.9, 9.35, 9.7, 10.0, 10.3]  # zgodne z animacją
     for i, a in enumerate(asks): m.add(ping(84 + (i * 5) % 12, 0.18 + 0.012 * i), a, pan=float(rng.uniform(-.7, .7)))
-    m.add(buzz(0.6, 0.24), 5.25); m.add(buzz(0.35, 0.2), 9.7)
+    m.add(buzz(0.6, 0.24), 5.25); m.add(buzz(0.45, 0.22), 8.3)
     for b in range(int(3 / 0.4), int(11.85 / 0.4)):  # puls basu przyspiesza napięcie
         m.add(bass(38, 0.3, 0.12 + 0.02 * (b * 0.4 - 3)), b * 0.4)
     m.add(noise_swell(2.5, 300, 5000, 0.95, 0.06), 8.5)
