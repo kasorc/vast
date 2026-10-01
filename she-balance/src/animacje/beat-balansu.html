@@ -248,6 +248,9 @@
 
   /* ---------- CTA ---------- */
   .scene.active .lineOut{animation:fadeOut .2s cubic-bezier(.6,0,.8,.2) var(--o) forwards}
+  .scene.active .lgWord{transform-box:fill-box;transform-origin:50% 50%;animation:lgIn .45s cubic-bezier(.2,.9,.25,1.1) 1.2s both, logoBeat .6s cubic-bezier(.2,.7,.3,1) 1.8s infinite}
+  @keyframes lgIn{from{opacity:0;transform:scale(.7);letter-spacing:0}to{opacity:1;transform:none}}
+  .scene.active .lgTag{animation:riseT .45s cubic-bezier(.2,.9,.25,1.15) 1.8s both}
   .scene.active .lgOut{animation:fadeOut .2s cubic-bezier(.6,0,.8,.2) 2.4s forwards}
   .scene.active .ctaIn{opacity:0;animation:pebShow .15s ease-out 2.55s forwards}
   .scene.active .ctaWipe{transform-origin:270px 440px;animation:wipeC .36s cubic-bezier(.7,0,.25,1) 2.4s both}
@@ -559,8 +562,9 @@
     <text class="serif reveal" x="270" y="372" font-size="38" text-anchor="middle" fill="#F2EFEB" style="--t:3s">to nie stan, to <tspan fill="#E8C872">rytm.</tspan></text>
   </g>
   <g class="scene" data-s="logo"><g class="lgOut">
-    <text class="serif split" x="270" y="196" font-size="64" text-anchor="middle" fill="#F2EFEB" style="--d0:1.2s">SheBalance</text>
-    <text class="lab riseT" x="270" y="236" font-size="22" text-anchor="middle" fill="#E3CCC1" style="--t:1.8s;letter-spacing:.2em">camp</text></g>
+    <!-- aktualny napis logo + hasło (symbole z defs-logo.svg) -->
+    <g transform="translate(270,190) scale(.62)"><g class="lgWord"><use href="#logoWord" style="color:#F2EFEB"/></g></g>
+    <g transform="translate(270,238) scale(.44)"><g class="lgTag"><use href="#logoTag" style="color:#E3CCC1"/></g></g></g>
     <g transform="translate(270,196) scale(.62)"><g class="pop" style="animation-delay:2.4s"><use href="#logoSign" style="color:#58756C"/></g></g>
     <text class="serif slideL" x="270" y="330" font-size="76" text-anchor="middle" fill="#333" style="--t:2.52s">5–7.11</text>
     <text class="serif slideR" x="270" y="398" font-size="52" text-anchor="middle" fill="#3f524c" style="--t:2.7s">Beskidy</text>

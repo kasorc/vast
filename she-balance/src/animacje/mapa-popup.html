@@ -277,7 +277,7 @@
   .scene.active .logoFill{animation:fadeIn .45s ease 1.2s both}
   .scene.active .cta1{animation:tx5 .45s var(--in) both;animation-delay:var(--dl)}
   .pill{transform-box:fill-box;transform-origin:50% 50%}
-  .scene.active .pill{animation:pill .5s var(--in) 1.3s both,pulse7 1.1s ease-in-out 2.1s infinite}
+  .scene.active .pill{animation:pill .5s var(--in) 1.5s both,pulse7 1.1s ease-in-out 2.1s infinite}
   @keyframes pill{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
   @keyframes pulse7{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
   .scene.active .pinIco{transform-box:fill-box;transform-origin:50% 100%;animation:pinIco 1.1s cubic-bezier(.3,1.5,.5,1) 2.1s infinite}
@@ -490,19 +490,20 @@
         <rect x="-60" y="-200" width="660" height="1400" fill="#F4F2EF"/>
         <g class="contour7" id="contour7"></g>
         <g id="route7"></g>
-        <g transform="translate(270,292) scale(2.15)">
+        <g transform="translate(270,268) scale(2.15)">
           <g class="logoFill"><use href="#logoSign" style="color:#58756C"/></g>
           <g class="logoLine" id="logoLine"></g>
         </g>
       </g></g>
-      <g class="cta1" style="--dl:.95s"><text x="270" y="478" font-size="22" text-anchor="middle" class="sans" fill="#58756C" letter-spacing="1">5–7.11 · Beskidy · 20 miejsc</text></g>
+      <g class="cta1" style="--dl:1.05s"><use href="#logoWord" transform="translate(270,430) scale(.42)" style="color:#333"/><use href="#logoTag" transform="translate(270,460) scale(.34)" style="color:#58756C"/></g>
+      <g class="cta1" style="--dl:1.25s"><text x="270" y="510" font-size="22" text-anchor="middle" class="sans" fill="#58756C" letter-spacing="1">5–7.11 · Beskidy · 20 miejsc</text></g>
       <g class="pill" id="pill7">
-        <rect class="pSh" x="60" y="552" width="420" height="68" rx="34" fill="#46605A" transform="translate(0,5)" opacity=".5"/>
-        <rect class="pBg" x="60" y="552" width="420" height="68" rx="34" fill="#58756C"/>
-        <text x="282" y="596" font-size="28" text-anchor="middle" class="bold" fill="#F4F2EF" letter-spacing="-.6">Zapisz się → shebalance.pl</text>
+        <rect class="pSh" x="60" y="540" width="420" height="68" rx="34" fill="#46605A" transform="translate(0,5)" opacity=".5"/>
+        <rect class="pBg" x="60" y="540" width="420" height="68" rx="34" fill="#58756C"/>
+        <text x="288" y="584" font-size="28" text-anchor="middle" class="bold" fill="#F4F2EF" letter-spacing="-.6">Zapisz się → shebalance.pl</text>
         <g class="pinP"><g class="pinIco"><path d="M0,0 C-12,-16 -18,-24 -18,-34 A18,18 0 0 1 18,-34 C18,-24 12,-16 0,0 Z" fill="#B5582F"/><circle cx="0" cy="-34" r="6.5" fill="#F4F2EF"/></g></g>
       </g>
-      <g class="cta1" style="--dl:1.9s"><text x="270" y="668" font-size="20" text-anchor="middle" class="sans" fill="#6E5446" letter-spacing="2">LINK W BIO</text></g>
+      <g class="cta1" style="--dl:1.9s"><text x="270" y="656" font-size="20" text-anchor="middle" class="sans" fill="#6E5446" letter-spacing="2">LINK W BIO</text></g>
     </g>
 
   </g>
@@ -621,7 +622,7 @@ function buildCover(){
   E('path',{d:'M500,380 L570,270 L610,330 L660,230 L760,380 Z',fill:'none',stroke:'#58756C','stroke-width':6,'stroke-linejoin':'round'},g);
   E('path',{d:'M470,380 H790',stroke:'#58756C','stroke-width':4},g);
   E('text',{x:630,y:500,'font-size':46,'text-anchor':'middle',class:'bold',fill:'#6E5446','letter-spacing':9,text:'PRZEWODNIK'},g);
-  E('text',{x:630,y:620,'font-size':66,'text-anchor':'middle',class:'serif',fill:'#6E5446',text:'SheBalance'},g);
+  E('use',{href:'#logoWord',transform:'translate(630,604) scale(.5)',style:'color:#6E5446'},g);
   E('text',{x:630,y:706,'font-size':60,'text-anchor':'middle',class:'serif',fill:'#58756C',text:'Beskidy'},g);
   E('path',{d:'M480,900 C560,840 620,960 700,880 S780,860 790,840',stroke:'#B5582F','stroke-width':6,fill:'none','stroke-dasharray':'16 10'},g);
 }
@@ -677,7 +678,7 @@ function pin(p,x,y,col,label,cls,dl){
   E('ellipse',{cx:4,cy:0,rx:12,ry:4,fill:'#000',opacity:.2},d);
   E('path',{d:'M0,0 L0,-42',stroke:'#6E5446','stroke-width':4,'stroke-linecap':'round'},d);
   const head=E('g',{},d);E('circle',{cx:0,cy:-50,r:17,fill:col},head);E('circle',{cx:-5,cy:-55,r:5,fill:'#fff',opacity:.45},head);
-  if(label){const lb=E('g',{class:'pinLabel popC',style:'--dl:2.45s'},d);E('path',{d:'M-22,-78 H-162 Q-170,-78 -170,-70 V-38 Q-170,-30 -162,-30 H-22 L-14,-54 Z',fill:'#F4F2EF',stroke:col,'stroke-width':3},lb);E('text',{x:-94,y:-46,'font-size':28,'text-anchor':'middle',class:'serif',fill:'#333',text:label},lb);}
+  if(label){const lb=E('g',{class:'pinLabel popC',style:'--dl:2.45s'},d);E('path',{d:'M-22,-78 H-162 Q-170,-78 -170,-70 V-38 Q-170,-30 -162,-30 H-22 L-14,-54 Z',fill:'#F4F2EF',stroke:col,'stroke-width':3},lb);if(label==='SheBalance') E('use',{href:'#logoWord',transform:'translate(-94,-54) scale(.205)',style:'color:#333'},lb); else E('text',{x:-94,y:-46,'font-size':28,'text-anchor':'middle',class:'serif',fill:'#333',text:label},lb);}
   return {g:d,head};}
 function terraces(p,mode,delay){
   MTS.forEach((m,mi)=>RINGS[mi].forEach((d,k)=>{const lift=-(k+1)*12;const dl=typeof delay==='function'?delay(m,mi,k):delay;
@@ -767,7 +768,7 @@ penAnim('beskidy',S4[0],S4[1],tg=>{const p=P(1),a=sm((tg-9.2)/.7);return [mix(p[
 
 // SCENA 7 – poziomice, trasa i logo
 {const c=$('#contour7');[[80,120,200,120,2],[500,860,260,150,4],[520,160,150,110,6]].forEach(h=>{for(let k=0;k<6;k++)E('path',{d:blob(h[0],h[1],h[2]*(1-k*.15),h[3]*(1-k*.15),9,.25,h[4]),fill:'none',stroke:'#A4B8B0','stroke-width':1.6,opacity:.55},c);});
- const R7='M46,770 C30,690 30,620 48,560 S96,450 150,428 S232,440 258,418';
+ const R7='M40,770 C28,680 26,560 40,470 S70,370 130,360 S228,392 256,392';
  const r=$('#route7'); const m=E('mask',{id:'rm7',maskUnits:'userSpaceOnUse',x:-50,y:-50,width:640,height:1100},r);
  E('path',{d:R7,class:'rv7',pathLength:1,'stroke-dasharray':'1 1',fill:'none',stroke:'#fff','stroke-width':20},m);
  const p7=E('path',{d:R7},defs),L7=p7.getTotalLength(),U7=t=>cosE(t/.65);
@@ -788,7 +789,7 @@ const st=document.createElement('style');st.textContent=CSS.join('\n');document.
 
 /* --- metki pod tekst i układ słów (po załadowaniu fontów) --- */
 window.beforeSplit=function(){
-  {const pl=$('#pill7'),t=pl.querySelector('text');const w=t.getComputedTextLength()+58;pl.querySelectorAll('rect').forEach(r=>{r.setAttribute('x',f(270-w/2));r.setAttribute('width',f(w));});pl.querySelector('.pinP').setAttribute('transform',`translate(${f(270-w/2+24)},${552+50}) scale(.62)`);}
+  {const pl=$('#pill7'),t=pl.querySelector('text');const w=t.getComputedTextLength()+62;pl.querySelectorAll('rect').forEach(r=>{r.setAttribute('x',f(270-w/2));r.setAttribute('width',f(w));});pl.querySelector('.pinP').setAttribute('transform',`translate(${f(270-w/2+22)},${540+50}) scale(.62)`);}
   document.querySelectorAll('.words3').forEach(w=>{const fs=+w.dataset.font;const lines={};w.querySelectorAll('text').forEach(t=>{t.setAttribute('font-size',fs);(lines[t.dataset.line]=lines[t.dataset.line]||[]).push(t);});
     Object.keys(lines).forEach(k=>{const ts=lines[k];const gap=fs*.28;const tot=ts.reduce((a,t)=>a+t.getComputedTextLength(),0)+gap*(ts.length-1);let x=270-tot/2;ts.forEach(t=>{t.setAttribute('x',x.toFixed(1));t.setAttribute('y',(170+ +k*58));x+=t.getComputedTextLength()+gap;});});});
   document.querySelectorAll('.tag').forEach(t=>{let bb;

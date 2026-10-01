@@ -5,8 +5,13 @@ tpl = (here / 'szablon.html').read_text()
 fonts = '\n  '.join(re.findall(r'@font-face\{[^}]*\}', (here.parent / 'index.html').read_text()))
 P1, P2 = re.findall(r'<path d="([^"]+)"', (here.parent / 'logo/oryginal/LOGO.svg').read_text())
 base, head = f'<path d="{P1}"/>', f'<path d="{P2}"/>'
-WORD = '<div class="word">SHE BALANCE</div><div class="sub">Women Camp</div>'
-TAG = '<div class="tagline">healthy · networking · self-development</div>'
+import json
+_d = json.loads((here.parent / 'logo/oryginal/logo-wektor.json').read_text())
+_wx0, _wy0, _wx1, _wy1 = _d['wordBox']; _tx0, _ty0, _tx1, _ty1 = _d['tagBox']; _cx = (_wx0 + _wx1) / 2
+_lets = ''.join(f'<g class="L" style="--i:{i};--dx:{(_cx - (l["x0"] + l["x1"]) / 2) * 0.55:.0f}px"><path d="{l["d"]}"/></g>' for i, l in enumerate(_d['letters']))
+WORD = (f'<svg class="wsvg" viewBox="{_tx0 - 4:.1f} {_wy0 - 4:.1f} {_tx1 - _tx0 + 8:.1f} {_ty1 - _wy0 + 8:.1f}" fill-rule="evenodd">'
+        f'<g class="W">{_lets}</g><g class="T"><path d="{_d["tag"]}"/></g></svg>')
+TAG = ''
 STAR = 'M0,-60 Q9,-9 60,0 Q9,9 0,60 Q-9,9 -60,0 Q-9,-9 0,-60Z'
 
 anims = [
@@ -23,7 +28,7 @@ anims = [
   <g class="breathe fb" fill="currentColor">{base}{head}</g></svg>{WORD}'''),
  ('pieczatka', 'Pieczątka', 8, True, 'Napis krąży dookoła znaku jak na pieczęci. Zapętlona – świetna jako naklejka w rogu wideo.',
   f'''<svg class="ring-text" viewBox="0 0 1080 1080"><defs><path id="circ" d="M540,540 m-400,0 a400,400 0 1,1 800,0 a400,400 0 1,1 -800,0"/></defs>
-  <g class="spin"><text><textPath href="#circ" textLength="2500" lengthAdjust="spacing">SHE BALANCE · WOMEN CAMP · HEALTHY · NETWORKING · SELF-DEVELOPMENT · </textPath></text></g>
+  <g class="spin"><text><textPath href="#circ" textLength="2500" lengthAdjust="spacing">SHE BALANCE · HEALTHY · NETWORKING · SELF-DEVELOPMENT · </textPath></text></g>
   <circle cx="540" cy="540" r="470" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="540" cy="540" r="352" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>
   <svg class="sign" viewBox="0 0 1500 1500"><g fill="currentColor">{base}{head}</g></svg>'''),
  ('litery', 'Litery', 5, False, 'Znak wyłania się z mgły, a litery pojawiają się jedna po drugiej. Elegancko i spokojnie.',

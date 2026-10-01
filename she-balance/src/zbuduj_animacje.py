@@ -2,6 +2,7 @@
 # Znaczniki do użycia w szablonie animacji:
 #   /*FONTS*/ /*BASE_CSS*/ /*FIG_CSS*/  – w <style>
 #   /*DEFS*/                          – w <defs> (gradienty, wzory, liść, gwiazdka, serce, kubek, filtr papieru #paper, #vignette)
+#   /*DEFS*/ zawiera też aktualne logo: #logoWord (napis SHE BALANCE), #logoTag (hasło), #logoLockup (całość) – patrz defs-logo.svg
 #   /*LOGO*/                          – ścieżki sygnetu (w viewBox 1500; np. <g transform="scale(.1) translate(-711,-738)">/*LOGO*/</g>)
 #   /*FIG_A*/ /*FIG_B*/               – postać A/B w całej sylwetce (można wstawiać wiele razy; klasy póz dodaj przez /*FIG_A:walk has-pack*/)
 #   /*BUST_A*/ /*BUST_B*/             – popiersia z machającą ręką (jak w pierwszym reelu)
@@ -13,7 +14,7 @@ logo = ''.join(f'<path d="{d}"/>' for d in re.findall(r'<path d="([^"]+)"', (roo
 figA = (src / 'figura-A.svg').read_text(); figB = (src / 'figura-B.svg').read_text()
 busts = (src / 'postacie.svg').read_text(); bustA = busts[:busts.index('  <!-- Dziewczyna 2')]; bustB = busts[busts.index('  <!-- Dziewczyna 2'):]
 common = {'/*FONTS*/': (src / 'fonty.css').read_text(), '/*BASE_CSS*/': (src / 'baza.css').read_text(), '/*FIG_CSS*/': (src / 'fig.css').read_text(),
-          '/*DEFS*/': (src / 'defs.svg').read_text() + (src / 'defs-fig.svg').read_text(), '/*LOGO*/': logo,
+          '/*DEFS*/': (src / 'defs.svg').read_text() + (src / 'defs-fig.svg').read_text() + (src / 'defs-logo.svg').read_text(), '/*LOGO*/': logo,
           '/*BUST_A*/': bustA, '/*BUST_B*/': bustB, '/*ENGINE*/': (src / 'silnik.js').read_text()}
 def fig(m):
     who, cls = m.group(1), (m.group(2) or '').strip()

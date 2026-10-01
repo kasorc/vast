@@ -428,8 +428,11 @@
           <g clip-path="url(#hd8)"><text x="270" y="218" font-size="56" text-anchor="middle" class="serif" fill="#333">Zapisz postęp.</text></g>
           <rect class="car8" x="88" y="172" width="2.5" height="52" fill="#58756C"/>
           <g id="s8grid"></g>
-          <g transform="translate(270,512) scale(1.2)"><use class="logo8" href="#logoSign" stroke="#58756C" stroke-width="14" style="color:transparent"/></g>
-          <g class="dt8"><text x="270" y="630" font-size="22" text-anchor="middle" class="mu" fill="#58756C" style="letter-spacing:.04em">5–7.11 · Beskidy · 20 miejsc</text></g>
+          <g transform="translate(270,474) scale(.92)"><use class="logo8" href="#logoSign" stroke="#58756C" stroke-width="16" style="color:transparent"/></g>
+          <!-- aktualne logo: napis SHE BALANCE + hasło (wektory klientki) -->
+          <g class="lw8"><use href="#logoWord" transform="translate(270,560) scale(.42)" style="color:#333"/></g>
+          <g class="lt8"><use href="#logoTag" transform="translate(270,590) scale(.34)" style="color:#58756C"/></g>
+          <g class="dt8"><text x="270" y="636" font-size="22" text-anchor="middle" class="mu" fill="#58756C" style="letter-spacing:.04em">5–7.11 · Beskidy · 20 miejsc</text></g>
           <g transform="translate(270,683)"><g class="pl8">
             <rect x="-150" y="-29" width="300" height="58" rx="29" fill="#58756C"/>
             <text y="10" font-size="28" text-anchor="middle" class="mu" fill="#F4F2EF">shebalance.pl →</text>
@@ -567,7 +570,7 @@ window.beforeSplit=function(){
     const w=mk('g',{transform:`translate(${x},${y})`},g);const dx=(left?-1:1)*(20+R()*110),dy=-(200+R()*110);
     const s=mk('g',{class:'lf7',style:`--dx:${f3(dx)}px;--dy:${f3(dy)}px;--dr:${f3((R()-.5)*720)}deg;animation-delay:${f3(.25+R()*.35)}s`},w);
     mk('use',{href:'#leaf',fill:cols[i%3],transform:`scale(${f3(.8+R()*.5)})`},s);}})($('#s7conf'));
-  (function grid(g){let i=0;for(let r=0;r<4;r++)for(let c=0;c<5;c++){const x=190+c*40,y=286+r*40;
+  (function grid(g){let i=0;for(let r=0;r<4;r++)for(let c=0;c<5;c++){const x=190+c*40,y=272+r*38;
     const d=mk('g',{class:'dot8',style:`--i:${i}`},g);mk('circle',{cx:x,cy:y,r:11,fill:'#F4F2EF',stroke:'#58756C','stroke-width':'1.5'},d);
     mk('circle',{class:'dpu',cx:x,cy:y,r:6,fill:'#A4B8B0',style:`--k:${c+r}`},d);i++;}})($('#s8grid'));
   // długość konturu logo do rysowania linią
@@ -726,6 +729,8 @@ window.beforeSplit=function(){
   A('.hdc8','hdc8',2.3,[[0,'transform:scaleX(0)'],[.08,'transform:scaleX(0)',IO],[.55,'transform:scaleX(1)']],'transform-origin:88px 0');
   A('.car8','car8',2.3,[[0,'opacity:0;transform:translateX(0px)'],[.07,'opacity:0;transform:translateX(0px)'],[.08,'opacity:1;transform:translateX(0px)',IO],[.55,'opacity:1;transform:translateX(362px)'],[.7,'opacity:0;transform:translateX(362px)'],[.85,'opacity:1;transform:translateX(362px)'],[1.0,'opacity:0;transform:translateX(362px)']]);
   A('.logo8','logo8',2.3,[[0,'stroke-dashoffset:var(--L);color:transparent'],[.3,'stroke-dashoffset:var(--L);color:transparent',IO],[.95,'stroke-dashoffset:0;color:transparent',EO],[1.3,'stroke-dashoffset:0;color:#58756C']]);
+  A('.lw8','lw8',2.3,[[0,'opacity:0;transform:translateY(12px)'],[.85,'opacity:0;transform:translateY(12px)',IN],[1.15,'opacity:1;transform:none']]);
+  A('.lt8','lt8',2.3,[[0,'opacity:0;transform:translateY(10px)'],[1.0,'opacity:0;transform:translateY(10px)',IN],[1.3,'opacity:1;transform:none']]);
   A('.dt8','dt8',2.3,[[0,'opacity:0;transform:translateY(16px)'],[.6,'opacity:0;transform:translateY(16px)',IN],[.95,'opacity:1;transform:none']]);
   A('.pl8','pl8',2.3,[[0,'opacity:0;transform:scale(.5)'],[.8,'opacity:0;transform:scale(.5)',IN],[1.12,'opacity:1;transform:scale(1)'],[1.5,'opacity:1;transform:scale(1)',IO],[1.7,'opacity:1;transform:scale(1.05)',IO],[1.92,'opacity:1;transform:scale(1)']]);
 

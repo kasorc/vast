@@ -3,7 +3,7 @@
 # Uruchom: python3 src/animacje/role-liscie/gen.py  → zapisuje src/animacje/role-liscie.html
 # Cała choreografia to statyczne SVG + keyframes CSS (deterministycznie, bez losowania w runtime).
 # Czasy w keyframes są liczone od początku sceny (tak działa silnik).
-import math, random, pathlib, itertools
+import math, random, pathlib, itertools, json
 
 HERE = pathlib.Path(__file__).parent
 OUT = HERE.parent / 'role-liscie.html'
@@ -1279,17 +1279,24 @@ def sc_logo():
     s.append('<g transform="translate(%d,%d)">%s</g></g>' % (LXc, LYc, sp))
     S('.c11{transform-origin:270px 420px}')
     A('.c11', K([(0, 'transform:scale(1.06) translateY(10px)'), (1.6, 'transform:scale(1.01) translateY(0)', ESOFT), (T, 'transform:scale(1)')]))
-    s.append('<text x="270" y="530" font-size="60" text-anchor="middle" class="serif split" fill="%s" style="--d0:.72s">SheBalance</text>' % DKG)
-    s.append('<text x="270" y="580" font-size="24" text-anchor="middle" class="wsplit w4 capT2" fill="%s" data-g="0,7,17" style="--d0:1.1s">5–7.11 · Beskidy · 20 miejsc</text>' % DKG)
+    # aktualny logotyp SHE BALANCE (ścieżki liter z logo-wektor.json) – wejście litera po literze + hasło #logoTag
+    lw = json.load(open(HERE.parents[2] / 'logo/oryginal/logo-wektor.json', encoding='utf-8'))
+    wb = lw['wordBox']; wcx, wcy = (wb[0] + wb[2]) / 2, (wb[1] + wb[3]) / 2
+    letters = ''.join('<path class="lwc" style="--i:%d" d="%s"/>' % (k, L['d']) for k, L in enumerate(lw['letters']))
+    s.append('<g transform="translate(270,512) scale(.55)" fill="%s"><g transform="translate(%s,%s)">%s</g></g>' % (DKG, f(-wcx), f(-wcy), letters))
+    S('.scene.active .lwc{transform-box:fill-box;transform-origin:50%% 70%%;animation:chIn .55s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(.72s + var(--i)*38ms)}')
+    s.append('<g class="tagIn"><use href="#logoTag" transform="translate(270,553) scale(.46)" style="color:%s"/></g>' % DKG)
+    A('.tagIn', K([(0, 'opacity:0;transform:translateY(8px)'), (1.0, 'opacity:0;transform:translateY(8px)'), (1.3, 'opacity:1;transform:none', EIN)]))
+    s.append('<text x="270" y="596" font-size="24" text-anchor="middle" class="wsplit w4 capT2" fill="%s" data-g="0,7,17" style="--d0:1.15s">5–7.11 · Beskidy · 20 miejsc</text>' % DKG)
     S('.capT2{font-family:"Mulish",sans-serif;font-weight:700;letter-spacing:.06em}'
       '.scene.active .w4.w{transform-box:fill-box;animation:wRise2 .4s %s both;animation-delay:calc(var(--d0) + var(--w)*.15s)}'
       '@keyframes wRise2{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}' % EIN)
-    s.append('<g transform="translate(270,648)"><g class="cta"><g class="ctaP"><rect x="-232" y="-32" width="464" height="64" rx="32" fill="%s"/>'
+    s.append('<g transform="translate(270,660)"><g class="cta"><g class="ctaP"><rect x="-232" y="-32" width="464" height="64" rx="32" fill="%s"/>'
              '<text x="0" y="10" font-size="28" text-anchor="middle" class="capT2" fill="%s" style="letter-spacing:.02em">Zapisz się → shebalance.pl</text></g></g></g>' % (DKG, CREAM))
     A('.cta', K([(0, 'transform:scale(0);opacity:0'), (1.3, 'transform:scale(0);opacity:0'), (1.52, 'transform:scale(1.04);opacity:1', 'cubic-bezier(.3,1.4,.5,1)'), (1.6, 'transform:scale(1)')]))
     A('.ctaP', 'ctaPulse .9s ease-in-out 1.8s infinite')
     S('@keyframes ctaPulse{0%,100%{transform:scale(1)}40%{transform:scale(1.05)}}')
-    s.append('<text class="hnd" x="270" y="724" font-size="20" text-anchor="middle" fill="%s" style="font-family:Mulish,sans-serif;font-weight:600;letter-spacing:.04em">@shebalance_camp</text>' % BROWN)
+    s.append('<text class="hnd" x="270" y="734" font-size="20" text-anchor="middle" fill="%s" style="font-family:Mulish,sans-serif;font-weight:600;letter-spacing:.04em">@shebalance_camp</text>' % BROWN)
     A('.hnd', K([(0, 'opacity:0;transform:translateY(8px)'), (1.65, 'opacity:0;transform:translateY(8px)'), (1.9, 'opacity:1;transform:none', EIN)]))
     s.append('<g class="lfL"><g class="lfLr">%s</g></g>' % gold_leaf('m', 1.2))
     # ostatni liść przelatuje i ląduje tam, gdzie w klatce 0 była karteczka (pętla)
