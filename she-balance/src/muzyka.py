@@ -195,6 +195,36 @@ def song_beat(d, sections):
     for i in range(4): m.add(click(0.5), d - 2.4 + i * beat)
     return m
 
+
+def tick(vol=0.25):
+    t = t_arr(0.06); return hp(rng.standard_normal(len(t)), 2500) * np.exp(-t * 120) * vol
+
+def ping(note=88, vol=0.3):  # powiadomienie
+    t = t_arr(0.5); f = midi(note)
+    return (np.sin(2 * np.pi * f * t) + 0.4 * np.sin(2 * np.pi * f * 2 * t)) * np.exp(-t * 9) * np.minimum(1, t / 0.003) * vol
+
+def buzz(dur=0.45, vol=0.18):  # wibracja telefonu
+    t = t_arr(dur); x = np.sign(np.sin(2 * np.pi * 150 * t)) * (0.5 + 0.5 * np.sign(np.sin(2 * np.pi * 9 * t)))
+    return lp(x, 900) * vol
+
+def song_kawa(d, cuts):
+    m = Mix(d)
+    # 0–11 s: zegar + narastający chaos próśb
+    for k in range(int(11 / 0.5)): m.add(tick(0.22 + 0.1 * (k % 2)), k * 0.5, pan=0.4 * (-1) ** k)
+    asks = [0.4, 3.0, 3.8, 4.6, 5.4, 6.1, 6.8, 7.4, 8.0, 8.5, 9.0, 9.4, 9.8, 10.2, 10.5, 10.8]
+    for i, a in enumerate(asks): m.add(ping(84 + (i * 5) % 12, 0.18 + 0.012 * i), a, pan=float(rng.uniform(-.7, .7)))
+    m.add(buzz(0.5, 0.2), 4.4); m.add(buzz(0.5, 0.22), 7.9); m.add(buzz(0.4, 0.25), 10.1)
+    for b in range(int(3 / 0.4), int(11 / 0.4)):  # puls basu przyspiesza napięcie
+        m.add(bass(38, 0.3, 0.12 + 0.02 * (b * 0.4 - 3)), b * 0.4)
+    m.add(noise_swell(2.5, 300, 5000, 0.95, 0.06), 8.5)
+    # 11–13 s: cisza (tylko delikatny ton)
+    m.add(pad([62, 69], 2.2, 0.03), 11.05)
+    # 13 s →: ulga – pianino
+    m.add(chime(90, 0.4), 13.0)
+    calm_piano(m, 13.0, d - 1.2, bpm=74, vol=0.95)
+    m.add(piano(50, 5, 0.6), d - 3.6); m.add(piano(62, 5, 0.5), d - 3.6); m.add(piano(69, 5, 0.45), d - 3.6); m.add(chime(86, 0.45), d - 2.4)
+    return m
+
 if __name__ == '__main__':
     name, dur = sys.argv[1], float(sys.argv[2])
     cuts = [float(x) for x in sys.argv[3].split(',')] if len(sys.argv) > 3 and sys.argv[3] else []
@@ -202,6 +232,7 @@ if __name__ == '__main__':
     elif name == 'gra-odpoczynek': m = song_game(dur, cuts)
     elif name == 'kamienie-sloik': m = song_calm(dur, cuts, 70, click)
     elif name == 'mapa-popup': m = song_calm(dur, cuts, 76, paper)
+    elif name == 'kawa': m = song_kawa(dur, cuts)
     elif name == 'beat-balansu': m = song_beat(dur, json.loads(sys.argv[4]))
     else: m = song_calm(dur, cuts)
     from scipy.io import wavfile
