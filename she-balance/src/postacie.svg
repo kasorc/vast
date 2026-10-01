@@ -49,13 +49,14 @@
       <!-- nos -->
       <path d="M111,124 Q110,142 105,151 Q110,155.5 116,152.5" fill="none" stroke="#d99d7e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
       <ellipse cx="111" cy="146" rx="1.8" ry="4" fill="#fff" opacity=".2"/>
-      <ellipse cx="84" cy="156" rx="9" ry="6" fill="#ee9a8c" opacity=".18"/><ellipse cx="136" cy="156" rx="9" ry="6" fill="#ee9a8c" opacity=".18"/>
+      <ellipse cx="84" cy="153" rx="9" ry="6" fill="#ee9a8c" opacity=".22"/><ellipse cx="136" cy="153" rx="9" ry="6" fill="#ee9a8c" opacity=".22"/>
       <!-- usta: spokojny uśmiech -->
       <g class="smile">
-        <path d="M97,168 Q104,164.5 110,166.5 Q116,164.5 123,168 Q116,170 110,169.5 Q104,170 97,168 Z" fill="#d68f8a"/>
-        <path d="M98,168.5 Q110,177 122,168.5 Q110,172 98,168.5 Z" fill="#e3a19a"/>
-        <path d="M96,168 Q110,172 124,167.5" fill="none" stroke="#b86e6e" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M105,172.5 Q110,174 115,172.5" fill="none" stroke="#f2c2bb" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M96.5,166.8 Q103,163.8 110,165.8 Q117,163.8 123.5,166.8 Q117,169 110,168.6 Q103,169 96.5,166.8 Z" fill="#d68f8a"/>
+        <path d="M97.5,167.4 Q110,176 122.5,167.4 Q110,171 97.5,167.4 Z" fill="#e3a19a"/>
+        <path d="M95,166 Q110,173.5 125,166" fill="none" stroke="#b86e6e" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M95,166 q-1.8,-.6 -2.8,-2.4 M125,166 q1.8,-.6 2.8,-2.4" fill="none" stroke="#d29a80" stroke-width="1.1" stroke-linecap="round" opacity=".8"/>
+        <path d="M105,171.6 Q110,173.2 115,171.6" fill="none" stroke="#f2c2bb" stroke-width="1.2" stroke-linecap="round"/>
       </g>
       <!-- włosy z przodu: przedziałek, pasma okalające twarz do klatki -->
       <path d="M60,116 C57,74 84,52 110,52 C136,52 163,74 160,116 C156,96 146,82 132,76 C122,72 112,72 106,74 C96,74 82,80 72,90 C66,98 62,106 60,116 Z" fill="url(#hairA)"/>
