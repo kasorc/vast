@@ -20,9 +20,38 @@ def fig(m):
     who, cls = m.group(1), (m.group(2) or '').strip()
     base = figA if who == 'A' else figB
     return base.replace(f'class="fig fig{who}"', f'class="fig fig{who} {cls}"'.rstrip(), 1)
+
+# Tylne włosy (.hairBack > .tiltBack) mają ruszać się razem z głową: każdą regułę CSS dla .tilt
+# duplikujemy dla .tiltBack (a '.body > .tilt' – dawne tylne włosy – kierujemy na nową warstwę).
+_TILT = re.compile(r'\.tilt(?![\w-])')
+def _dup_tilt_rules(html):
+    def fix_style(css):
+        out, buf = [], []
+        for part in re.split(r'([{}])', css):
+            if part == '{':
+                sel = ''.join(buf); buf = []
+                last = max(sel.rfind(';'), sel.rfind('}'))
+                head, s2 = sel[:last + 1], sel[last + 1:]
+                if not s2.lstrip().startswith('@') and len(s2) < 2000 and _TILT.search(s2):
+                    extra = [_TILT.sub('.tiltBack', q.replace('.body > .tilt', '.body > .hairBack > .tiltBack')) for q in s2.split(',') if _TILT.search(q)]
+                    s2 = s2 + ',' + ','.join(extra)
+                out.append(head + s2 + '{')
+            elif part == '}':
+                out.append(''.join(buf) + '}'); buf = []
+            else:
+                buf.append(part)
+        out.append(''.join(buf)); return ''.join(out)
+    pieces = re.split(r'(<style[^>]*>|</style>)', html); res = []; inside = False
+    for pc in pieces:
+        if pc.startswith('<style'): inside = True; res.append(pc)
+        elif pc == '</style>': inside = False; res.append(pc)
+        else: res.append(fix_style(pc) if inside else pc)
+    return ''.join(res)
+
 names = sys.argv[1:] or [p.stem for p in (src / 'animacje').glob('*.html')]
 for n in names:
     html = (src / 'animacje' / f'{n}.html').read_text()
     html = re.sub(r'/\*FIG_([AB])(?::([^*]*))?\*/', fig, html)
     for k, v in common.items(): html = html.replace(k, v)
+    html = _dup_tilt_rules(html)
     (out_dir / f'{n}.html').write_text(html); print('zbudowano', n, len(html))

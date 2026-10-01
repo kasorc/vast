@@ -47,3 +47,7 @@
   .fig.point .armR{transform:rotate(-95deg)} .fig.point .foreR{transform:rotate(-10deg)}
   /* ręce za siebie – wiatr */
   .fig.windy .armL{transform:rotate(40deg)} .fig.windy .armR{transform:rotate(-25deg)} .fig.windy .foreL{transform:rotate(30deg)}
+
+  /* tylne włosy podążają za głową (ta sama klasa headWrap) i kołyszą się jak głowa */
+  .fig .tiltBack{transform-origin:110px 190px;animation:tilt 4.2s ease-in-out infinite}
+  .figB .tiltBack{animation-duration:4.8s;animation-delay:-1.6s}

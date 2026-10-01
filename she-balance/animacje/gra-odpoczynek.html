@@ -96,9 +96,11 @@
   @keyframes hop{0%{transform:none}30%{transform:translateY(-26px) scale(.98,1.03)}60%{transform:translateY(0) scale(1.03,.97)}100%{transform:none}}
   .breathe{animation:breathe 3s ease-in-out infinite}
   @keyframes breathe{50%{transform:translateY(-2.5px)}}
-  .tilt{transform-origin:110px 190px;animation:tilt 4.2s ease-in-out infinite}
+  .tilt,
+  .tiltBack{transform-origin:110px 190px;animation:tilt 4.2s ease-in-out infinite}
   @keyframes tilt{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.8deg) translateY(-2px)}}
-  .charB .tilt{animation-duration:4.8s;animation-delay:-1.6s}
+  .charB .tilt,
+  .charB .tiltBack{animation-duration:4.8s;animation-delay:-1.6s}
   .sway{transform-origin:110px 60px;animation:sway 3.6s ease-in-out infinite}
   @keyframes sway{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(1.7deg)}}
   .eyes{transform-origin:110px 131px;animation:blink 3.4s infinite}
@@ -159,6 +161,10 @@
   .fig.point .armR{transform:rotate(-95deg)} .fig.point .foreR{transform:rotate(-10deg)}
   /* ręce za siebie – wiatr */
   .fig.windy .armL{transform:rotate(40deg)} .fig.windy .armR{transform:rotate(-25deg)} .fig.windy .foreL{transform:rotate(30deg)}
+
+  /* tylne włosy podążają za głową (ta sama klasa headWrap) i kołyszą się jak głowa */
+  .fig .tiltBack{transform-origin:110px 190px;animation:tilt 4.2s ease-in-out infinite}
+  .figB .tiltBack{animation-duration:4.8s;animation-delay:-1.6s}
 
 
   /* ================= MINI-GRA „Poziom: Odpoczynek” ================= */
@@ -320,11 +326,11 @@
               <rect x="-50" y="-150" width="4" height="150"/><circle cx="-48" cy="-162" r="17" fill="#F4F2EF" stroke="#8E8C88" stroke-width="3"/>
               <rect x="-57" y="-170" width="18" height="12" rx="2" fill="#8E8C88"/><circle cx="-53" cy="-156" r="2" fill="#8E8C88"/><circle cx="-43" cy="-156" r="2" fill="#8E8C88"/>
             </g></g>
-            <g transform="translate(180,712)"><g class="bIn2"><g class="lean2"><g transform="scale(.42) translate(-110,-712)"><g class="fig figB walk has-pack heavy"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+            <g transform="translate(180,712)"><g class="bIn2"><g class="lean2"><g transform="scale(.42) translate(-110,-712)"><g class="fig figB walk has-pack heavy"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
-    </g></g>
+    </g></g></g>
     <g class="pack"><rect x="36" y="246" width="148" height="176" rx="26" fill="#9c6b45"/></g>
     <g class="legL"><g class="thighL"><rect x="61.0" y="436" width="50" height="138" rx="23.0" fill="#8a6247"/></g>
       <g class="shinL"><path d="M62,556 L110,556 L116,694 L56,694 Z" fill="#8a6247"/><path d="M82,560 L80,690" stroke="#7a553c" stroke-width="2"/><path d="M62,700 C62,688 108,688 102,700 L104,712 L62,712 Z" fill="#5a3b28"/></g></g>
@@ -454,11 +460,11 @@
             <g transform="translate(0,-12)"><rect class="flipP" x="-32" y="0" width="64" height="44" fill="#E3CCC1" stroke="#58756C" stroke-width="1.2"/></g>
           </g></g></g></g>
           <g id="s3shards"></g>
-          <g transform="translate(150,730)"><g class="jB3J"><g class="lean3"><g transform="scale(.5) translate(-110,-712)"><g class="fig figB walk has-pack jB3"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(150,730)"><g class="jB3J"><g class="lean3"><g transform="scale(.5) translate(-110,-712)"><g class="fig figB walk has-pack jB3"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
-    </g></g>
+    </g></g></g>
     <g class="pack"><rect x="36" y="246" width="148" height="176" rx="26" fill="#9c6b45"/></g>
     <g class="legL"><g class="thighL"><rect x="61.0" y="436" width="50" height="138" rx="23.0" fill="#8a6247"/></g>
       <g class="shinL"><path d="M62,556 L110,556 L116,694 L56,694 Z" fill="#8a6247"/><path d="M82,560 L80,690" stroke="#7a553c" stroke-width="2"/><path d="M62,700 C62,688 108,688 102,700 L104,712 L62,712 Z" fill="#5a3b28"/></g></g>
@@ -568,11 +574,11 @@
           <g transform="translate(575,520)"><g class="it2"><g class="bob" style="animation-delay:-.5s"><circle class="halo" r="31" fill="#F4F2EF"/><use href="#icoMat"/></g></g></g>
           <g transform="translate(715,411)"><g class="it3"><g class="bob" style="animation-delay:-.9s"><circle class="halo" r="31" fill="#F4F2EF"/><use href="#icoCandle"/></g></g></g>
         </g>
-        <g transform="translate(170,720)"><g class="jB4J"><g transform="scale(.4) translate(-110,-712)"><g class="fig figB walk has-pack jB4"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+        <g transform="translate(170,720)"><g class="jB4J"><g transform="scale(.4) translate(-110,-712)"><g class="fig figB walk has-pack jB4"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
-    </g></g>
+    </g></g></g>
     <g class="pack"><rect x="36" y="246" width="148" height="176" rx="26" fill="#9c6b45"/></g>
     <g class="legL"><g class="thighL"><rect x="61.0" y="436" width="50" height="138" rx="23.0" fill="#8a6247"/></g>
       <g class="shinL"><path d="M62,556 L110,556 L116,694 L56,694 Z" fill="#8a6247"/><path d="M82,560 L80,690" stroke="#7a553c" stroke-width="2"/><path d="M62,700 C62,688 108,688 102,700 L104,712 L62,712 Z" fill="#5a3b28"/></g></g>
@@ -707,11 +713,11 @@
             <g id="s5deck"></g>
           </g>
           <!-- B -->
-          <g transform="translate(0,700)"><g class="bx5"><g class="jB5J"><g transform="scale(.42) translate(-110,-712)"><g class="fig figB walk has-pack jB5"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(0,700)"><g class="bx5"><g class="jB5J"><g transform="scale(.42) translate(-110,-712)"><g class="fig figB walk has-pack jB5"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
-    </g></g>
+    </g></g></g>
     <g class="pack"><rect x="36" y="246" width="148" height="176" rx="26" fill="#9c6b45"/></g>
     <g class="legL"><g class="thighL"><rect x="61.0" y="436" width="50" height="138" rx="23.0" fill="#8a6247"/></g>
       <g class="shinL"><path d="M62,556 L110,556 L116,694 L56,694 Z" fill="#8a6247"/><path d="M82,560 L80,690" stroke="#7a553c" stroke-width="2"/><path d="M62,700 C62,688 108,688 102,700 L104,712 L62,712 Z" fill="#5a3b28"/></g></g>
@@ -788,10 +794,10 @@
     </g></g>
   </g></g></g></g></g></g>
           <!-- A: wchodzi, podaje rękę, idzie razem z B -->
-          <g transform="translate(0,700)"><g class="ax5"><g class="a1v5"><g transform="scale(.42) translate(-110,-712)"><g class="fig figA walk has-notes has-mug"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(0,700)"><g class="ax5"><g class="a1v5"><g transform="scale(.42) translate(-110,-712)"><g class="fig figA walk has-notes has-mug"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M50,104 C47,68 78,48 110,48 C142,48 173,68 170,104 L172,180 C174,215 176,245 179,268 C164,275 146,273 132,264 L88,264 C74,273 56,275 41,268 C44,245 46,215 48,180 Z" fill="url(#hairA)"/>
       <path d="M54,150 C52,190 50,226 46,262 M166,150 C168,190 170,226 174,262" fill="none" stroke="#a37b4b" stroke-width="1.6" opacity=".35"/>
-    </g></g>
+    </g></g></g>
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
     <g class="legR"><g class="thighR"><rect x="114.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
@@ -850,10 +856,10 @@
       <path d="M106,74 Q104,64 100,56" fill="none" stroke="#a37b4b" stroke-width="1.4" opacity=".5" stroke-linecap="round"/>
     </g></g>
   </g></g></g></g></g></g>
-          <g transform="translate(440,700)"><g class="a2v5"><g transform="scale(.42) translate(-110,-712)"><g class="fig figA has-notes has-mug reach5"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(440,700)"><g class="a2v5"><g transform="scale(.42) translate(-110,-712)"><g class="fig figA has-notes has-mug reach5"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M50,104 C47,68 78,48 110,48 C142,48 173,68 170,104 L172,180 C174,215 176,245 179,268 C164,275 146,273 132,264 L88,264 C74,273 56,275 41,268 C44,245 46,215 48,180 Z" fill="url(#hairA)"/>
       <path d="M54,150 C52,190 50,226 46,262 M166,150 C168,190 170,226 174,262" fill="none" stroke="#a37b4b" stroke-width="1.6" opacity=".35"/>
-    </g></g>
+    </g></g></g>
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
     <g class="legR"><g class="thighR"><rect x="114.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
@@ -912,10 +918,10 @@
       <path d="M106,74 Q104,64 100,56" fill="none" stroke="#a37b4b" stroke-width="1.4" opacity=".5" stroke-linecap="round"/>
     </g></g>
   </g></g></g></g></g>
-          <g transform="translate(440,700)"><g class="a3v5"><g transform="scale(.42) translate(-110,-712)"><g class="fig figA walk has-notes has-mug hf5"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(440,700)"><g class="a3v5"><g transform="scale(.42) translate(-110,-712)"><g class="fig figA walk has-notes has-mug hf5"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M50,104 C47,68 78,48 110,48 C142,48 173,68 170,104 L172,180 C174,215 176,245 179,268 C164,275 146,273 132,264 L88,264 C74,273 56,275 41,268 C44,245 46,215 48,180 Z" fill="url(#hairA)"/>
       <path d="M54,150 C52,190 50,226 46,262 M166,150 C168,190 170,226 174,262" fill="none" stroke="#a37b4b" stroke-width="1.6" opacity=".35"/>
-    </g></g>
+    </g></g></g>
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
     <g class="legR"><g class="thighR"><rect x="114.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
@@ -1033,11 +1039,11 @@
           <g class="inR b"><path d="M510,600 q-20,-8 -40,0 t-40,0"/><path d="M495,642 q-20,-8 -40,0 t-40,0"/></g>
         </g>
         <!-- postacie ramię w ramię -->
-        <g transform="translate(210,735)"><g class="hop6"><g transform="scale(.4) translate(-110,-712)"><g class="fig figB brth lookR has-pack"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+        <g transform="translate(210,735)"><g class="hop6"><g transform="scale(.4) translate(-110,-712)"><g class="fig figB brth lookR has-pack"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
-    </g></g>
+    </g></g></g>
     <g class="pack"><rect x="36" y="246" width="148" height="176" rx="26" fill="#9c6b45"/></g>
     <g class="legL"><g class="thighL"><rect x="61.0" y="436" width="50" height="138" rx="23.0" fill="#8a6247"/></g>
       <g class="shinL"><path d="M62,556 L110,556 L116,694 L56,694 Z" fill="#8a6247"/><path d="M82,560 L80,690" stroke="#7a553c" stroke-width="2"/><path d="M62,700 C62,688 108,688 102,700 L104,712 L62,712 Z" fill="#5a3b28"/></g></g>
@@ -1113,10 +1119,10 @@
       <path d="M100,50 q-6,-8 -2,-14 M118,48 q6,-6 4,-12" fill="none" stroke="#6a4328" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
     </g></g>
   </g></g></g></g></g>
-        <g transform="translate(330,735)"><g class="hop6b"><g transform="scale(.4) translate(-110,-712)"><g class="fig figA brth lookL"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+        <g transform="translate(330,735)"><g class="hop6b"><g transform="scale(.4) translate(-110,-712)"><g class="fig figA brth lookL"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M50,104 C47,68 78,48 110,48 C142,48 173,68 170,104 L172,180 C174,215 176,245 179,268 C164,275 146,273 132,264 L88,264 C74,273 56,275 41,268 C44,245 46,215 48,180 Z" fill="url(#hairA)"/>
       <path d="M54,150 C52,190 50,226 46,262 M166,150 C168,190 170,226 174,262" fill="none" stroke="#a37b4b" stroke-width="1.6" opacity=".35"/>
-    </g></g>
+    </g></g></g>
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
     <g class="legR"><g class="thighR"><rect x="114.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
@@ -1212,10 +1218,10 @@
         <path d="M150,720 C200,712 240,709 270,708 C300,709 340,712 390,720" fill="none" stroke="#A4B8B0" stroke-width="3" stroke-linecap="round"/>
         <!-- wiwat -->
         <g class="cv7">
-          <g transform="translate(205,712) scale(.42) translate(-110,-712)"><g class="fig figA cheer"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(205,712) scale(.42) translate(-110,-712)"><g class="fig figA cheer"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M50,104 C47,68 78,48 110,48 C142,48 173,68 170,104 L172,180 C174,215 176,245 179,268 C164,275 146,273 132,264 L88,264 C74,273 56,275 41,268 C44,245 46,215 48,180 Z" fill="url(#hairA)"/>
       <path d="M54,150 C52,190 50,226 46,262 M166,150 C168,190 170,226 174,262" fill="none" stroke="#a37b4b" stroke-width="1.6" opacity=".35"/>
-    </g></g>
+    </g></g></g>
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
     <g class="legR"><g class="thighR"><rect x="114.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
@@ -1274,11 +1280,11 @@
       <path d="M106,74 Q104,64 100,56" fill="none" stroke="#a37b4b" stroke-width="1.4" opacity=".5" stroke-linecap="round"/>
     </g></g>
   </g></g></g>
-          <g transform="translate(335,712) scale(.42) translate(-110,-712)"><g class="fig figB cheer has-pack"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(335,712) scale(.42) translate(-110,-712)"><g class="fig figB cheer has-pack"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
-    </g></g>
+    </g></g></g>
     <g class="pack"><rect x="36" y="246" width="148" height="176" rx="26" fill="#9c6b45"/></g>
     <g class="legL"><g class="thighL"><rect x="61.0" y="436" width="50" height="138" rx="23.0" fill="#8a6247"/></g>
       <g class="shinL"><path d="M62,556 L110,556 L116,694 L56,694 Z" fill="#8a6247"/><path d="M82,560 L80,690" stroke="#7a553c" stroke-width="2"/><path d="M62,700 C62,688 108,688 102,700 L104,712 L62,712 Z" fill="#5a3b28"/></g></g>
@@ -1357,10 +1363,10 @@
         </g>
         <!-- A podaje kubek B – kubek przechodzi z ręki do ręki -->
         <g class="pv7">
-          <g transform="translate(205,712) scale(.42) translate(-110,-712)"><g class="fig figA giveA7"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(205,712) scale(.42) translate(-110,-712)"><g class="fig figA giveA7"><ellipse class="shadow" cx="110" cy="714" rx="72" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M50,104 C47,68 78,48 110,48 C142,48 173,68 170,104 L172,180 C174,215 176,245 179,268 C164,275 146,273 132,264 L88,264 C74,273 56,275 41,268 C44,245 46,215 48,180 Z" fill="url(#hairA)"/>
       <path d="M54,150 C52,190 50,226 46,262 M166,150 C168,190 170,226 174,262" fill="none" stroke="#a37b4b" stroke-width="1.6" opacity=".35"/>
-    </g></g>
+    </g></g></g>
     <g class="legL"><g class="thighL"><rect x="66.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
       <g class="shinL"><rect x="68" y="554" width="36" height="140" rx="16" fill="#2a2a2e"/><rect x="68" y="672" width="36" height="12" fill="#1f1f22"/><path d="M64,704 C64,690 108,688 102,700 L104,712 L62,712 Z" fill="#f4f2ee"/><rect x="62" y="708" width="48" height="5" rx="2" fill="#d6cfc2"/></g></g>
     <g class="legR"><g class="thighR"><rect x="114.0" y="436" width="40" height="138" rx="18.0" fill="#2a2a2e"/></g>
@@ -1419,11 +1425,11 @@
       <path d="M106,74 Q104,64 100,56" fill="none" stroke="#a37b4b" stroke-width="1.4" opacity=".5" stroke-linecap="round"/>
     </g></g>
   </g></g></g>
-          <g transform="translate(335,712) scale(.42) translate(-110,-712)"><g class="fig figB has-pack takeB7"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+          <g transform="translate(335,712) scale(.42) translate(-110,-712)"><g class="fig figB has-pack takeB7"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
-    </g></g>
+    </g></g></g>
     <g class="pack"><rect x="36" y="246" width="148" height="176" rx="26" fill="#9c6b45"/></g>
     <g class="legL"><g class="thighL"><rect x="61.0" y="436" width="50" height="138" rx="23.0" fill="#8a6247"/></g>
       <g class="shinL"><path d="M62,556 L110,556 L116,694 L56,694 Z" fill="#8a6247"/><path d="M82,560 L80,690" stroke="#7a553c" stroke-width="2"/><path d="M62,700 C62,688 108,688 102,700 L104,712 L62,712 Z" fill="#5a3b28"/></g></g>

@@ -2,7 +2,10 @@
 # Układ współrzędnych jak w popiersiach: środek x=110, stopy ok. y=712.
 import pathlib
 src = pathlib.Path(__file__).parent
-headA = (src / '_headA.svg').read_text(); backA = (src / '_backA.svg').read_text(); backB = (src / '_backB.svg').read_text(); headB = (src / '_headB.svg').read_text()
+headA = (src / '_headA.svg').read_text(); backA = (src / '_backA.svg').read_text(); backB = (src / '_backB.svg').read_text()
+# tylne włosy dostają te same ruchy co głowa (klasa headWrap), ale bez klasy tilt, żeby selektory '.headWrap .tilt' trafiały w głowę
+def _wrap_back(b): return '<g class="headWrap hairBack">' + b.replace('<g class="tilt">', '<g class="tiltBack">', 1) + '</g>'
+backA, backB = _wrap_back(backA), _wrap_back(backB); headB = (src / '_headB.svg').read_text()
 
 def leg(side, x, pants, thigh_w, shin, shoe):
     return f'''<g class="leg{side}"><g class="thigh{side}"><rect x="{x-thigh_w/2}" y="436" width="{thigh_w}" height="138" rx="{thigh_w/2-2}" fill="{pants}"/></g>

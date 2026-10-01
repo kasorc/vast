@@ -1,8 +1,8 @@
-<g class="fig figB"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="tilt"><g class="sway">
+<g class="fig figB"><ellipse class="shadow" cx="110" cy="714" rx="78" ry="9" fill="#000" opacity=".13"/><g class="body"><g class="headWrap hairBack"><g class="tiltBack"><g class="sway">
       <path d="M44,108 C40,68 76,42 110,42 C146,42 182,66 176,108 C184,132 176,150 186,172 C196,194 182,212 192,234 C198,248 190,262 178,268 C170,256 162,250 150,252 L70,252 C58,250 50,256 42,268 C30,262 22,248 28,234 C38,212 24,194 34,172 C44,150 36,132 44,108 Z" fill="url(#hairB)"/>
       <path d="M40,176 q10,18 -2,36 q-8,14 2,30 M180,176 q-10,18 2,36 q8,14 -2,30 M48,120 q-8,20 0,40 M172,120 q8,20 0,40" fill="none" stroke="#5e3a22" stroke-width="2" opacity=".35" stroke-linecap="round"/>
       <path d="M30,232 q-8,8 -4,18 M190,232 q8,8 4,18 M34,172 q-8,6 -8,14 M186,172 q8,6 8,14" fill="none" stroke="#c28d52" stroke-width="3" stroke-linecap="round"/>
-    </g></g>
+    </g></g></g>
     <g class="pack"><rect x="36" y="246" width="148" height="176" rx="26" fill="#9c6b45"/></g>
     <g class="legL"><g class="thighL"><rect x="61.0" y="436" width="50" height="138" rx="23.0" fill="#8a6247"/></g>
       <g class="shinL"><path d="M62,556 L110,556 L116,694 L56,694 Z" fill="#8a6247"/><path d="M82,560 L80,690" stroke="#7a553c" stroke-width="2"/><path d="M62,700 C62,688 108,688 102,700 L104,712 L62,712 Z" fill="#5a3b28"/></g></g>
