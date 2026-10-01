@@ -111,6 +111,8 @@ def master(m, dur):
     n = int(dur * SR); L, R = L[:n], R[:n]
     fade = np.clip((dur - np.arange(n) / SR) / 1.2, 0, 1); fi = np.minimum(1, np.arange(n) / (SR * 0.05))
     L *= fade * fi; R *= fade * fi
+    for a, b in getattr(m, 'gates', []):  # twarde wyciszenie (np. „…serio?”)
+        tt = np.arange(n) / SR; g = np.clip(np.maximum((a - tt) / 0.015, (tt - b) / 0.015), 0, 1); L *= g; R *= g
     rms = np.sqrt(np.mean(np.concatenate([L, R]) ** 2)) + 1e-9
     g = 0.1 / rms; L *= g; R *= g  # ok. -20 dBFS RMS
     pk = max(np.abs(L).max(), np.abs(R).max())
@@ -228,6 +230,44 @@ def song_kawa(d, cuts):
     m.add(piano(50, 5, 0.6), d - 3.6); m.add(piano(62, 5, 0.5), d - 3.6); m.add(piano(69, 5, 0.45), d - 3.6); m.add(chime(86, 0.45), d - 2.4)
     return m
 
+def knock(vol=0.5):  # pukanie w drzwi
+    t = t_arr(0.18)
+    x = lp(rng.standard_normal(len(t)), 900) * np.exp(-t * 45) + np.sin(2 * np.pi * 120 * t) * np.exp(-t * 30) * 0.8
+    return x * vol
+
+def song_poradnik(d, ev):
+    m = Mix(d)
+    cut = ev.get('cut', 17.0)
+    # 0–17 s: kiczowata, skoczna melodia „telezakupy” (C-dur, 128 bpm)
+    bpm = 128; b = 60 / bpm
+    chords = [(48, [60, 64, 67]), (53, [60, 65, 69]), (55, [59, 62, 67]), (48, [60, 64, 67])]
+    mel = [72, 76, 79, 76, 77, 74, 71, 74, 72, 76, 79, 84, 83, 79, 74, 72]
+    n = int(cut / b)
+    for k in range(n):
+        tt = k * b
+        root, ch = chords[(k // 8) % 4]
+        if k % 2 == 0: m.add(kick(0.45), tt)
+        if k % 4 == 2: m.add(snare(0.18), tt)
+        m.add(hat(0.05), tt + b / 2)
+        if k % 2 == 0: m.add(bass(root - 12 + (7 if k % 4 == 2 else 0), b * 0.9, 0.22), tt)
+        if k % 2 == 1:
+            for j, c in enumerate(ch): m.add(pluck(c, 0.3, 0.16), tt + j * 0.008, pan=-0.3 + 0.3 * j)
+        if k % 2 == 0 and k >= 4: m.add(pluck(mel[(k // 2) % len(mel)], 0.45, 0.32), tt, pan=0.15)
+    for st in ev.get('steps', [2, 5, 8, 11, 14]):  # „ding” + ✔ na każdy krok
+        m.add(chime(91, 0.42), st + 0.05); m.add(chime(96, 0.3), st + 0.17)
+    m.add(noise_swell(0.5, 800, 7000, 0.6, 0.1), 0.0)  # flesz studia
+    for t0 in ev.get('dings', [11.6, 12.5, 13.4]):  # mikrofalówka
+        m.add(chime(93, 0.55), t0); m.add(chime(100, 0.25), t0 + 0.02)
+    for t0 in ev.get('knocks', [14.9, 15.15, 15.4, 16.2, 16.45]): m.add(knock(0.55), t0, pan=-0.2)
+    # 17 s: twarde ucięcie → cisza; jeden suchy akcent przy uniesieniu brwi
+    m.gates = [(cut, ev.get('brow', 18.0) - 0.01)]
+    m.add(pluck(79, 0.6, 0.18), ev.get('brow', 18.0))
+    # 19 s →: spokojne pianino, ciepło
+    calm_piano(m, ev.get('calm', 19.0), d - 1.0, bpm=72, vol=0.95)
+    m.add(noise_swell(1.2, 200, 3000, 0.7, 0.05), 19.0)
+    m.add(piano(48, 4, 0.55), d - 3.0); m.add(piano(60, 4, 0.45), d - 3.0); m.add(piano(67, 4, 0.4), d - 3.0); m.add(chime(84, 0.4), d - 2.2)
+    return m
+
 if __name__ == '__main__':
     name, dur = sys.argv[1], float(sys.argv[2])
     cuts = [float(x) for x in sys.argv[3].split(',')] if len(sys.argv) > 3 and sys.argv[3] else []
@@ -236,6 +276,7 @@ if __name__ == '__main__':
     elif name == 'kamienie-sloik': m = song_calm(dur, cuts, 70, click)
     elif name == 'mapa-popup': m = song_calm(dur, cuts, 76, paper)
     elif name == 'kawa': m = song_kawa(dur, cuts)
+    elif name == 'poradnik': m = song_poradnik(dur, json.loads(sys.argv[4]) if len(sys.argv) > 4 and sys.argv[4] else {})
     elif name == 'beat-balansu': m = song_beat(dur, json.loads(sys.argv[4]))
     else: m = song_calm(dur, cuts)
     from scipy.io import wavfile
