@@ -210,18 +210,21 @@ def buzz(dur=0.45, vol=0.18):  # wibracja telefonu
 def song_kawa(d, cuts):
     m = Mix(d)
     # 0–11 s: zegar + narastający chaos próśb
-    for k in range(int(11 / 0.5)): m.add(tick(0.22 + 0.1 * (k % 2)), k * 0.5, pan=0.4 * (-1) ** k)
-    asks = [0.4, 3.0, 3.8, 4.6, 5.4, 6.1, 6.8, 7.4, 8.0, 8.5, 9.0, 9.4, 9.8, 10.2, 10.5, 10.8]
+    for k in range(int(11.85 / 0.5)): m.add(tick(0.22 + 0.1 * (k % 2)), k * 0.5, pan=0.4 * (-1) ** k)
+    asks = [1.42, 3.15, 4.25, 5.25, 6.15, 6.95, 7.65, 8.3, 8.9, 9.35, 9.7, 10.0, 10.3]
     for i, a in enumerate(asks): m.add(ping(84 + (i * 5) % 12, 0.18 + 0.012 * i), a, pan=float(rng.uniform(-.7, .7)))
-    m.add(buzz(0.5, 0.2), 4.4); m.add(buzz(0.5, 0.22), 7.9); m.add(buzz(0.4, 0.25), 10.1)
-    for b in range(int(3 / 0.4), int(11 / 0.4)):  # puls basu przyspiesza napięcie
+    m.add(buzz(0.6, 0.24), 5.25); m.add(buzz(0.35, 0.2), 9.7)
+    for b in range(int(3 / 0.4), int(11.85 / 0.4)):  # puls basu przyspiesza napięcie
         m.add(bass(38, 0.3, 0.12 + 0.02 * (b * 0.4 - 3)), b * 0.4)
     m.add(noise_swell(2.5, 300, 5000, 0.95, 0.06), 8.5)
     # 11–13 s: cisza (tylko delikatny ton)
-    m.add(pad([62, 69], 2.2, 0.03), 11.05)
+    m.add(pad([62, 69], 1.3, 0.03), 11.9)
+    m.add(click(0.3), 13.15)  # klamka
     # 13 s →: ulga – pianino
-    m.add(chime(90, 0.4), 13.0)
-    calm_piano(m, 13.0, d - 1.2, bpm=74, vol=0.95)
+    for k in range(5): m.add(chime(88 + k * 2, 0.25), 14.3 + k * 0.07)  # pękające dymki
+    m.add(chime(93, 0.4), 15.75)  # błysk biletu
+    calm_piano(m, 13.3, d - 1.2, bpm=74, vol=0.95)
+    m.add(noise_swell(0.4, 600, 6000, 0.5, 0.12), 18.35)  # whip-pan
     m.add(piano(50, 5, 0.6), d - 3.6); m.add(piano(62, 5, 0.5), d - 3.6); m.add(piano(69, 5, 0.45), d - 3.6); m.add(chime(86, 0.45), d - 2.4)
     return m
 
