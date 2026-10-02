@@ -237,35 +237,29 @@ def knock(vol=0.5):  # pukanie w drzwi
 
 def song_poradnik(d, ev):
     m = Mix(d)
-    cut = ev.get('cut', 17.0)
-    # 0–17 s: kiczowata, skoczna melodia „telezakupy” (C-dur, 128 bpm)
-    bpm = 128; b = 60 / bpm
-    chords = [(48, [60, 64, 67]), (53, [60, 65, 69]), (55, [59, 62, 67]), (48, [60, 64, 67])]
-    mel = [72, 76, 79, 76, 77, 74, 71, 74, 72, 76, 79, 84, 83, 79, 74, 72]
-    n = int(cut / b)
-    for k in range(n):
-        tt = k * b
-        root, ch = chords[(k // 8) % 4]
-        if k % 2 == 0: m.add(kick(0.45), tt)
-        if k % 4 == 2: m.add(snare(0.18), tt)
-        m.add(hat(0.05), tt + b / 2)
-        if k % 2 == 0: m.add(bass(root - 12 + (7 if k % 4 == 2 else 0), b * 0.9, 0.22), tt)
-        if k % 2 == 1:
-            for j, c in enumerate(ch): m.add(pluck(c, 0.3, 0.16), tt + j * 0.008, pan=-0.3 + 0.3 * j)
-        if k % 2 == 0 and k >= 4: m.add(pluck(mel[(k // 2) % len(mel)], 0.45, 0.32), tt, pan=0.15)
-    for st in ev.get('steps', [2, 5, 8, 11, 14]):  # „ding” + ✔ na każdy krok
-        m.add(chime(91, 0.42), st + 0.05); m.add(chime(96, 0.3), st + 0.17)
-    m.add(noise_swell(0.5, 800, 7000, 0.6, 0.1), 0.0)  # flesz studia
-    for t0 in ev.get('dings', [11.6, 12.5, 13.4]):  # mikrofalówka
-        m.add(chime(93, 0.55), t0); m.add(chime(100, 0.25), t0 + 0.02)
-    for t0 in ev.get('knocks', [14.9, 15.15, 15.4, 16.2, 16.45]): m.add(knock(0.55), t0, pan=-0.2)
-    # 17 s: twarde ucięcie → cisza; jeden suchy akcent przy uniesieniu brwi
-    m.gates = [(cut, ev.get('brow', 18.0) - 0.01)]
-    m.add(pluck(79, 0.6, 0.18), ev.get('brow', 18.0))
-    # 19 s →: spokojne pianino, ciepło
-    calm_piano(m, ev.get('calm', 19.0), d - 1.0, bpm=72, vol=0.95)
-    m.add(noise_swell(1.2, 200, 3000, 0.7, 0.05), 19.0)
-    m.add(piano(48, 4, 0.55), d - 3.0); m.add(piano(60, 4, 0.45), d - 3.0); m.add(piano(67, 4, 0.4), d - 3.0); m.add(chime(84, 0.4), d - 2.2)
+    cut, calm = ev.get('cut', 16.5), ev.get('calm', 18.5)
+    # 0–16.5 s: zegar przyspiesza, puls basu narasta, ping przy każdej prośbie
+    t, k = 0.0, 0
+    while t < cut - 0.05:
+        m.add(tick(0.2 + 0.08 * (k % 2)), t, pan=0.4 * (-1) ** k)
+        t += 0.5 if t < 10.5 else 0.33; k += 1
+    t = 2.5
+    while t < cut - 0.1:
+        m.add(bass(38 if t < 10.5 else 40, 0.28, 0.12 + 0.012 * (t - 2.5)), t)
+        t += 0.4 if t < 10.5 else 0.27
+    for i, a in enumerate(ev.get('asks', [])): m.add(ping(84 + (i * 5) % 12, 0.17 + 0.008 * i), a, pan=float(rng.uniform(-.7, .7)))
+    for a in ev.get('buzz', []): m.add(buzz(0.5, 0.22), a)
+    for a in ev.get('slam', []): m.add(knock(0.6), a)
+    for a in ev.get('pages', []): m.add(paper(0.3), a)
+    m.add(noise_swell(3.0, 300, 5000, 0.95, 0.06), 10.5)
+    pad_ = pad([50, 57, 62], 3.0, 0.035); m.add(pad_, 13.5)
+    m.gates = [(cut, calm - 0.6)]
+    # 16.5 s: cisza, jedna nuta przy pytaniu
+    m.add(piano(62, 2.5, 0.3), calm - 0.55)
+    m.add(click(0.3), ev.get('laptop', 19.72))
+    m.add(chime(91, 0.35), ev.get('warm', 20.0))
+    calm_piano(m, calm, d - 1.0, bpm=72, vol=0.95)
+    m.add(piano(50, 4, 0.55), d - 3.0); m.add(piano(62, 4, 0.45), d - 3.0); m.add(piano(69, 4, 0.4), d - 3.0); m.add(chime(86, 0.4), d - 2.2)
     return m
 
 if __name__ == '__main__':
