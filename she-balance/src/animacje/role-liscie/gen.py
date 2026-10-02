@@ -1287,7 +1287,7 @@ def sc_logo():
     S('.scene.active .lwc{transform-box:fill-box;transform-origin:50%% 70%%;animation:chIn .55s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(.72s + var(--i)*38ms)}')
     s.append('<g class="tagIn"><use href="#logoTag" transform="translate(270,553) scale(.46)" style="color:%s"/></g>' % DKG)
     A('.tagIn', K([(0, 'opacity:0;transform:translateY(8px)'), (1.0, 'opacity:0;transform:translateY(8px)'), (1.3, 'opacity:1;transform:none', EIN)]))
-    s.append('<text x="270" y="596" font-size="24" text-anchor="middle" class="wsplit w4 capT2" fill="%s" data-g="0,7,17" style="--d0:1.15s">5–7.11 · Beskidy · 20 miejsc</text>' % DKG)
+    s.append('<text x="270" y="596" font-size="22" text-anchor="middle" class="wsplit w4 capT2" fill="%s" data-g="0,7,24" style="--d0:1.15s">5–7.11 · Karolowy Dwór, Wisła</text>' % DKG)
     S('.capT2{font-family:"Mulish",sans-serif;font-weight:700;letter-spacing:.06em}'
       '.scene.active .w4.w{transform-box:fill-box;animation:wRise2 .4s %s both;animation-delay:calc(var(--d0) + var(--w)*.15s)}'
       '@keyframes wRise2{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}' % EIN)

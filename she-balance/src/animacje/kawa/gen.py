@@ -893,7 +893,7 @@ def sc_logo():
     A('.sg6', K([(0, 'opacity:0'), (1.05, 'opacity:0', EIO), (1.4, 'opacity:1')], T))
     A('.tg6', K([(0, 'opacity:0;transform:translateY(12px)'), (1.85, 'opacity:0;transform:translateY(12px)', ESNAP), (2.1, 'opacity:1;transform:translateY(0)')], T))
     # data
-    s.append('<g class="d6"><text x="270" y="520" font-size="25" text-anchor="middle" fill="%s" style="font-weight:800;letter-spacing:.05em">5–7.11 · Beskidy · 20 miejsc</text></g>' % INK)
+    s.append('<g class="d6"><text x="270" y="520" font-size="23" text-anchor="middle" fill="%s" style="font-weight:800;letter-spacing:.04em">5–7.11 · Karolowy Dwór, Wisła</text></g>' % INK)
     A('.d6', vis(2.05, None, T, .22, 14))
     # przycisk
     s.append('<g transform="translate(270,590)"><g class="btn6"><rect x="-162" y="-44" width="324" height="88" rx="44" fill="#3a2a20" opacity=".15" transform="translate(0,5)"/>'

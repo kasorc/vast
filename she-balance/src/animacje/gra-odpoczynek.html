@@ -62,6 +62,10 @@
   .scene.active .ch.br6{animation:chBr .75s cubic-bezier(.2,.7,.3,1) both;animation-delay:calc(var(--d0,0s) + var(--i)*42ms)}
   @keyframes chBr{0%{opacity:0;transform:translateY(22px) scale(.92)}100%{opacity:1;transform:none}}
   .scene.active .dot8{transform-box:fill-box;transform-origin:center;animation:dot8 .45s cubic-bezier(.2,.9,.25,1.12) both;animation-delay:calc(.12s + var(--i)*22ms)}
+  .scene.active .bar8{transform-box:fill-box;transform-origin:left center;animation:bar8 1.1s cubic-bezier(.45,0,.25,1) .35s both}
+  @keyframes bar8{from{transform:scaleX(0)}to{transform:none}}
+  .scene.active .pct8{animation:pct8 .35s ease-out 1.4s both}
+  @keyframes pct8{from{opacity:0}to{opacity:1}}
   @keyframes dot8{from{opacity:0;transform:scale(0)}to{opacity:1;transform:none}}
   .dpu{transform-box:fill-box;transform-origin:center;animation:dpu 1.3s ease-in-out infinite;animation-delay:calc(var(--k)*-90ms)}
   @keyframes dpu{0%,100%{transform:scale(.55);opacity:.55}50%{transform:scale(1);opacity:1}}
@@ -432,7 +436,7 @@
           <!-- aktualne logo: napis SHE BALANCE + hasło (wektory klientki) -->
           <g class="lw8"><use href="#logoWord" transform="translate(270,560) scale(.42)" style="color:#333"/></g>
           <g class="lt8"><use href="#logoTag" transform="translate(270,590) scale(.34)" style="color:#58756C"/></g>
-          <g class="dt8"><text x="270" y="636" font-size="22" text-anchor="middle" class="mu" fill="#58756C" style="letter-spacing:.04em">5–7.11 · Beskidy · 20 miejsc</text></g>
+          <g class="dt8"><text x="270" y="636" font-size="22" text-anchor="middle" class="mu" fill="#58756C" style="letter-spacing:.04em">5–7.11 · Karolowy Dwór, Wisła</text></g>
           <g transform="translate(270,683)"><g class="pl8">
             <rect x="-150" y="-29" width="300" height="58" rx="29" fill="#58756C"/>
             <text y="10" font-size="28" text-anchor="middle" class="mu" fill="#F4F2EF">shebalance.pl →</text>
@@ -570,9 +574,13 @@ window.beforeSplit=function(){
     const w=mk('g',{transform:`translate(${x},${y})`},g);const dx=(left?-1:1)*(20+R()*110),dy=-(200+R()*110);
     const s=mk('g',{class:'lf7',style:`--dx:${f3(dx)}px;--dy:${f3(dy)}px;--dr:${f3((R()-.5)*720)}deg;animation-delay:${f3(.25+R()*.35)}s`},w);
     mk('use',{href:'#leaf',fill:cols[i%3],transform:`scale(${f3(.8+R()*.5)})`},s);}})($('#s7conf'));
-  (function grid(g){let i=0;for(let r=0;r<4;r++)for(let c=0;c<5;c++){const x=190+c*40,y=272+r*38;
-    const d=mk('g',{class:'dot8',style:`--i:${i}`},g);mk('circle',{cx:x,cy:y,r:11,fill:'#F4F2EF',stroke:'#58756C','stroke-width':'1.5'},d);
-    mk('circle',{class:'dpu',cx:x,cy:y,r:6,fill:'#A4B8B0',style:`--k:${c+r}`},d);i++;}})($('#s8grid'));
+  (function bar(g){ // pasek postępu w stylu gry: „Balans 100%”
+    const d=mk('g',{class:'dot8',style:'--i:0'},g);
+    mk('text',{x:120,y:300,'font-size':20,class:'mu',fill:'#58756C',style:'letter-spacing:.12em;font-weight:700'},d).textContent='BALANS';
+    mk('rect',{x:120,y:316,width:300,height:30,rx:15,fill:'#F4F2EF',stroke:'#58756C','stroke-width':2},d);
+    mk('rect',{class:'bar8',x:126,y:322,width:288,height:18,rx:9,fill:'#A4B8B0'},d);
+    const t=mk('text',{x:420,y:300,'font-size':22,'text-anchor':'end',class:'mu pct8',fill:'#58756C',style:'font-weight:700'},d);t.textContent='100%';
+  })($('#s8grid'));
   // długość konturu logo do rysowania linią
   let L=0;document.querySelectorAll('#logoSign path').forEach(p=>{L=Math.max(L,p.getTotalLength());});$('.logo8').style.setProperty('--L',Math.ceil(L+10));
 

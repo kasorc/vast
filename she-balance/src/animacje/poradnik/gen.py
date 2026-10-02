@@ -9,7 +9,7 @@ from pomoc import *          # K, A, S, uid, f, rig, head, pupils, FIG, L2W, gho
 from pomoc import CSS
 
 # ---------- TEKST DO PODMIANY (data i miejsce campu na planszy końcowej) ----------
-DATA_CAMPU = "5–7.11 · Beskidy · 20 miejsc"
+DATA_CAMPU = "5–7.11 · Karolowy Dwór, Wisła"
 
 PANTS = '#2a2a2e'
 EBOUNCE = 'cubic-bezier(.2,.9,.3,1.04)'
