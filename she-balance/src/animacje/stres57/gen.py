@@ -308,6 +308,7 @@ lg('mistH', [(0, '#FBF4EA', 0), (.32, '#FBF4EA', .9), (.68, '#FBF4EA', .9), (1, 
 lg('mistBand', [(0, '#FBF2E6', 0), (.5, '#FBF2E6', .9), (1, '#FBF2E6', 0)])
 lg('hairOts', [(0, '#5e3a22', 1), (.45, '#7d5132', 1), (.8, '#a5723f', 1), (1, '#cf9b5e', 1)])
 lg('kdBay', [(0, '#FFF8EC', 1), (.55, '#F3ECE1', 1), (1, '#DCD2C4', 1)], x2=1, y2=0)
+lg('veilEdge', [(0, '#F1E3CF', 1), (1, '#F1E3CF', 0)])
 lg('woodTop', [(0, '#a5826c', 1), (.25, '#8a6a56', 1), (1, '#7a5c4a', 1)])
 lg('hillG', [(0, '#6c867c', 1), (1, '#4c655c', 1)])
 lg('grassG', [(0, '#8fa896', 1), (1, '#6f8a7c', 1)])
@@ -871,19 +872,22 @@ def _umbrella(x, y, sc=1.0):
             '<circle cx="-6" cy="-1" r="1.6" fill="%s"/><circle cx="6" cy="-1" r="1.6" fill="%s"/></g>' % (KD['wood_d'], KD['wood_d']))
 
 def karolowy_dwor(x, y, s=1.0, chalet=True, grounds=True, glow=True):
-    """Ilustracja Karolowego Dworu (Wisła) w stylu marki. (x,y) = środek linii gruntu przed głównym budynkiem, s = skala.
-    Jednostki lokalne: główny budynek x -142…168 (wys. do -186), chalet x -276…-128, taras/płot do y≈70.
-    chalet=False – sam główny budynek; grounds=False – bez trawnika, tarasu, parasoli i płotu (np. fragment w tle)."""
+    """Ilustracja Karolowego Dworu (Wisła) w stylu marki, widok z drona z przodu-z lewej (wg src/zdjecia/karolowy-dwor.jpg).
+    (x,y) = środek linii gruntu przed głównym budynkiem, s = skala. Jednostki lokalne: główny budynek x -152…168 (wys. do -188),
+    chalet (wyżej na zboczu) x -300…-150, basen + zielony kort przed chaletem, taras z parasolami i płot do y≈70.
+    chalet=False – sam główny budynek; grounds=False – bez trawnika, kortu, basenu, tarasu, parasoli i płotu (np. fragment w tle)."""
     o = '<g transform="translate(%s,%s) scale(%s)">' % (f(x), f(y), f4(s))
+    CY = -36                                    # chalet stoi wyżej na zboczu
     if grounds:
-        o += '<path d="M-310,-26 L-112,-30 L-96,16 L-150,44 L-310,34 Z" fill="%s"/>' % KD['lawn']
-        o += '<path d="M-140,2 L178,8 L198,42 L60,60 L-70,62 L-152,32 Z" fill="%s"/><path d="M-152,32 L-70,62 L60,60 L198,42" fill="none" stroke="#c7b8a6" stroke-width="2"/>' % KD['pave']
-        o += '<path d="M-132,0 L176,6 L172,14 L-140,8 Z" fill="#2e2620" opacity=".12"/>'
+        o += '<path d="M-330,%s L-150,%s L-94,-16 L-98,56 L-210,74 L-330,58 Z" fill="%s"/>' % (CY - 40, CY - 44, KD['lawn'])
+        o += '<path d="M-330,%s L-150,%s" stroke="#a9bf92" stroke-width="3" opacity=".7"/>' % (CY - 40, CY - 44)
     if chalet:
-        # zaplecze/garaż za chaletem
-        o += '<rect x="-184" y="-64" width="62" height="32" fill="#E9E1D5"/><rect x="-188" y="-70" width="70" height="8" fill="#3f3b38"/>' + ''.join(_win(xx, -56, 9, 10) for xx in (-176, -158, -140))
-        # chalet: drewno, ciemny dach dwuspadowy szczytem do przodu
-        o += '<path d="M-224,-108 L-172,-50 L-154,-58 L-206,-116 Z" fill="%s"/>' % KD['ch_roof_l']
+        cy = CY
+        o += '<g transform="translate(-12,%s)">' % cy
+        # zaplecze/garaż za chaletem (długi, ciemny dach)
+        o += '<rect x="-180" y="-62" width="66" height="30" fill="#E9E1D5"/><rect x="-184" y="-68" width="74" height="8" fill="#3f3b38"/>' + ''.join(_win(xx, -55, 9, 10) for xx in (-172, -154, -136))
+        o += '<path d="M-224,-110 L-280,-50 L-296,-58 L-240,-118 Z" fill="%s"/>' % KD['ch_roof_l']
+        o += '<path d="M-262,-56 L-276,-62 L-276,-20 L-262,-14 Z" fill="#A9814E"/>'
         o += '<rect x="-262" y="-56" width="76" height="44" fill="%s"/>' % KD['ch_wood']
         o += '<path d="%s" stroke="#A87E4A" stroke-width="1.1"/>' % ''.join('M-262,%sH-186' % yy for yy in range(-50, -12, 5))
         o += ''.join(_win(xx, -46, 11, 15) for xx in (-256, -238, -204)) + '<rect x="-222" y="-38" width="12" height="24" fill="%s"/>' % KD['wood_d']
@@ -891,15 +895,25 @@ def karolowy_dwor(x, y, s=1.0, chalet=True, grounds=True, glow=True):
         o += '<path d="%s" stroke="#B88D58" stroke-width="1"/>' % ''.join('M%s,-54V%s' % (xx, f(-54 - (40 - abs(xx + 224)) * 1.1)) for xx in range(-256, -190, 6))
         o += _win(-232, -86, 16, 14) + _gallery(-256, -192, -62)
         o += '<rect x="-264" y="-14" width="80" height="4" fill="#bdb3a6"/>'
-        o += '<path d="M-170,-50 L-224,-110" stroke="%s" stroke-width="1.6" opacity=".7"/>' % KD['rim']
-        # basen z błękitną wodą
-        o += '<path d="M-180,12 L-112,12 L-118,-14 L-172,-14 Z" fill="#EFE9DF"/><path d="M-174,8 L-118,8 L-123,-10 L-167,-10 Z" fill="%s"/>' % KD['pool']
-        o += '<path d="M-164,-4 h20 M-150,2 h24 M-160,5 h10" stroke="%s" stroke-width="1.4" stroke-linecap="round"/>' % KD['pool_l']
+        o += '<path d="M-170,-50 L-224,-110" stroke="%s" stroke-width="1.6" opacity=".7"/></g>' % KD['rim']
+    if grounds:
+        # basen PRZED chaletem (niżej, bliżej widza) + zielony ogrodzony kort tuż obok po prawej
+        o += '<path d="M-262,30 L-188,30 L-194,4 L-256,4 Z" fill="#EFE9DF"/><path d="M-256,26 L-194,26 L-198,8 L-252,8 Z" fill="%s"/>' % KD['pool']
+        o += '<path d="M-246,14 h22 M-232,20 h26 M-244,23 h12" stroke="%s" stroke-width="1.4" stroke-linecap="round"/>' % KD['pool_l']
+        o += '<path d="M-180,-2 L-118,-8 L-100,44 L-164,50 Z" fill="#4e7d5a"/>'
+        o += '<path d="M-174,10 L-114,4 M-170,24 L-109,18 M-166,37 L-104,31 M-160,-2 L-144,48 M-140,-4 L-126,46 M-121,-6 L-110,42" stroke="#3a6347" stroke-width="1.1"/>'
+        o += '<path d="M-180,-2 L-118,-8 L-100,44 L-164,50 Z" fill="none" stroke="#2f5039" stroke-width="2"/>'
+        o += '<path d="%s" stroke="#2f5039" stroke-width="1.6"/>' % ''.join('M%s,%sv-9' % (f(-180 + 62 * k / 4), f(-2 - 6 * k / 4)) for k in range(5))
+        # podjazd/taras przed dworem
+        o += '<path d="M-112,-8 L178,8 L198,42 L60,60 L-70,62 L-96,46 Z" fill="%s"/><path d="M-96,46 L-70,62 L60,60 L198,42" fill="none" stroke="#c7b8a6" stroke-width="2"/>' % KD['pave']
+        o += '<path d="M-132,0 L176,6 L172,14 L-140,8 Z" fill="#2e2620" opacity=".12"/>'
     # tylne połacie (wiele dachów)
-    o += '<path d="M-124,-146 L-86,-186 L-48,-146 Z" fill="%s"/><path d="M-86,-186 L-48,-146 L-38,-150 L-74,-188 Z" fill="%s"/>' % (KD['roof_d'], KD['roof'])
+    o += '<path d="M-124,-146 L-86,-188 L-48,-146 Z" fill="%s"/><path d="M-86,-188 L-124,-146 L-134,-150 L-98,-190 Z" fill="%s"/>' % (KD['roof'], KD['roof_d'])
     o += '<path d="M-34,-150 L-6,-178 L22,-150 Z" fill="%s"/>' % KD['roof_d']
-    # główny budynek
-    o += '<rect x="-130" y="-70" width="160" height="70" fill="%s"/><rect x="-130" y="-70" width="12" height="70" fill="%s"/>' % (KD['wall'], KD['wall_sh'])
+    # główny budynek (widoczna lewa ściana boczna – ujęcie z przodu-z lewej)
+    o += '<path d="M-130,0 L-130,-70 L-146,-78 L-146,-8 Z" fill="%s"/>' % KD['wall_sh']
+    o += ''.join(_win(-142, yy, 7, 13) for yy in (-60,)) + _arch(-142, -10, -32, 7)
+    o += '<rect x="-130" y="-70" width="160" height="70" fill="%s"/>' % KD['wall']
     o += '<rect x="-130" y="-70" width="160" height="6" fill="#000" opacity=".08"/>'
     o += ''.join(_win(-124 + i * 19.5, -63, 10, 15) for i in range(8))
     o += _gallery(-136, 34, -40)
@@ -907,21 +921,21 @@ def karolowy_dwor(x, y, s=1.0, chalet=True, grounds=True, glow=True):
         xx = -124 + i * 19.5
         o += _arch(xx - 2, -1, -32, 14, KD['wood_d']) if i == 3 else _arch(xx, -4, -29, 10)
     o += '<rect x="-130" y="-4" width="160" height="4" fill="#d8cfc2"/>'
-    # wielka połać czterospadowa + faktura dachówki
-    o += '<path d="M-142,-70 L-104,-152 L-112,-152 L-152,-74 Z" fill="%s"/>' % KD['roof_d']
+    o += '<path d="M-142,-70 L-104,-152 L-114,-154 L-160,-80 Z" fill="%s"/>' % KD['roof_d']
     o += '<path d="M-142,-70 L42,-70 L4,-152 L-104,-152 Z" fill="%s"/>' % KD['roof']
     o += _tiles(-142, -104, 42, 4, -152, -70)
     o += '<path d="M-104,-152 L4,-152" stroke="%s" stroke-width="2.4"/><path d="M-142,-70 L42,-70" stroke="%s" stroke-width="2"/>' % (KD['roof_e'], KD['roof_e'])
     o += '<rect x="-82" y="-166" width="8" height="15" fill="%s"/><rect x="-83.5" y="-168" width="11" height="3" fill="#5a4a42"/>' % KD['wall']
     o += '<rect x="-22" y="-164" width="8" height="13" fill="%s"/><rect x="-23.5" y="-166" width="11" height="3" fill="#5a4a42"/>' % KD['wall']
     o += _dormer(-120, -100) + _dormer(-8, -100) + _dormer(-32, -128) + _dormer(-110, -132)
-    # środkowy szczyt z balkonem
-    o += '<path d="M-60,-142 L-20,-66 L-8,-72 L-48,-148 Z" fill="%s"/>' % KD['roof_l']
+    # środkowy szczyt z balkonem (lewa połać widoczna)
+    o += '<path d="M-60,-142 L-100,-66 L-112,-72 L-72,-148 Z" fill="%s"/>' % KD['roof_d']
     o += '<path d="M-100,-66 L-60,-142 L-20,-66 Z" fill="%s"/><path d="M-88,-68 L-60,-126 L-32,-68 Z" fill="%s"/>' % (KD['roof'], KD['wall'])
     o += _arch(-66, -84, -106, 12) + _gallery(-84, -36, -74)
     o += '<path d="M-20,-66 L-60,-142" stroke="%s" stroke-width="1.6" opacity=".8"/>' % KD['rim']
-    # prawe skrzydło z dużym szczytem
-    o += '<path d="M72,-168 L130,-74 L150,-82 L92,-176 Z" fill="%s"/>' % KD['roof_l']
+    # prawe skrzydło z dużym szczytem (lewa połać i lewa ściana boczna widoczne)
+    o += '<path d="M72,-168 L16,-74 L-4,-82 L52,-176 Z" fill="%s"/>' % KD['roof_d']
+    o += '<path d="M30,6 L30,-80 L18,-86 L18,0 Z" fill="%s"/>' % KD['wall_sh']
     o += '<rect x="30" y="-80" width="86" height="86" fill="%s"/>' % KD['wall_lit']
     o += '<path d="M16,-74 L72,-168 L130,-74 Z" fill="%s"/><path d="M30,-78 L72,-152 L114,-78 Z" fill="%s"/>' % (KD['roof'], KD['wall_lit'])
     o += '<path d="M18,-74 L72,-168" stroke="%s" stroke-width="1.6"/><path d="M130,-74 L72,-168" stroke="%s" stroke-width="2" opacity=".85"/>' % (KD['roof_e'], KD['rim'])
@@ -935,9 +949,9 @@ def karolowy_dwor(x, y, s=1.0, chalet=True, grounds=True, glow=True):
     o += '<path d="M106,-54 L137,-88 L168,-54 Q137,-46 106,-54 Z" fill="%s"/><path d="M137,-88 L168,-54 Q154,-49 140,-47 Z" fill="%s"/>' % (KD['roof'], KD['roof_l'])
     o += '<path d="M137,-88 L168,-54" stroke="%s" stroke-width="1.6" opacity=".85"/>' % KD['rim']
     if grounds:
-        for ux, uy in [(-118, 14), (-92, 26), (-62, 34), (-30, 40), (4, 42), (38, 40), (72, 36), (106, 30), (140, 24), (168, 18)]:
+        for ux, uy in [(-84, 26), (-58, 36), (-28, 42), (4, 44), (38, 42), (72, 38), (106, 32), (140, 26), (168, 20)]:
             o += _umbrella(ux, uy)
-        pts = [(-162, 34), (-132, 48), (-102, 58), (-72, 65), (-40, 68), (-8, 69), (24, 67), (56, 64), (88, 60), (120, 56), (152, 51), (184, 46), (214, 41)]
+        pts = [(-100, 50), (-82, 60), (-58, 66), (-30, 70), (0, 71), (30, 69), (60, 66), (90, 62), (120, 57), (152, 52), (184, 47), (214, 42), (244, 38)]
         o += '<path d="M%s" fill="none" stroke="%s" stroke-width="2.2"/>' % (' L'.join('%s,%s' % p for p in pts), KD['wood'])
         o += '<path d="M%s" fill="none" stroke="%s" stroke-width="1.6"/>' % (' L'.join('%s,%s' % (px, py - 4) for px, py in pts), KD['wood_l'])
         o += '<path d="%s" stroke="%s" stroke-width="2"/>' % (''.join('M%s,%sv-7' % (px, py + 1) for px, py in pts), KD['wood_d'])
@@ -961,39 +975,80 @@ def forest(x0, x1, base0, base1, n, seed, hmin, hmax, decid=.35, avoid=None):
             s += spruce(x, b, h, ['#3f5a52', '#4a655c', '#557062', '#38524a'][int(c * 4)])
     return s
 
+def range_svg(pts, col, crest=None, trees=None, seed=1, bottom=1500, meadows=None):
+    """pasmo górskie: gładki grzbiet przez pts, ciepłe światło na grani (crest), zalesienie (trees=(kolor, gęstość, wys.)), polany"""
+    d = smooth(pts) + ' L%s,%s L%s,%s Z' % (f(pts[-1][0]), bottom, f(pts[0][0]), bottom)
+    s = '<path d="%s" fill="%s"/>' % (d, col)
+    r = random.Random(seed)
+    if meadows:
+        mc, n = meadows
+        for i in range(n):
+            k = r.uniform(.05, .95); i0 = int(k * (len(pts) - 1)); p0, p1 = pts[i0], pts[min(i0 + 1, len(pts) - 1)]
+            t = k * (len(pts) - 1) - i0; mx = p0[0] + (p1[0] - p0[0]) * t; my = p0[1] + (p1[1] - p0[1]) * t + r.uniform(18, 70)
+            s += '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="%s" transform="rotate(%s %s %s)"/>' % (f(mx), f(my), f(r.uniform(22, 48)), f(r.uniform(7, 14)), mc, f(r.uniform(-18, 18)), f(mx), f(my))
+    if trees:
+        tc, step, th = trees
+        cols = tc if isinstance(tc, (list, tuple)) else [tc]
+        items = []
+        x = pts[0][0]
+        while x < pts[-1][0]:
+            for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+                if ax <= x <= bx:
+                    yy = ay + (by - ay) * (x - ax) / (bx - ax); break
+            for k in range(3):                                                                           # rozsiany po zboczu
+                if r.random() < .75: items.append((yy + r.uniform(th * 1.1, th * 7), x + r.uniform(-step, step), th * r.uniform(.7, 1.2)))
+            x += step
+        for b_, x_, h_ in sorted(items):
+            s += spruce(x_, b_, h_, cols[int(r.random() * len(cols))])
+    if crest:
+        s += '<path d="%s" fill="none" stroke="%s" stroke-width="3" stroke-linecap="round" opacity=".75"/>' % (smooth(pts), crest)
+    return s
+
 def shot_manor(T, t0, t1):
-    # dron: start na linii horyzontu (match-cut z laptopem), czubki drzew na pierwszym planie opadają (kamera „wznosi się”), przelot w bok
-    cam = [(t0, 270, 482, 1.55, 270, 480, 0, 'cubic-bezier(.3,.05,.2,1)'), (t0 + 1.2, 298, 688, 1.14, 270, 640, 0, 'cubic-bezier(.4,0,.6,1)'), (t1 + .3, 284, 690, 1.17, 270, 640, 0)]
+    """Karolowy Dwór z drona (10,0–11,5): start = linia czubków drzew pod poranną mgłą (match-cut z linią laptopa),
+    mgła i drzewa rozstępują się (dron się wznosi), odsłaniając pasma Beskidów i dwór na zboczu; potem powolny przelot."""
+    cam = [(t0, 270, 482, 1.55, 270, 480, 0, 'cubic-bezier(.3,.05,.2,1)'), (t0 + 1.2, 300, 690, 1.12, 270, 642, 0, 'cubic-bezier(.4,0,.6,1)'), (t1 + .3, 286, 692, 1.15, 270, 642, 0)]
     sky = '<rect x="-400" y="-500" width="1340" height="2000" fill="url(#dawnSky)"/>'
-    sun = '<g class="sun5"><circle cx="372" cy="470" r="250" fill="url(#sunHalo)"/><circle cx="372" cy="470" r="40" fill="url(#sunDisc)"/></g>'
-    A('.sun5', K([(0, 'transform:translateY(34px)'), (t1, 'transform:translateY(-58px)')], T, 'cubic-bezier(.3,0,.4,1)'))
-    far = ridge(-400, 940, 452, 9, 12, 51, 1500, '#C9CFC4')
-    mist1 = '<g class="ms5a"><rect x="-400" y="448" width="1340" height="56" fill="url(#mistBand)"/></g>'
-    drift('ms5a', T, 30, 0)
-    main = ridge(-400, 940, 482, 3, 14, 52, 1500, '#6f8a80') + ''.join(spruce(x, 484 + random.Random(x).uniform(-2, 2), random.Random(x * 3).uniform(7, 14), '#647f75') for x in range(-380, 940, 9))
-    mist2 = '<g class="ms5b"><rect x="-400" y="520" width="1340" height="70" fill="url(#mistBand)"/></g>'
-    A('.ms5b', K([(0, 'opacity:.9;transform:translateX(0)'), (t1, 'opacity:1;transform:translateX(-36px)')], T, 'cubic-bezier(.4,0,.6,1)'))
-    midr = ridge(-400, 940, 566, 22, 10, 53, 1500, '#58756C') + ''.join(spruce(x, 572 + random.Random(x).uniform(-6, 12), random.Random(x * 5).uniform(18, 34), '#4a655c') for x in range(-380, 940, 17))
-    # zbocze z dworem (ostre)
-    hill = '<path d="M-400,640 C-80,606 220,598 420,604 C640,612 820,630 940,646 L940,1500 L-400,1500 Z" fill="url(#hillG)"/>'
-    hill += forest(-400, 940, 606, 660, 160, 91, 26, 52, .4)
-    hill += '<path d="M40,700 C140,680 400,676 500,694 L520,820 C380,846 150,846 30,816 Z" fill="#8DA87B"/><path d="M60,812 C180,836 360,836 500,812" fill="none" stroke="#7d9a6c" stroke-width="3"/>'
-    hill += forest(-400, 70, 660, 820, 70, 92, 40, 90, .35) + forest(470, 940, 650, 820, 70, 93, 40, 96, .35)
-    hill += karolowy_dwor(306, 742, .8)
-    hill += '<g transform="translate(244,606)">' + steam_paths('stm', 2, 40, 7, 3, '#F6EDE2', 12, '#e9dccd') + '</g>'
-    near = forest(-400, 940, 860, 1060, 120, 94, 60, 130, .22, avoid=(90, 520, 806))
+    sun = '<g class="sun5"><circle cx="420" cy="330" r="240" fill="url(#sunHalo)"/><circle cx="420" cy="330" r="34" fill="url(#sunDisc)"/></g>'
+    A('.sun5', K([(0, 'transform:translateY(40px)'), (t1, 'transform:translateY(-24px)')], T, 'cubic-bezier(.3,0,.4,1)'))
+    # pasma Beskidów: od najdalszego (jasne, przymglone) do bliższych (ciemniejsze, zalesione); z lewej dolina opada, z prawej teren rośnie
+    rA = range_svg([(-400, 330), (-250, 312), (-120, 300), (-20, 318), (80, 302), (190, 282), (300, 298), (400, 318), (520, 300), (640, 286), (940, 300)], '#C6CEC6', '#F6DDB2', seed=1)
+    rB = range_svg([(-400, 250), (-120, 246), (-10, 254), (70, 274), (150, 312), (240, 354), (330, 386), (420, 398), (520, 392), (640, 380), (940, 384)],
+                   '#A2B3A8', '#F4D7A6', (['#94a79a', '#8c9f92'], 13, 9), 2, meadows=('#B9C5A3', 3))
+    mvB = '<g class="mv5a"><ellipse cx="230" cy="418" rx="260" ry="26" fill="#FBF2E6" opacity=".7"/><ellipse cx="40" cy="404" rx="170" ry="20" fill="#FBF2E6" opacity=".5"/></g>'
+    drift('mv5a', T, 26, 0)
+    rC = range_svg([(-400, 476), (-200, 466), (0, 458), (120, 452), (220, 432), (320, 398), (420, 362), (520, 336), (620, 320), (760, 312), (940, 318)],
+                   '#83998B', '#F1CF98', (['#748b7c', '#6d8476', '#7f957f'], 11, 11), 3, meadows=('#A6B88A', 5))
+    mvC = '<g class="mv5b"><ellipse cx="60" cy="520" rx="300" ry="30" fill="#FBF2E6" opacity=".8"/><ellipse cx="-120" cy="500" rx="220" ry="24" fill="#FBF2E6" opacity=".6"/></g>'
+    A('.mv5b', K([(0, 'opacity:.9;transform:translateX(0)'), (t1, 'opacity:1;transform:translateX(-30px)')], T, 'cubic-bezier(.4,0,.6,1)'))
+    rD = range_svg([(-400, 640), (-250, 622), (-120, 600), (0, 580), (120, 562), (240, 550), (360, 536), (480, 512), (600, 486), (760, 470), (940, 466)],
+                   '#66806F', '#E9C68E', (['#58705f', '#4f685a', '#5f7866'], 10, 13), 4, meadows=('#97AE7E', 6))
+    # zbocze z dworem (ostre): las za budynkiem, dwór, trawiasta skarpa schodząca na pierwszy plan
+    hill = '<path d="M-400,700 C-150,672 80,640 300,624 C520,610 760,590 940,578 L940,1500 L-400,1500 Z" fill="url(#hillG)"/>'
+    hill += forest(-400, 940, 606, 670, 170, 91, 26, 54, .4)
+    hill += '<path d="M-200,744 C-60,700 120,690 240,706 C380,722 520,760 600,780 L600,1100 L-200,1100 Z" fill="#8FAA7C"/>'
+    hill += '<path d="M-60,800 C100,780 260,800 420,830 L460,1100 L-120,1100 Z" fill="#9AB384" opacity=".8"/>'
+    hill += ''.join('<path d="M%s,%s C%s,%s %s,%s %s,%s" fill="none" stroke="%s" stroke-width="2" opacity=".55"/>' % (-120 + i * 12, 760 + i * 26, 60 + i * 10, 744 + i * 26, 260 + i * 6, 768 + i * 28, 520, 800 + i * 30, '#86a274' if i % 2 else '#a3ba8c') for i in range(9)).replace('opacity=".55"', 'opacity=".3"')
+    hill += ''.join('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#7d9a6b"/>' % (x, y, rx, ry) for x, y, rx, ry in [(40, 830, 14, 6), (150, 872, 18, 7), (300, 900, 12, 5), (380, 846, 16, 6), (90, 930, 20, 8)])
+    hill += forest(-400, -10, 690, 840, 60, 92, 40, 90, .35) + forest(500, 940, 640, 860, 80, 93, 40, 100, .35)
+    hill += karolowy_dwor(318, 744, .8)
+    hill += '<g transform="translate(256,608)">' + steam_paths('stm', 2, 40, 7, 3, '#F6EDE2', 12, '#e9dccd') + '</g>'
+    near = forest(-400, 120, 880, 1080, 70, 94, 70, 140, .25) + forest(470, 940, 860, 1080, 60, 95, 70, 140, .25)
     bird = birds('bd5')
-    A('.bd5', K([(0, 'transform:translate(60px,330px)'), (t1, 'transform:translate(330px,300px)')], T, 'cubic-bezier(.3,0,.7,1)'))
-    bok = bokeh(7, (330, 290, 520, 430), ['#FFE9C2', '#FFF3DC'], (8, 22), 11, (.3, .55))
-    fg = ''.join(spruce(x, b_, h, '#2f4540') for x, b_, h in [(-40, 1140, 400), (30, 1170, 320), (580, 1150, 380), (510, 1190, 300)])
-    # czubki drzew przed obiektywem na starcie (ciemny dół kadru = blat z ujęcia laptopa) – opadają, gdy dron się wznosi
-    crane = '<g class="cr5a">' + ''.join(spruce(x, 1060, h, c) for x, h, c in zip(range(-160, 760, 46), itertools.cycle([560, 520, 590, 540, 575]), itertools.cycle(['#2b3f39', '#314740', '#283a35']))) + \
-            '<rect x="-300" y="840" width="1200" height="600" fill="#2b3f39"/></g>'
-    A('.cr5a', K([(0, 'transform:translateY(0)'), (t0 + .12, 'transform:translateY(0)', 'cubic-bezier(.45,0,.3,1)'), (t0 + 1.0, 'transform:translateY(520px)')], T))
-    ev(10.12, 'dron wznosi się nad czubkami drzew – odsłania Karolowy Dwór (do 11.0)')
-    out = layers('a5', T, cam, [(.06, sky, None), (.1, sun, None), (.18, far, 'bl3'), (.27, mist1, 'bl6'), (.35, main, 'bl15'), (.45, mist2, 'bl4'),
-                                (.58, midr, 'bl2'), (.8, hill, None), (1.12, near, 'bl2'), (.5, bird, None), (1.3, bok, 'bl4'), (1.7, fg, 'bl6'), (1.45, crane, 'bl6')])
-    return out
+    A('.bd5', K([(0, 'transform:translate(70px,300px)'), (t1, 'transform:translate(320px,272px)')], T, 'cubic-bezier(.3,0,.7,1)'))
+    bok = bokeh(6, (340, 240, 530, 380), ['#FFE9C2', '#FFF3DC'], (8, 20), 11, (.3, .5))
+    fg = ''.join(spruce(x, b_, h, '#2f4540') for x, b_, h in [(-40, 1150, 400), (30, 1180, 320), (590, 1160, 380), (520, 1200, 300)])
+    # start: czubki drzew przed obiektywem (linia na wys. 480 = zamknięty laptop), opadają – dron się wznosi
+    crane = '<g class="cr5a"><rect x="-400" y="516" width="1340" height="1300" fill="#2b3f39"/>' + ''.join(
+        spruce(x, 522, h, c) for x, h, c in zip(range(-380, 940, 22), itertools.cycle([30, 44, 36, 48, 40]), itertools.cycle(['#2b3f39', '#314740', '#283a35']))) + '</g>'
+    A('.cr5a', K([(0, 'transform:translateY(0)'), (t0 + .12, 'transform:translateY(0)', 'cubic-bezier(.45,0,.3,1)'), (t0 + 1.0, 'transform:translateY(900px)')], T))
+    ev(10.12, 'dron wznosi się nad czubkami drzew, poranna mgła się rozstępuje – odsłania Beskidy i Karolowy Dwór (do 11.0)')
+    out = layers('a5', T, cam, [(.06, sky, None), (.1, sun, None), (.12, rA, 'bl3'), (.17, rB, 'bl2'), (.21, mvB, 'bl6'), (.27, rC, 'bl15'), (.33, mvC, 'bl4'),
+                                (.5, rD, 'bl15'), (.8, hill, None), (1.12, near, 'bl2'), (.4, bird, None), (1.3, bok, 'bl4'), (1.7, fg, 'bl6'), (1.45, crane, 'bl6')])
+    # poranna mgła nad lasem na starcie (jasna jak ściana biura w ujęciu z laptopem) – unosi się i rozwiewa
+    veil = '<g class="vl5"><rect x="-20" y="-40" width="580" height="524" fill="#F1E3CF"/><rect x="-20" y="482" width="580" height="60" fill="url(#veilEdge)"/></g>'
+    A('.vl5', K([(0, 'opacity:1;transform:translateY(0)'), (t0 + .14, 'opacity:1;transform:translateY(0)', 'cubic-bezier(.45,0,.35,1)'), (t0 + .95, 'opacity:0;transform:translateY(-140px)')], T))
+    return out + veil
 
 def shot_coffee(T, t0, t1):
     cam = [(t0, 300, 650, 1.0, 300, 650, 0, 'cubic-bezier(.3,0,.4,1)'), (t1 - .28, 314, 640, 1.07, 300, 650, 0, 'cubic-bezier(.6,0,.85,.35)'), (t1, 314, 330, 1.09, 300, 650, 0)]
