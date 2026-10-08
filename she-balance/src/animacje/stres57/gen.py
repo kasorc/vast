@@ -884,7 +884,8 @@ def karolowy_dwor(x, y, s=1.0, chalet=True, grounds=True, glow=True, chalet_dx=-
     o = '<g transform="translate(%s,%s) scale(%s)">' % (f(x), f(y), f4(s))
     CY, CX = -30, chalet_dx                     # chalet: lekko wyżej, odsunięty w lewo
     if grounds:
-        o += '<path d="M%s,-62 C%s,-82 -260,-84 -166,-72 C-146,-40 -146,0 -152,46 C-210,72 %s,80 %s,58 Z" fill="%s"/>' % (f(-340 + CX), f(-280 + CX), f(-210 + CX), f(-340 + CX), KD['lawn'])
+        if chalet:  # trawnik pod chaletem – bez chaletu zostawał jaśniejszy, płaski placek
+            o += '<path d="M%s,-62 C%s,-82 -260,-84 -166,-72 C-146,-40 -146,0 -152,46 C-210,72 %s,80 %s,58 Z" fill="%s"/>' % (f(-340 + CX), f(-280 + CX), f(-210 + CX), f(-340 + CX), KD['lawn'])
         # parking (szary placyk z autami) między chaletem a dworem
         o += '<path d="M-200,-46 L-150,-48 L-136,-6 L-184,-2 Z" fill="#CFC9C0"/><path d="M-200,-46 L-150,-48" stroke="#bdb6ac" stroke-width="1.5"/>'
         for cx_, cy_, col in [(-190, -38, '#F4F2EF'), (-176, -38, '#8f9893'), (-162, -39, '#3f4a47'), (-186, -22, '#b9c2be'), (-171, -23, '#6E5446'), (-156, -23, '#F4F2EF')]:
