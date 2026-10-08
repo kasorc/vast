@@ -88,7 +88,7 @@ def master(m, dur):
     return np.stack([L, R], 1)
 
 PLANS = {  # przebieg nastroju dopasowany do scen
-    'kawa': [[0, 'light'], [1.8, 'full'], [9.8, 'silent'], [11.8, 'soft'], [15.8, 'full']],
+    'kawa': [[0, 'light'], [3, 'full'], [8.6, 'silent'], [10.6, 'soft'], [14.6, 'full']],
     'poradnik': [[0, 'light'], [2.5, 'full'], [16.5, 'silent'], [18.5, 'soft'], [20, 'full']],
     'beat-balansu': [[0, 'light'], [2.4, 'full'], [7.2, 'soft'], [9.0, 'light'], [11.4, 'full']],
     'role-liscie': [[0, 'soft'], [3.7, 'light'], [8.4, 'full']],
