@@ -5,7 +5,7 @@
 import sys, json
 import numpy as np
 from scipy.signal import lfilter
-from muzyka import SR, OUT, t_arr, midi, lp, hp, bp, Mix, kick, hat, bass
+from muzyka import SR, OUT, t_arr, midi, lp, hp, bp, Mix, kick, hat, bass, tick, ping, buzz
 
 rng = np.random.default_rng(11)
 
@@ -39,19 +39,36 @@ MELODY = [  # (takt-ósemka, nuta, długość w ósemkach) – 2 takty, powtarza
     (16, 72, 2), (18, 76, 1), (19, 79, 1), (20, 81, 2), (22, 79, 2),
     (24, 77, 2), (26, 76, 1), (27, 74, 1), (28, 72, 4)]
 
+def bird(f0=3200, vol=0.08):  # krótki ćwierk (sinusoida z glissandem)
+    t = t_arr(0.16); f = f0 * (1 + 0.35 * np.sin(np.pi * t / 0.16)) * (1 - 0.15 * t / 0.16)
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / 0.16) ** 2 * vol
+
 def mode_at(t, plan):
     m = plan[0][1]
     for s, md in plan:
         if t >= s: m = md
     return m
 
-def song(d, plan, bpm=104):
+def song(d, plan, bpm=104, ev=None):
     m = Mix(d); e = 60 / bpm / 2  # ósemka
+    ev = ev or {}
+    for i, a in enumerate(ev.get('pings', [])): m.add(ping(84 + (i * 5) % 12, 0.16), a, pan=float(rng.uniform(-.6, .6)))
+    for a in ev.get('buzz', []): m.add(buzz(0.45, 0.2), a)
+    for a in ev.get('chimes', []): m.add(celesta(88, 1.2, 0.5), a, pan=0.1)
     end = d - 2.2
     n8 = int(end / e)
     for k in range(n8):
         t = k * e; md = mode_at(t, plan)
         if md == 'silent': continue
+        if md == 'nature':
+            if k % 3 == 0: m.add(bird(float(rng.uniform(2600, 4200)), 0.07), t + float(rng.uniform(0, e)), pan=float(rng.uniform(-.7, .7)))
+            continue
+        if md == 'tense':  # energiczny „chaos dnia”: zegar, puls, bez ukulele
+            m.add(tick(0.18 + 0.06 * (k % 2)), t, pan=0.3 * (-1) ** k)
+            m.add(shaker(0.04), t + e / 2, pan=0.4)
+            if k % 2 == 0: m.add(kick(0.42), t)
+            m.add(bass(45, e * 0.9, 0.22), t)
+            continue
         bar = k // 8; root, ch = CHORDS[bar % 4]; pos = k % 8
         # ukulele: rytm D-DU-UDU
         if pos in (0, 2, 3, 5, 6, 7):
@@ -87,6 +104,8 @@ def master(m, dur):
     if pk > 0.89: L *= 0.89 / pk; R *= 0.89 / pk
     return np.stack([L, R], 1)
 
+EVENTS = {}  # zdarzenia dźwiękowe zgrane z animacją: {'nazwa': {'pings': [...], 'buzz': [...], 'chimes': [...]}}
+
 PLANS = {  # przebieg nastroju dopasowany do scen
     'kawa': [[0, 'light'], [3, 'full'], [8.6, 'silent'], [10.6, 'soft'], [14.6, 'full']],
     'poradnik': [[0, 'light'], [2.5, 'full'], [16.5, 'silent'], [18.5, 'soft'], [20, 'full']],
@@ -98,6 +117,6 @@ if __name__ == '__main__':
     name, dur = sys.argv[1], float(sys.argv[2])
     plan = json.loads(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3] else PLANS.get(name, [[0, 'soft'], [2.3, 'light'], [4.6, 'full']])
     from scipy.io import wavfile
-    data = master(song(dur, plan), dur)
+    data = master(song(dur, plan, ev=EVENTS.get(name)), dur)
     wavfile.write(OUT / f'{name}.wav', SR, (data * 32767).astype(np.int16))
     print('zapisano', OUT / f'{name}.wav')
