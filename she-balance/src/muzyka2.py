@@ -5,7 +5,7 @@
 import sys, json
 import numpy as np
 from scipy.signal import lfilter
-from muzyka import SR, OUT, t_arr, midi, lp, hp, bp, Mix, kick, hat, bass, tick, ping, buzz
+from muzyka import SR, OUT, t_arr, midi, lp, hp, bp, Mix, kick, hat, bass, tick, ping, buzz, click
 
 rng = np.random.default_rng(11)
 
@@ -55,6 +55,7 @@ def song(d, plan, bpm=104, ev=None):
     for i, a in enumerate(ev.get('pings', [])): m.add(ping(84 + (i * 5) % 12, 0.16), a, pan=float(rng.uniform(-.6, .6)))
     for a in ev.get('buzz', []): m.add(buzz(0.45, 0.2), a)
     for a in ev.get('chimes', []): m.add(celesta(88, 1.2, 0.5), a, pan=0.1)
+    for a in ev.get('clicks', []): m.add(click(0.35), a)
     end = d - 2.2
     n8 = int(end / e)
     for k in range(n8):
@@ -104,9 +105,13 @@ def master(m, dur):
     if pk > 0.89: L *= 0.89 / pk; R *= 0.89 / pk
     return np.stack([L, R], 1)
 
-EVENTS = {}  # zdarzenia dźwiękowe zgrane z animacją: {'nazwa': {'pings': [...], 'buzz': [...], 'chimes': [...]}}
+EVENTS = {
+    'stres57': {'pings': [1.30, 1.48, 1.66, 1.84, 2.00, 2.18, 2.36, 2.52, 2.64, 2.70, 2.74, 2.84, 2.86, 3.04, 3.24, 3.44, 3.66],
+                'buzz': [1.66, 1.89], 'chimes': [0.70, 5.78, 16.08], 'clicks': [9.82]},
+}  # zdarzenia dźwiękowe zgrane z animacją: {'nazwa': {'pings': [...], 'buzz': [...], 'chimes': [...]}}
 
-PLANS = {  # przebieg nastroju dopasowany do scen
+PLANS = {
+    'stres57': [[0, 'tense'], [7, 'nature'], [10, 'full']],  # przebieg nastroju dopasowany do scen
     'kawa': [[0, 'light'], [3, 'full'], [8.6, 'silent'], [10.6, 'soft'], [14.6, 'full']],
     'poradnik': [[0, 'light'], [2.5, 'full'], [16.5, 'silent'], [18.5, 'soft'], [20, 'full']],
     'beat-balansu': [[0, 'light'], [2.4, 'full'], [7.2, 'soft'], [9.0, 'light'], [11.4, 'full']],

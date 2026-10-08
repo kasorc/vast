@@ -235,7 +235,7 @@ def ticket():
             '<use href="#signCur" transform="translate(-64,16) scale(.075)" style="color:%s"/>' % DKG +
             '<text x="16" y="12" font-size="27" text-anchor="middle" class="serif" fill="%s">Zaproszenie</text>' % INK +
             '<path d="M-36,24 H70" stroke="%s" stroke-width="1.3" stroke-dasharray="4 4"/>' % SAGE +
-            '<text x="16" y="44" font-size="13.5" text-anchor="middle" fill="%s" style="font-weight:800;letter-spacing:.1em">3 DNI · BESKIDY</text>' % BROWN +
+            '<text x="16" y="44" font-size="13.5" text-anchor="middle" fill="%s" style="font-weight:800;letter-spacing:.1em">TYLKO DLA CIEBIE</text>' % BROWN +
             '</g>')
 
 def mug_svg(body='#F7F3EC', band=SAGE, rim='#e2d9cc', steam=True, sc=1.0):
@@ -304,7 +304,7 @@ lg('lidG', [(0, '#3d4945', 1), (1, '#2b3532', 1)], x2=1, y2=1)
 lg('dawnSky', [(0, '#E9E3DA', 1), (.38, '#F1DFCB', 1), (.5, '#F6D7B0', 1), (.56, '#F8CF9E', 1), (1, '#F6D2A8', 1)])
 lg('daySky', [(0, '#EFE6DA', 1), (.45, '#F5DFC4', 1), (.6, '#F7D6AE', 1), (1, '#F4D2AC', 1)])
 lg('duskSky', [(0, '#4e6862', 1), (.32, '#7f948c', 1), (.52, '#C9AE98', 1), (.62, '#E7BC94', 1), (1, '#EDC39A', 1)])
-lg('mistH', [(0, '#FBF4EA', 0), (.3, '#FBF4EA', .97), (.7, '#FBF4EA', .97), (1, '#FBF4EA', 0)], x2=1, y2=0)
+lg('mistH', [(0, '#FBF4EA', 0), (.32, '#FBF4EA', .9), (.68, '#FBF4EA', .9), (1, '#FBF4EA', 0)], x2=1, y2=0)
 lg('mistBand', [(0, '#FBF2E6', 0), (.5, '#FBF2E6', .9), (1, '#FBF2E6', 0)])
 lg('hairOts', [(0, '#5e3a22', 1), (.45, '#7d5132', 1), (.8, '#a5723f', 1), (1, '#cf9b5e', 1)])
 lg('woodTop', [(0, '#a5826c', 1), (.25, '#8a6a56', 1), (1, '#7a5c4a', 1)])
@@ -586,6 +586,8 @@ def sc_chaos():
     T = 3.5; s = []
     cell0 = (90, 290.5)
     s.append('<rect x="-20" y="-20" width="580" height="1000" fill="%s"/>' % DARK)
+    s.append('<g class="bq2"><g filter="url(#bl10)">%s</g></g>' % bk3())
+    A('.bq2', K([(0, 'opacity:0'), (3.08, 'opacity:0', EIO), (3.42, 'opacity:1')], T))
     makers = [cut_laptop, cut_phone, cut_calendar, cut_alarm]
     for i, fn in enumerate(makers):
         c = uid('cut'); show_win(c, T, CUTS[i], CUTS[i + 1])
@@ -642,14 +644,17 @@ def sc_chaos():
     return ''.join(s), T
 
 # ================= SCENA 3: Ponad połowa (4,5–7 s) =================
+def bk3():
+    return ('<rect x="-300" y="-300" width="1140" height="1560" fill="%s"/><circle cx="270" cy="470" r="460" fill="url(#coolGlow)"/>' % DARK +
+            bokeh(8, (-60, 40, 600, 920), ['#56706a', '#4b6159', '#62796f'], (40, 100), 7, (.3, .7)))
+
 GRID0, CELL = (90, 300), 40
 
 def sc_polowa():
     T = 2.5; s = []
     s.append('<rect x="-20" y="-20" width="580" height="1000" fill="%s"/>' % DARK)
     cam = [(0, 270, 480, 1.0, 270, 480, 0, 'cubic-bezier(.35,0,.25,1)'), (T, 282, 482, 1.06, 270, 480, 0)]
-    bk = ('<rect x="-300" y="-300" width="1140" height="1560" fill="%s"/><circle cx="270" cy="470" r="460" fill="url(#coolGlow)"/>' % DARK +
-          bokeh(8, (-60, 40, 600, 920), ['#56706a', '#4b6159', '#62796f'], (40, 100), 7, (.3, .7)))
+    bk = bk3()
     grid = ''
     times = {}
     for kk in range(1, 57):
@@ -771,6 +776,7 @@ def sc_zatrzymanie():
     foc += '<ellipse class="sg4" cx="380" cy="470" rx="160" ry="150" fill="url(#screenGlow)" style="mix-blend-mode:screen"/>'
     foc += '<rect x="-300" y="%s" width="1140" height="16" fill="#B89B80"/><rect x="-300" y="%s" width="1140" height="4" fill="#D2BBA2"/>' % (DESK4, DESK4)
     foc += '<rect x="-300" y="%s" width="1140" height="700" fill="%s"/><rect x="-300" y="%s" width="1140" height="12" fill="#000" opacity=".14"/>' % (DESK4 + 16, DKG, DESK4 + 16)
+    foc += ''.join('<rect x="%s" y="%s" width="200" height="150" rx="6" fill="none" stroke="#4d675f" stroke-width="2.5"/><rect x="%s" y="%s" width="60" height="8" rx="4" fill="#B89B80"/>' % (x, DESK4 + 46, x + 70, DESK4 + 70) for x in (-140, 80, 300, 520))
     foc += '<g transform="translate(250,%s) rotate(-4)"><rect x="-46" y="-8" width="92" height="9" fill="#F4F2EF"/><rect x="-42" y="-14" width="88" height="7" fill="#ECE8E1" transform="rotate(3)"/></g>' % DESK4
     foc += laptop_back(lid, lgl)
     S('.%s{transform-origin:%spx %spx}' % (lid, LAP['cx'], DESK4 - 4))
@@ -789,12 +795,12 @@ def sc_zatrzymanie():
            (t2 + .01, W[0], W[1], z2, SW[0], SW[1], 0, 'cubic-bezier(.62,0,.22,1)'), (T, W[0], W[1], 3.1, 270, 480, 0)]
     s.append(layers('s4', T, cam, [(.3, bg, 'bl3'), (.35, rays, None), (.6, mid, 'bl2'), (1, foc, None), (1.6, fg, 'bl6')]))
     S('.s4L1{mix-blend-mode:screen}')
-    A('.s4L1 > path', K([(0, 'opacity:0'), (.9, 'opacity:0', 'cubic-bezier(.4,0,.4,1)'), (2.6, 'opacity:.62'), (T, 'opacity:.66')], T))
+    A('.s4L1 > path', K([(0, 'opacity:0'), (.9, 'opacity:0', 'cubic-bezier(.4,0,.4,1)'), (2.6, 'opacity:.46'), (T, 'opacity:.5')], T))
     ev(8.0, 'światło zaczyna się ocieplać (promienie przez okno) do 9.6')
     # korekcja koloru: chłód → ciepło
     s.append('<g class="cg4">%s</g>' % overlay('#8DA19C', .26, 'multiply'))
     A('.cg4', K([(0, 'opacity:1'), (.8, 'opacity:1', EIO), (2.5, 'opacity:0')], T))
-    s.append('<g class="wg4">%s</g>' % overlay('#F0B878', .3, 'soft-light'))
+    s.append('<g class="wg4">%s</g>' % overlay('#F0B878', .24, 'soft-light'))
     A('.wg4', K([(0, 'opacity:0'), (.8, 'opacity:0', EIO), (2.6, 'opacity:1')], T))
     s.append('<g class="wr4"><ellipse cx="40" cy="180" rx="400" ry="400" fill="url(#warmGlow)" style="mix-blend-mode:screen" opacity=".34"/></g>')
     A('.wr4', K([(0, 'opacity:0'), (.9, 'opacity:0', EIO), (2.6, 'opacity:1')], T))
@@ -804,10 +810,10 @@ def sc_zatrzymanie():
     s.append('<g class="%s">%s</g>' % (c1, T_('A Ty?', 270, 214, 82, INK)))
     S('.%s{transform-origin:270px 190px}' % c1)
     A('.' + c1, K([(0, 'opacity:0;transform:scale(1.1)'), (.14, 'opacity:0;transform:scale(1.1)', 'cubic-bezier(.2,.7,.25,1)'), (.36, 'opacity:1;transform:scale(1.015)', 'cubic-bezier(.3,0,.3,1)'),
-                   (.9, 'opacity:1;transform:scale(1)', EOUT), (1.02, 'opacity:0;transform:scale(.97)')], T))
-    s.append(line_wipe(T, 'Kiedy ostatnio naprawdę', 270, 196, 42, 1.0, .42, INK, t_out=2.46))
-    s.append(line_wipe(T, 'zadbałaś o siebie?', 270, 250, 42, 1.17, .36, INK, t_out=2.5))
-    ev(7.14, 'napis „A Ty?”'); ev(8.0, 'napis „Kiedy ostatnio naprawdę zadbałaś o siebie?”'); ev(9.43, 'kamera wjeżdża w laptop (dolly-in do 10.0)')
+                   (.8, 'opacity:1;transform:scale(1)', EOUT), (.92, 'opacity:0;transform:scale(.97)')], T))
+    s.append(line_wipe(T, 'Kiedy ostatnio naprawdę', 270, 196, 42, .88, .42, INK, t_out=2.34))
+    s.append(line_wipe(T, 'zadbałaś o siebie?', 270, 250, 42, 1.04, .36, INK, t_out=2.38))
+    ev(7.14, 'napis „A Ty?”'); ev(7.88, 'napis „Kiedy ostatnio naprawdę zadbałaś o siebie?”'); ev(9.43, 'kamera wjeżdża w laptop (dolly-in do 10.0)')
     ev(10.0, 'MATCH-CUT: linia zamkniętego laptopa → linia horyzontu w Beskidach')
     return ''.join(s), T
 
@@ -977,7 +983,7 @@ def shot_table(T, t0, t1):
     tab += '<g transform="translate(118,%s)"><ellipse cx="0" cy="-6" rx="36" ry="10" fill="#E9DED0"/><circle cx="-12" cy="-14" r="9" fill="%s"/><circle cx="6" cy="-15" r="9" fill="%s"/><circle cx="16" cy="-10" r="7" fill="%s"/></g>' % (table + 2, RUST, MUST, '#c47a3c')
     glow = '<g class="fl5"><ellipse cx="80" cy="900" rx="420" ry="360" fill="url(#fireG)" style="mix-blend-mode:screen"/></g>'
     A('.fl5', 'flk .9s ease-in-out infinite alternate'); S('@keyframes flk{0%{opacity:.55}40%{opacity:.8}70%{opacity:.62}100%{opacity:.85}}')
-    fire = ('<g transform="translate(40,1010)"><path d="M-110,0 L110,0 L90,-30 L-90,-30 Z" fill="#3c2f28"/>' +
+    fire = ('<g transform="translate(46,978)"><path d="M-110,0 L110,0 L90,-30 L-90,-30 Z" fill="#3c2f28"/>' +
             ''.join('<g class="flame" style="animation-delay:-%ss;animation-duration:%ss"><path d="M%s,-20 Q%s,%s %s,%s Q%s,%s %s,-20 Z" fill="%s"/></g>' % (
                 f(i * .13), f(.3 + i * .04), x - w, x - w * .6, -20 - h * .5, x, -20 - h, x + w * .6, -20 - h * .5, x + w, c)
                 for i, (x, w, h, c) in enumerate([(-50, 34, 120, '#E9874A'), (10, 40, 170, MUST), (60, 30, 110, '#E9874A'), (0, 22, 100, '#FBE3A8')])) + '</g>')
@@ -1005,12 +1011,12 @@ def sc_shebalance():
     A('.mw5', K([(0, 'transform:translateX(560px)'), (1.2, 'transform:translateX(560px)', 'cubic-bezier(.45,0,.55,1)'), (1.8, 'transform:translateX(-1520px)')], T))
     ev(11.2, 'przejście: mgła przepływa przez kadr (do 11.8)')
     # przejście b→c: smugi ruchu przy pionowym „whip-tilt”
-    s.append('<g class="wt5">' + ''.join('<rect x="%s" y="-40" width="%s" height="1040" fill="#FFF6E6" opacity="%s"/>' % (f(random.Random(i).uniform(0, 520)), f(random.Random(i * 3).uniform(2, 6)), f(random.Random(i * 7).uniform(.25, .6))) for i in range(14)) + '</g>')
-    A('.wt5', K([(0, 'opacity:0'), (2.86, 'opacity:0', 'ease-in'), (3.0, 'opacity:1', 'ease-out'), (3.16, 'opacity:0')], T))
+    s.append('<g class="wt5"><g filter="url(#bl2)">' + ''.join('<rect x="%s" y="-40" width="%s" height="1040" fill="#FFF6E6" opacity="%s"/>' % (f(random.Random(i).uniform(20, 520)), f(random.Random(i * 3).uniform(1.5, 3.5)), f(random.Random(i * 7).uniform(.15, .35))) for i in range(8)) + '</g></g>')
+    A('.wt5', K([(0, 'opacity:0'), (2.9, 'opacity:0', 'ease-in'), (3.0, 'opacity:1', 'ease-out'), (3.1, 'opacity:0')], T))
     ev(12.72, 'przejście: szybki ruch kamery w górę za parą z kubka → w dół na łąkę (13.0)')
     # przejście c→d: rozjaśnienie złotym światłem
-    s.append('<g class="gd5">%s</g>' % overlay('#FFE3B0', 1, 'screen'))
-    A('.gd5', K([(0, 'opacity:0'), (4.22, 'opacity:0', 'cubic-bezier(.5,0,.8,.4)'), (4.5, 'opacity:.95', 'cubic-bezier(.2,.6,.3,1)'), (4.85, 'opacity:0')], T))
+    s.append('<g class="gd5">%s<ellipse cx="420" cy="300" rx="420" ry="420" fill="url(#warmGlow)" style="mix-blend-mode:screen"/></g>' % overlay('#FFEFD4', 1, 'screen'))
+    A('.gd5', K([(0, 'opacity:0'), (4.24, 'opacity:0', 'cubic-bezier(.5,0,.8,.4)'), (4.5, 'opacity:.82', 'cubic-bezier(.2,.6,.3,1)'), (4.86, 'opacity:0')], T))
     ev(14.5, 'przejście: rozbłysk złotego światła → wieczór')
     # przejście d→logo: światełko girlandy rośnie w poświatę
     s.append('<g class="ho5"><circle cx="270" cy="413" r="60" fill="url(#haloEnd)"/></g>')
