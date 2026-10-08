@@ -903,7 +903,7 @@ def karolowy_dwor(x, y, s=1.0, chalet=True, grounds=True, glow=True, chalet_dx=-
         o += _win(-232, -86, 16, 14) + _gallery(-256, -192, -62)
         o += '<rect x="-264" y="-14" width="80" height="4" fill="#bdb3a6"/>'
         o += '<path d="M-170,-50 L-224,-110" stroke="%s" stroke-width="1.6" opacity=".7"/></g>' % KD['rim']
-    if grounds:
+    if grounds and chalet:
         # basen tuż przy chalecie (po jego prawej, lekko z przodu)
         bx = -12 + CX - 182 + 60          # prawa krawędź chaletu + odstęp
         o += '<path d="M%s,6 L%s,6 L%s,-20 L%s,-20 Z" fill="#EFE9DF"/>' % (f(bx - 6), f(bx + 62), f(bx + 56), f(bx))
@@ -1063,7 +1063,7 @@ def shot_manor(T, t0, t1):
                     [(520, 560, 70, 16, '#A9C584'), (600, 530, 60, 12, '#B3CC8C'), (470, 600, 50, 10, '#9FBD7A'), (560, 600, 46, 12, '#A9C584')])
     hill += forest(430, 940, 520, 640, 50, 31, 18, 40, .45) + small_house(486, 556, 1.15) + small_house(560, 522, .8)
     hill += forest(20, 440, 556, 590, 40, 32, 24, 48, .55)        # drzewa za dworem i chaletem na grzbiecie (brzozy, świerki)
-    hill += karolowy_dwor(300, 600, .62)
+    hill += karolowy_dwor(300, 600, .62, chalet=False)  # klientka: bez drewnianego domku i basenu
     hill += '<g transform="translate(252,488)">' + steam_paths('stm', 2, 34, 6, 2.6, '#F6EDE2', 10, '#e9dccd') + '</g>'
     # skarpa pod tarasem: trawa + las schodzący do dolnej krawędzi
     slope = '<path d="M40,640 C120,656 300,664 440,646 C470,700 470,800 430,1000 L70,1000 C40,860 20,720 40,640 Z" fill="url(#slopeG)"/>'
