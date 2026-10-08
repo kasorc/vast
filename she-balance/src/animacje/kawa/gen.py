@@ -310,7 +310,8 @@ def slide_x(c, T, frames, ease=EIO):
 
 # ================= SCENA 1: Poranek, który już trwa (0–3 s) =================
 def sc_poranek():
-    T = 3.0; s = []
+    Q = .6; T = 3.0 * Q; s = []  # skrócony wstęp (1,8 s)
+    q = lambda L: [(round(e[0] * Q, 3),) + tuple(e[1:]) for e in L]
     cy = 742; s1 = .7; cx = 300; feet = cy + (712 - 470) * s1
     micro = ('<g><rect x="34" y="%s" width="120" height="74" rx="8" fill="#f7f3ec" stroke="#d6cdc1" stroke-width="2"/>' % (cy - 74) +
              '<rect x="44" y="%s" width="70" height="54" rx="4" fill="#6d7f78"/><rect x="122" y="%s" width="24" height="54" rx="3" fill="#ede6dd"/>' % (cy - 64, cy - 64) +
@@ -325,13 +326,13 @@ def sc_poranek():
     s.append(counter(cy))
     # zegar 6:47 na mikrofalówce (duży odpowiednik w rogu kadru)
     s.append('</g>')
-    rig(inst, 'A', T, [(0, {'R': R_HOLD, 'L': (62, 452)}), (.35, {'R': R_HOLD}), (1.3, {'R': R_SIP}, 'cubic-bezier(.4,0,.2,1)'),
-                       (1.42, {'R': R_SIP}), (1.62, {'R': R_HOLD}, ESNAP), (2.4, {'R': R_HOLD}), (2.75, {'R': (186, 232)})])
-    head(inst, T, [(0, 0, 0, 0), (.9, 2, 0, 1), (1.45, 2, 0, 1), (1.62, -9, -5, 0, ESNAP), (2.4, -8, -5, 0), (2.9, -4, -2, 0)])
-    pupils(inst, T, [(0, 0), (1.45, 0), (1.55, -3.2), (2.6, -3.2), (2.9, -1.5)])
-    A('.fig.%s .eyes' % inst, K([(0, 'transform:scaleY(1)'), (.95, 'transform:scaleY(1)'), (1.15, 'transform:scaleY(.15)'), (1.42, 'transform:scaleY(.15)'), (1.52, 'transform:scaleY(1.12)', ESNAP), (2.3, 'transform:scaleY(1.05)'), (2.6, 'transform:scaleY(1)')], T))
+    rig(inst, 'A', T, q([(0, {'R': R_HOLD, 'L': (62, 452)}), (.35, {'R': R_HOLD}), (1.3, {'R': R_SIP}, 'cubic-bezier(.4,0,.2,1)'),
+                       (1.42, {'R': R_SIP}), (1.62, {'R': R_HOLD}, ESNAP), (2.4, {'R': R_HOLD}), (2.75, {'R': (186, 232)})]))
+    head(inst, T, q([(0, 0, 0, 0), (.9, 2, 0, 1), (1.45, 2, 0, 1), (1.62, -9, -5, 0, ESNAP), (2.4, -8, -5, 0), (2.9, -4, -2, 0)]))
+    pupils(inst, T, q([(0, 0), (1.45, 0), (1.55, -3.2), (2.6, -3.2), (2.9, -1.5)]))
+    A('.fig.%s .eyes' % inst, K(q([(0, 'transform:scaleY(1)'), (.95, 'transform:scaleY(1)'), (1.15, 'transform:scaleY(.15)'), (1.42, 'transform:scaleY(.15)'), (1.52, 'transform:scaleY(1.12)', ESNAP), (2.3, 'transform:scaleY(1.05)'), (2.6, 'transform:scaleY(1)')]), T))
     A('.st1', K([(0, 'opacity:1'), (T, 'opacity:.85')], T))
-    cam('c1', T, [(0, 300, 509, 1.0, 300, 509, 0), (1.4, 300, 509, 1.05, 296, 509, 0, 'cubic-bezier(.2,.8,.2,1)'), (1.6, 300, 509, 1.075, 300, 509, 0), (T, 300, 509, 1.09, 302, 507, 0)], 'cubic-bezier(.4,0,.6,1)')
+    cam('c1', T, q([(0, 300, 509, 1.0, 300, 509, 0), (1.4, 300, 509, 1.05, 296, 509, 0, 'cubic-bezier(.2,.8,.2,1)'), (1.6, 300, 509, 1.075, 300, 509, 0), (3.0, 300, 509, 1.09, 302, 507, 0)]), 'cubic-bezier(.4,0,.6,1)')
     A('.clk', 'clk .5s steps(1) infinite')
     S('@keyframes clk{0%{opacity:1}50%{opacity:.15}}')
     s.append('<rect width="540" height="960" fill="url(#warm)" pointer-events="none"/>')
@@ -339,15 +340,15 @@ def sc_poranek():
     # nakładka: tytuł, zegar, MAMO!
     s.append('<g class="t1a"><text x="270" y="176" font-size="54" text-anchor="middle" class="serif" fill="%s">Jedna kawa.</text></g>' % INK)
     A('.t1a', K([(0, 'transform:translateY(0);opacity:1'), (T, 'transform:translateY(-4px);opacity:1')], T, 'linear'))
-    s.append('<text x="270" y="236" font-size="54" text-anchor="middle" class="serif split" fill="%s" style="--d0:.55s">Tylko jedna.</text>' % INK)
+    s.append('<text x="270" y="236" font-size="54" text-anchor="middle" class="serif split" fill="%s" style="--d0:.3s">Tylko jedna.</text>' % INK)
     # duży zegar w rogu (miga)
     s.append('<g transform="translate(414,330)"><g class="clkBig">'
              '<rect x="-46" y="-22" width="92" height="44" rx="10" fill="#2f3b37"/>'
              '<text x="0" y="10" font-size="26" text-anchor="middle" fill="#F6DDA8" style="font-weight:800;letter-spacing:.04em">6<tspan class="clk">:</tspan>47</text></g></g>')
-    A('.clkBig', K([(0, 'opacity:0;transform:scale(.6)'), (.35, 'opacity:0;transform:scale(.6)', ESNAP), (.6, 'opacity:1;transform:scale(1)'), (2.2, 'opacity:1;transform:scale(1)'), (2.32, 'opacity:.35;transform:scale(1)'), (2.44, 'opacity:1;transform:scale(1.04)'), (2.56, 'opacity:.35;transform:scale(1)'), (2.68, 'opacity:1;transform:scale(1)')], T))
+    A('.clkBig', K(q([(0, 'opacity:0;transform:scale(.6)'), (.35, 'opacity:0;transform:scale(.6)', ESNAP), (.6, 'opacity:1;transform:scale(1)'), (2.2, 'opacity:1;transform:scale(1)'), (2.32, 'opacity:.35;transform:scale(1)'), (2.44, 'opacity:1;transform:scale(1.04)'), (2.56, 'opacity:.35;transform:scale(1)'), (2.68, 'opacity:1;transform:scale(1)')]), T))
     b, w, h = bubble(['MAMO!'], fill=BEIGE, stroke=BROWN, fs=40, col=RUST, weight=900, k=.72, padx=20, pady=12, tail=(-70, 40))
     lines = ''.join('<path d="M%s,%s l%s,%s" stroke="%s" stroke-width="3" stroke-linecap="round"/>' % (f(dx), f(dy), f(ex), f(ey), BROWN) for dx, dy, ex, ey in [(-w / 2 - 8, -18, -14, -10), (-w / 2 - 10, 2, -18, 0), (-w / 2 - 6, 20, -14, 10)])
-    s.append(place_bubble(b + lines, 132, 352, T, 1.42, pop_dur=.3))
+    s.append(place_bubble(b + lines, 132, 352, T, 1.42 * Q, pop_dur=.25))
     s.append('<g class="sh1">%s</g>' % '')
     return ''.join(s), T
 
