@@ -603,7 +603,7 @@ def ticket(big=True):
          '<use href="#logoWord" transform="translate(0,-43) scale(.2)" style="color:#FBF9F6"/>' +
          '<path d="M-96,10 a7,7 0 0 1 0,14 M96,10 a7,7 0 0 0 0,14" fill="%s"/>' % CREAM +
          '<path d="M-80,17 H80" stroke="%s" stroke-width="1.4" stroke-dasharray="4 4"/>' % SAGE +
-         '<text x="0" y="1" font-size="23" text-anchor="middle" class="serif" fill="%s">3 dni · Beskidy</text>' % INK +
+         '<text x="0" y="4" font-size="32" text-anchor="middle" class="serif" fill="%s">3 dni</text>' % INK +
          '<text x="0" y="45" font-size="14.5" text-anchor="middle" fill="%s" style="font-weight:800;letter-spacing:.06em">TYLKO DLA CIEBIE</text>' % BROWN +
          '<g clip-path="url(#tixClip)"><rect class="tixShine" x="-60" y="-70" width="40" height="140" fill="url(#shine)" transform="rotate(18)"/></g>'
          '</g>')
